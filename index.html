@@ -20,6 +20,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .screen.active {
@@ -145,6 +146,8 @@
 ================================ */
 #scan-screen {
   background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+  align-items: flex-start;
+  padding-top: 1rem;
 }
 
 .scan-container {
@@ -153,6 +156,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding-bottom: 2rem;
 }
 
 .back-btn {
@@ -592,6 +596,7 @@ let archivingScanner;
 let isArchivingScanning = false;
 let scannedItems = [];   // chaque scan ajoute une entrée, même réf OK plusieurs fois
 let scanCooldown = false; // cooldown pour éviter double détection sur la même frame
+let localQtyMap = {};     // { sourceRow: qtyRestante } pour tracker localement
 
 function goBackToLogin() {
   stopArchivingScan();
@@ -649,8 +654,8 @@ async function onArchivingScan(decodedText) {
 
       await fetchItemData(spreadsheetId, row);
 
-      // Relâche le cooldown après 1.5s
-      setTimeout(() => { scanCooldown = false; }, 1500);
+      // Relâche le cooldown après 800ms
+      setTimeout(() => { scanCooldown = false; }, 800);
 
     } else {
       alert('Invalid QR Code: Missing parameters');
@@ -681,11 +686,18 @@ async function fetchItemData(spreadsheetId, row) {
     }
     
     if (result.success && result.data) {
-      // Si Qty Available est déjà 0 → refuse le scan
-      if (Number(result.data.qtyAvailable) <= 0) {
+      // Calcule la qty locale restante pour cette ligne
+      const row = result.data.sourceRow;
+      const qtyLocale = (localQtyMap[row] !== undefined) ? localQtyMap[row] : Number(result.data.qtyAvailable);
+
+      // Si la qty locale est déjà 0 → refuse
+      if (qtyLocale <= 0) {
         alert('⚠️ Plus de quantité disponible pour cette référence !');
         return;
       }
+
+      // Met à jour qtyAvailable avec la valeur locale avant d'ajouter
+      result.data.qtyAvailable = qtyLocale;
       addScannedItem(result.data);
     }
     
@@ -698,10 +710,11 @@ async function fetchItemData(spreadsheetId, row) {
 
 /**
  * Ajoute un item — même réf peut apparaître plusieurs fois
+ * Décrémente le qtyAvailable localement pour les scans suivants du même QR
  */
 function addScannedItem(data) {
   const item = {
-    id: Date.now(),                              // ID unique pour chaque scan
+    id: Date.now(),
     reference: data.reference || 'N/A',
     sNumber: data.sNumber || 'N/A',
     season: data.season || 'N/A',
@@ -718,6 +731,11 @@ function addScannedItem(data) {
   };
   
   scannedItems.push(item);
+
+  // Décrémente localement pour les scans suivants du même sourceRow
+  // comme ça le prochain scan aura le bon Dispo affiché
+  localQtyMap[item.sourceRow] = (localQtyMap[item.sourceRow] !== undefined ? localQtyMap[item.sourceRow] : item.qtyAvailable) - 1;
+
   updateItemsList();
   updateCount();
   
@@ -831,6 +849,7 @@ function clearAll(skipConfirm = false) {
   }
   
   scannedItems = [];
+  localQtyMap = {};
   updateItemsList();
   updateCount();
 }
