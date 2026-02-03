@@ -287,16 +287,6 @@
   margin-top: 3px;
 }
 
-.item-dropdown {
-  width: 120px;
-  padding: 8px;
-  border: 2px solid #7c3aed;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #7c3aed;
-  font-weight: 600;
-}
-
 .item-remove {
   background: #ef4444;
   color: white;
@@ -306,6 +296,35 @@
   border-radius: 50%;
   cursor: pointer;
   font-size: 16px;
+}
+
+/* ===== badges Total / Dispo ===== */
+.item-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.badge-total {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.badge-avail {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.badge-avail.zero {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 /* ===============================
@@ -474,7 +493,7 @@
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlyoAA6iQBug-SvDPOduYPnYoj1sMihYIbKzZcJ-Uw7garDGLfrxdwviT40Q593yluWg/exec';
 
 // =====================
-// SELECT SCANNER (Original)
+// SELECT SCANNER (Original — inchangé)
 // =====================
 let selectScanner;
 let isSelectScanning = false;
@@ -535,7 +554,7 @@ function generateSharePoint() {
 }
 
 // =====================
-// ARCHIVING - LOGIN
+// ARCHIVING - LOGIN (inchangé sauf logout qui va au scan)
 // =====================
 function goToArchiving() {
   document.getElementById("home-screen").classList.remove("active");
@@ -555,6 +574,7 @@ function login() {
   }, 500);
 }
 
+// ✅ logout → va au scan screen + start scanner (comportement original)
 function logout() {
   document.getElementById('status').textContent = 'Logged Out ❌';
   document.getElementById('status').style.color = '#ef4444';
@@ -569,8 +589,9 @@ function logout() {
 // ARCHIVING - SCANNER
 // =====================
 let archivingScanner;
-let scannedItems = [];
-let itemCount = 0;
+let isArchivingScanning = false;
+let scannedItems = [];   // chaque scan ajoute une entrée, même réf OK plusieurs fois
+let scanCooldown = false; // cooldown pour éviter double détection sur la même frame
 
 function goBackToLogin() {
   stopArchivingScan();
@@ -579,6 +600,8 @@ function goBackToLogin() {
 }
 
 function startArchivingScan() {
+  if (isArchivingScanning) return;
+
   if (!archivingScanner) {
     archivingScanner = new Html5Qrcode("qr-reader");
   }
@@ -587,13 +610,28 @@ function startArchivingScan() {
     { facingMode: "environment" },
     { fps: 10, qrbox: 220 },
     decodedText => onArchivingScan(decodedText)
-  ).catch(err => {
+  ).then(() => {
+    isArchivingScanning = true;
+  }).catch(err => {
     console.error('Scanner error:', err);
     alert('Camera access error. Please allow camera permissions.');
   });
 }
 
+function stopArchivingScan() {
+  if (archivingScanner && isArchivingScanning) {
+    archivingScanner.stop().then(() => { isArchivingScanning = false; }).catch(() => { isArchivingScanning = false; });
+  }
+}
+
+/**
+ * Chaque détection QR
+ * Cooldown 1.5s pour éviter qu'un même QR soit détecté en boucle
+ * tant que la caméra pointe dessus — après le cooldown on peut rescanner le même QR
+ */
 async function onArchivingScan(decodedText) {
+  if (scanCooldown) return;
+
   console.log('QR Scanned:', decodedText);
   
   try {
@@ -603,19 +641,29 @@ async function onArchivingScan(decodedText) {
     const row = params.get('row');
     
     if (spreadsheetId && row) {
+      scanCooldown = true;
+
+      if (navigator.vibrate) {
+        navigator.vibrate(200);
+      }
+
       await fetchItemData(spreadsheetId, row);
+
+      // Relâche le cooldown après 1.5s
+      setTimeout(() => { scanCooldown = false; }, 1500);
+
     } else {
       alert('Invalid QR Code: Missing parameters');
     }
   } catch (e) {
+    scanCooldown = false;
     alert('Invalid QR Code format');
-  }
-  
-  if (navigator.vibrate) {
-    navigator.vibrate(200);
   }
 }
 
+/**
+ * Fetch les données depuis l'API Apps Script
+ */
 async function fetchItemData(spreadsheetId, row) {
   showLoader('Fetching data...');
   
@@ -633,6 +681,11 @@ async function fetchItemData(spreadsheetId, row) {
     }
     
     if (result.success && result.data) {
+      // Si Qty Available est déjà 0 → refuse le scan
+      if (Number(result.data.qtyAvailable) <= 0) {
+        alert('⚠️ Plus de quantité disponible pour cette référence !');
+        return;
+      }
       addScannedItem(result.data);
     }
     
@@ -643,11 +696,12 @@ async function fetchItemData(spreadsheetId, row) {
   }
 }
 
+/**
+ * Ajoute un item — même réf peut apparaître plusieurs fois
+ */
 function addScannedItem(data) {
-  itemCount++;
-  
   const item = {
-    id: itemCount,
+    id: Date.now(),                              // ID unique pour chaque scan
     reference: data.reference || 'N/A',
     sNumber: data.sNumber || 'N/A',
     season: data.season || 'N/A',
@@ -655,6 +709,10 @@ function addScannedItem(data) {
     fabricCode: data.fabricCode || 'N/A',
     composition: data.composition || 'N/A',
     collection: data.collection || 'N/A',
+    totalQty: Number(data.totalQty) || 0,
+    qtyAvailable: Number(data.qtyAvailable) || 0,
+    sourceRow: data.sourceRow,
+    spreadsheetId: data.spreadsheetId,
     action: '',
     timestamp: new Date().toLocaleTimeString()
   };
@@ -669,6 +727,9 @@ function addScannedItem(data) {
   }, 100);
 }
 
+/**
+ * Render la liste — affiche ref, sNumber + badges Total/Dispo
+ */
 function updateItemsList() {
   const itemsList = document.getElementById('items-list');
   
@@ -677,40 +738,33 @@ function updateItemsList() {
     return;
   }
   
-  itemsList.innerHTML = scannedItems.map((item, index) => `
-    <div class="item-card">
-      <div class="item-number">${index + 1}</div>
-      <div class="item-details">
-        <div>
-          <strong>Reference</strong>
-          <p>${item.reference}</p>
+  itemsList.innerHTML = scannedItems.map((item, index) => {
+    const isZero = item.qtyAvailable <= 0;
+    return `
+      <div class="item-card">
+        <div class="item-number">${index + 1}</div>
+        <div class="item-details">
+          <div>
+            <strong>Reference</strong>
+            <p>${item.reference}</p>
+          </div>
+          <div style="margin-top: 5px;">
+            <strong>S-Number</strong>
+            <p>${item.sNumber}</p>
+          </div>
+          <div class="item-badges">
+            <span class="badge badge-total">Total: ${item.totalQty}</span>
+            <span class="badge badge-avail ${isZero ? 'zero' : ''}">Dispo: ${item.qtyAvailable}</span>
+          </div>
         </div>
-        <div style="margin-top: 8px;">
-          <strong>S-Number</strong>
-          <p>${item.sNumber}</p>
-        </div>
+        <button class="item-remove" onclick="removeItem(${item.id})">×</button>
       </div>
-      <select class="item-dropdown" onchange="handleDropdown(${item.id}, this.value)">
-        <option value="">Action...</option>
-        <option value="Archive">Archive</option>
-        <option value="Review">Review</option>
-        <option value="Approve">Approve</option>
-        <option value="Reject">Reject</option>
-      </select>
-      <button class="item-remove" onclick="removeItem(${item.id})">×</button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function updateCount() {
   document.getElementById('count').textContent = scannedItems.length;
-}
-
-function handleDropdown(itemId, value) {
-  const item = scannedItems.find(i => i.id === itemId);
-  if (item) {
-    item.action = value;
-  }
 }
 
 function removeItem(itemId) {
@@ -719,33 +773,35 @@ function removeItem(itemId) {
   updateCount();
 }
 
+/**
+ * 💾 Save All
+ * Envoie chaque item avec sourceRow pour que le Apps Script décrémente col O
+ */
 async function saveAll() {
   if (scannedItems.length === 0) {
     alert('No items to save!');
     return;
   }
   
-  const missingAction = scannedItems.some(item => !item.action);
-  if (missingAction) {
-    if (!confirm('Some items don\'t have an action selected. Continue anyway?')) {
-      return;
-    }
-  }
-  
   showLoader('Saving to Archiving sheet...');
   
   try {
-    const url = `${GOOGLE_APPS_SCRIPT_URL}`;
+    const itemsPayload = scannedItems.map(item => ({
+      reference: item.reference,
+      sNumber: item.sNumber,
+      season: item.season,
+      description: item.description,
+      fabricCode: item.fabricCode,
+      composition: item.composition,
+      collection: item.collection,
+      action: item.action || '',
+      sourceRow: item.sourceRow,           // ← envoyé pour le décrément
+      spreadsheetId: item.spreadsheetId
+    }));
+
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=saveArchiving&items=${encodeURIComponent(JSON.stringify(itemsPayload))}`;
     
-    const formData = new URLSearchParams();
-    formData.append('apiAction', 'saveArchiving');
-    formData.append('items', JSON.stringify(scannedItems));
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData
-    });
-    
+    const response = await fetch(url);
     const result = await response.json();
     
     hideLoader();
@@ -775,17 +831,13 @@ function clearAll(skipConfirm = false) {
   }
   
   scannedItems = [];
-  itemCount = 0;
   updateItemsList();
   updateCount();
 }
 
-function stopArchivingScan() {
-  if (archivingScanner) {
-    archivingScanner.stop().catch(() => {});
-  }
-}
-
+// =====================
+// LOADER
+// =====================
 function showLoader(message = 'Loading...') {
   let loader = document.getElementById('loader');
   if (!loader) {
