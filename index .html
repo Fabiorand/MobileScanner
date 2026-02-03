@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mobile scanner</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+/* ===============================
+   GLOBAL SCREENS
+================================ */
+.screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #f3f4f6;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ===============================
+   HOME SCREEN
+================================ */
+#home-screen {
+  background: radial-gradient(circle at top, #111827, #000);
+  color: white;
+}
+
+.home-container {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.btn-modern {
+  padding: 1rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background: #030712;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-modern:active {
+  transform: scale(0.95);
+}
+
+.opacity-40 {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ===============================
+   LOGIN SCREEN (ARCHIVING)
+================================ */
+#login-screen {
+  background: radial-gradient(circle at top, #111827, #000);
+  color: white;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.login-container h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.login-subtitle {
+  color: #9ca3af;
+  margin-bottom: 30px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn-login {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-login:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.info-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #7c3aed;
+}
+
+.info-box strong {
+  color: #7c3aed;
+}
+
+#status {
+  color: #ef4444;
+}
+
+/* ===============================
+   SCAN SCREEN (ARCHIVING SCANNER)
+================================ */
+#scan-screen {
+  background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+}
+
+.scan-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.back-btn {
+  background: #f7fafc;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #7c3aed;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.back-btn:active {
+  background: #edf2f7;
+}
+
+/* ===============================
+   QR READER
+================================ */
+#qr-reader {
+  width: 260px;
+  height: 260px;
+  margin: auto;
+  background: white;
+  border: 4px dashed #374151;
+  border-radius: 16px;
+  position: relative;
+}
+
+#qr-reader::before,
+#qr-reader::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 4px solid #7c3aed;
+}
+
+#qr-reader::before {
+  top: -4px;
+  left: -4px;
+  border-right: none;
+  border-bottom: none;
+}
+
+#qr-reader::after {
+  bottom: -4px;
+  right: -4px;
+  border-left: none;
+  border-top: none;
+}
+
+#qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* ===============================
+   SCANNER INFO
+================================ */
+.scanner-info {
+  text-align: center;
+  color: #718096;
+  margin: 10px 0;
+}
+
+.scan-count {
+  font-size: 18px;
+  font-weight: 600;
+  color: #7c3aed;
+  margin-top: 10px;
+}
+
+/* ===============================
+   SCANNED ITEMS
+================================ */
+.scanned-items {
+  margin: 20px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scanned-items h3 {
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.item-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border-left: 5px solid #7c3aed;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.item-number {
+  background: #7c3aed;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-details strong {
+  color: #7c3aed;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.item-details p {
+  color: #2d3748;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 3px;
+}
+
+.item-dropdown {
+  width: 120px;
+  padding: 8px;
+  border: 2px solid #7c3aed;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.item-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+/* ===============================
+   LOADER
+================================ */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loader-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.loader-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.loader-text {
+  color: #7c3aed;
+  font-weight: 600;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================
+     HOME SCREEN 
+===================== -->
+<div id="home-screen" class="screen active">
+  <div class="home-container">
+    <h1>📲 QR Portal</h1>
+    <button class="btn-modern" onclick="goToSelect()">▶️ Select</button>
+    <button class="btn-modern" onclick="goToArchiving()">📁 Archiving</button>
+  </div>
+</div>
+
+<!-- =====================
+     LOGIN SCREEN (ARCHIVING)
+===================== -->
+<div id="login-screen" class="screen">
+  <div class="login-container">
+    <button class="back-btn" onclick="goHomeFromLogin()">← Back</button>
+    
+    <div class="login-icon">🔐</div>
+    <h2>Archiving System</h2>
+    <p class="login-subtitle">Please authenticate to access the scanner</p>
+
+    <div class="button-group">
+      <button class="btn-login btn-primary" onclick="login()">
+        🔓 Log In
+      </button>
+      
+      <button class="btn-login btn-secondary" onclick="logout()">
+        🔒 Log Out
+      </button>
+    </div>
+
+    <div class="info-box">
+      <p><strong>Status:</strong> <span id="status">Logged Out</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- =====================
+     SCAN SCREEN (SELECT - Original)
+===================== -->
+<div id="select-scan-screen" class="screen">
+  <div class="scan-container">
+    <button class="back-btn" onclick="goHomeFromSelect()">← Back</button>
+    <h2 style="text-align:center">🔍 Scan QR Code (Select)</h2>
+
+    <div id="qr-reader-select"></div>
+
+    <button class="btn-modern" onclick="startSelectScan()">📷 Scan</button>
+
+    <div>
+      <h3>📄 Scanned Data</h3>
+      <div id="select-scan-results"></div>
+    </div>
+
+    <button class="btn-modern" onclick="generateSharePoint()">🚀 Generate</button>
+  </div>
+</div>
+
+<!-- =====================
+     SCAN SCREEN (ARCHIVING)
+===================== -->
+<div id="scan-screen" class="screen">
+  <div class="scan-container">
+    <button class="back-btn" onclick="goBackToLogin()">← Back</button>
+    <h2 style="text-align:center">📸 QR Code Scanner</h2>
+
+    <div id="qr-reader"></div>
+
+    <div class="scanner-info">
+      <p>📸 Position the QR code in the frame</p>
+      <p class="scan-count">Scanned: <span id="count">0</span> items</p>
+    </div>
+
+    <div class="scanned-items">
+      <h3>Scanned Items</h3>
+      <div id="items-list">
+        <p style="text-align: center; color: #718096; padding: 20px;">No items scanned yet</p>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-action btn-success" onclick="saveAll()">
+        💾 Save All
+      </button>
+      <button class="btn-action btn-danger" onclick="clearAll()">
+        🗑️ Clear All
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================
+// CONFIGURATION
+// =====================
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlyoAA6iQBug-SvDPOduYPnYoj1sMihYIbKzZcJ-Uw7garDGLfrxdwviT40Q593yluWg/exec';
+
+// =====================
+// SELECT SCANNER (Original)
+// =====================
+let selectScanner;
+let isSelectScanning = false;
+let selectScanCount = 0;
+const MAX_SELECT_SCANS = 10;
+let selectScannedData = [];
+
+function goToSelect() {
+  document.getElementById("home-screen").classList.remove("active");
+  document.getElementById("select-scan-screen").classList.add("active");
+}
+
+function goHomeFromSelect() {
+  stopSelectScan();
+  document.getElementById("select-scan-screen").classList.remove("active");
+  document.getElementById("home-screen").classList.add("active");
+}
+
+function startSelectScan() {
+  if (isSelectScanning || selectScanCount >= MAX_SELECT_SCANS) return;
+
+  if (!selectScanner) {
+    selectScanner = new Html5Qrcode("qr-reader-select");
+  }
+
+  isSelectScanning = true;
+
+  selectScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 220 },
+    text => handleSelectScan(text)
+  ).catch(() => isSelectScanning = false);
+}
+
+function handleSelectScan(text) {
+  if (selectScannedData.includes(text)) return;
+
+  selectScanCount++;
+  selectScannedData.push(text);
+
+  const div = document.createElement("div");
+  div.className = "scan-item";
+  div.style.cssText = "background: white; border-radius: 10px; padding: 8px 12px; border-left: 4px solid #7c3aed; font-size: 0.85rem; margin-bottom: 8px;";
+  div.innerHTML = `<b>Scan ${selectScanCount}:</b> ${text}`;
+  document.getElementById("select-scan-results").appendChild(div);
+
+  stopSelectScan();
+}
+
+function stopSelectScan() {
+  if (selectScanner && isSelectScanning) {
+    selectScanner.stop().finally(() => isSelectScanning = false);
+  }
+}
+
+function generateSharePoint() {
+  alert("🚀 Data ready:\n\n" + selectScannedData.join("\n"));
+}
+
+// =====================
+// ARCHIVING - LOGIN
+// =====================
+function goToArchiving() {
+  document.getElementById("home-screen").classList.remove("active");
+  document.getElementById("login-screen").classList.add("active");
+}
+
+function goHomeFromLogin() {
+  document.getElementById("login-screen").classList.remove("active");
+  document.getElementById("home-screen").classList.add("active");
+}
+
+function login() {
+  document.getElementById('status').textContent = 'Logged In ✅';
+  document.getElementById('status').style.color = '#10b981';
+  setTimeout(() => {
+    alert('Login successful!');
+  }, 500);
+}
+
+function logout() {
+  document.getElementById('status').textContent = 'Logged Out ❌';
+  document.getElementById('status').style.color = '#ef4444';
+  setTimeout(() => {
+    document.getElementById("login-screen").classList.remove("active");
+    document.getElementById("scan-screen").classList.add("active");
+    startArchivingScan();
+  }, 500);
+}
+
+// =====================
+// ARCHIVING - SCANNER
+// =====================
+let archivingScanner;
+let scannedItems = [];
+let itemCount = 0;
+
+function goBackToLogin() {
+  stopArchivingScan();
+  document.getElementById("scan-screen").classList.remove("active");
+  document.getElementById("login-screen").classList.add("active");
+}
+
+function startArchivingScan() {
+  if (!archivingScanner) {
+    archivingScanner = new Html5Qrcode("qr-reader");
+  }
+
+  archivingScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 220 },
+    decodedText => onArchivingScan(decodedText)
+  ).catch(err => {
+    console.error('Scanner error:', err);
+    alert('Camera access error. Please allow camera permissions.');
+  });
+}
+
+async function onArchivingScan(decodedText) {
+  console.log('QR Scanned:', decodedText);
+  
+  try {
+    const url = new URL(decodedText);
+    const params = new URLSearchParams(url.search);
+    const spreadsheetId = params.get('id');
+    const row = params.get('row');
+    
+    if (spreadsheetId && row) {
+      await fetchItemData(spreadsheetId, row);
+    } else {
+      alert('Invalid QR Code: Missing parameters');
+    }
+  } catch (e) {
+    alert('Invalid QR Code format');
+  }
+  
+  if (navigator.vibrate) {
+    navigator.vibrate(200);
+  }
+}
+
+async function fetchItemData(spreadsheetId, row) {
+  showLoader('Fetching data...');
+  
+  try {
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItem&id=${spreadsheetId}&row=${row}`;
+    
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    hideLoader();
+    
+    if (result.error) {
+      alert('Error: ' + result.error);
+      return;
+    }
+    
+    if (result.success && result.data) {
+      addScannedItem(result.data);
+    }
+    
+  } catch (error) {
+    hideLoader();
+    console.error('Fetch error:', error);
+    alert('Connection error. Please check your internet.');
+  }
+}
+
+function addScannedItem(data) {
+  itemCount++;
+  
+  const item = {
+    id: itemCount,
+    reference: data.reference || 'N/A',
+    sNumber: data.sNumber || 'N/A',
+    season: data.season || 'N/A',
+    description: data.description || 'N/A',
+    fabricCode: data.fabricCode || 'N/A',
+    composition: data.composition || 'N/A',
+    collection: data.collection || 'N/A',
+    action: '',
+    timestamp: new Date().toLocaleTimeString()
+  };
+  
+  scannedItems.push(item);
+  updateItemsList();
+  updateCount();
+  
+  setTimeout(() => {
+    const itemsList = document.getElementById('items-list');
+    itemsList.scrollTop = itemsList.scrollHeight;
+  }, 100);
+}
+
+function updateItemsList() {
+  const itemsList = document.getElementById('items-list');
+  
+  if (scannedItems.length === 0) {
+    itemsList.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No items scanned yet</p>';
+    return;
+  }
+  
+  itemsList.innerHTML = scannedItems.map((item, index) => `
+    <div class="item-card">
+      <div class="item-number">${index + 1}</div>
+      <div class="item-details">
+        <div>
+          <strong>Reference</strong>
+          <p>${item.reference}</p>
+        </div>
+        <div style="margin-top: 8px;">
+          <strong>S-Number</strong>
+          <p>${item.sNumber}</p>
+        </div>
+      </div>
+      <select class="item-dropdown" onchange="handleDropdown(${item.id}, this.value)">
+        <option value="">Action...</option>
+        <option value="Archive">Archive</option>
+        <option value="Review">Review</option>
+        <option value="Approve">Approve</option>
+        <option value="Reject">Reject</option>
+      </select>
+      <button class="item-remove" onclick="removeItem(${item.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function updateCount() {
+  document.getElementById('count').textContent = scannedItems.length;
+}
+
+function handleDropdown(itemId, value) {
+  const item = scannedItems.find(i => i.id === itemId);
+  if (item) {
+    item.action = value;
+  }
+}
+
+function removeItem(itemId) {
+  scannedItems = scannedItems.filter(item => item.id !== itemId);
+  updateItemsList();
+  updateCount();
+}
+
+async function saveAll() {
+  if (scannedItems.length === 0) {
+    alert('No items to save!');
+    return;
+  }
+  
+  const missingAction = scannedItems.some(item => !item.action);
+  if (missingAction) {
+    if (!confirm('Some items don\'t have an action selected. Continue anyway?')) {
+      return;
+    }
+  }
+  
+  showLoader('Saving to Archiving sheet...');
+  
+  try {
+    const url = `${GOOGLE_APPS_SCRIPT_URL}`;
+    
+    const formData = new URLSearchParams();
+    formData.append('apiAction', 'saveArchiving');
+    formData.append('items', JSON.stringify(scannedItems));
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData
+    });
+    
+    const result = await response.json();
+    
+    hideLoader();
+    
+    if (result.error) {
+      alert('Error: ' + result.error);
+      return;
+    }
+    
+    if (result.success) {
+      alert(`✅ Success! ${result.savedCount} items saved to Archiving sheet.`);
+      clearAll(true);
+    }
+    
+  } catch (error) {
+    hideLoader();
+    console.error('Save error:', error);
+    alert('Connection error. Please try again.');
+  }
+}
+
+function clearAll(skipConfirm = false) {
+  if (scannedItems.length === 0) return;
+  
+  if (!skipConfirm && !confirm('Are you sure you want to clear all items?')) {
+    return;
+  }
+  
+  scannedItems = [];
+  itemCount = 0;
+  updateItemsList();
+  updateCount();
+}
+
+function stopArchivingScan() {
+  if (archivingScanner) {
+    archivingScanner.stop().catch(() => {});
+  }
+}
+
+function showLoader(message = 'Loading...') {
+  let loader = document.getElementById('loader');
+  if (!loader) {
+    loader = document.createElement('div');
+    loader.id = 'loader';
+    loader.className = 'loader-overlay';
+    loader.innerHTML = `
+      <div class="loader-content">
+        <div class="loader-icon">⏳</div>
+        <div class="loader-text">${message}</div>
+      </div>
+    `;
+    document.body.appendChild(loader);
+  }
+}
+
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  if (loader) loader.remove();
+}
+</script>
+
+</body>
+</html>
