@@ -793,7 +793,7 @@ function removeItem(itemId) {
 
 /**
  * 💾 Save All
- * Envoie chaque item avec sourceRow pour que le Apps Script décrémente col O
+ * Envoie en POST pour éviter les problèmes d'encodage dans l'URL
  */
 async function saveAll() {
   if (scannedItems.length === 0) {
@@ -813,13 +813,20 @@ async function saveAll() {
       composition: item.composition,
       collection: item.collection,
       action: item.action || '',
-      sourceRow: item.sourceRow,           // ← envoyé pour le décrément
+      sourceRow: item.sourceRow,
       spreadsheetId: item.spreadsheetId
     }));
 
-    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=saveArchiving&items=${encodeURIComponent(JSON.stringify(itemsPayload))}`;
+    // Envoie en POST avec FormData
+    const formData = new FormData();
+    formData.append('apiAction', 'saveArchiving');
+    formData.append('items', JSON.stringify(itemsPayload));
+
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    });
     
-    const response = await fetch(url);
     const result = await response.json();
     
     hideLoader();
