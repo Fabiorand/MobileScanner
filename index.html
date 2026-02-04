@@ -3,14 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mobile scanner</title>
+<title>Mobile Scanner</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-/* ===============================
-   GLOBAL SCREENS
-================================ */
 .screen {
   display: none;
   position: fixed;
@@ -27,9 +24,6 @@
   display: flex;
 }
 
-/* ===============================
-   HOME SCREEN
-================================ */
 #home-screen {
   background: radial-gradient(circle at top, #111827, #000);
   color: white;
@@ -59,14 +53,6 @@
   transform: scale(0.95);
 }
 
-.opacity-40 {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-/* ===============================
-   LOGIN SCREEN (ARCHIVING)
-================================ */
 #login-screen {
   background: radial-gradient(circle at top, #111827, #000);
   color: white;
@@ -141,9 +127,6 @@
   color: #ef4444;
 }
 
-/* ===============================
-   SCAN SCREEN (ARCHIVING SCANNER)
-================================ */
 #scan-screen {
   background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
   align-items: flex-start;
@@ -175,9 +158,6 @@
   background: #edf2f7;
 }
 
-/* ===============================
-   QR READER
-================================ */
 #qr-reader {
   width: 260px;
   height: 260px;
@@ -218,9 +198,6 @@
   border-radius: 12px;
 }
 
-/* ===============================
-   SCANNER INFO
-================================ */
 .scanner-info {
   text-align: center;
   color: #718096;
@@ -234,9 +211,6 @@
   margin-top: 10px;
 }
 
-/* ===============================
-   SCANNED ITEMS
-================================ */
 .scanned-items {
   margin: 20px 0;
   max-height: 300px;
@@ -302,7 +276,6 @@
   font-size: 16px;
 }
 
-/* ===== badges Total / Dispo ===== */
 .item-badges {
   display: flex;
   gap: 6px;
@@ -331,9 +304,6 @@
   color: #dc2626;
 }
 
-/* ===============================
-   ACTION BUTTONS
-================================ */
 .action-buttons {
   display: flex;
   gap: 10px;
@@ -360,9 +330,6 @@
   color: white;
 }
 
-/* ===============================
-   LOADER
-================================ */
 .loader-overlay {
   position: fixed;
   top: 0;
@@ -398,20 +365,13 @@
 
 <body>
 
-<!-- =====================
-     HOME SCREEN 
-===================== -->
 <div id="home-screen" class="screen active">
   <div class="home-container">
     <h1>📲 QR Portal</h1>
-    <button class="btn-modern" onclick="goToSelect()">▶️ Select</button>
     <button class="btn-modern" onclick="goToArchiving()">📁 Archiving</button>
   </div>
 </div>
 
-<!-- =====================
-     LOGIN SCREEN (ARCHIVING)
-===================== -->
 <div id="login-screen" class="screen">
   <div class="login-container">
     <button class="back-btn" onclick="goHomeFromLogin()">← Back</button>
@@ -436,30 +396,6 @@
   </div>
 </div>
 
-<!-- =====================
-     SCAN SCREEN (SELECT - Original)
-===================== -->
-<div id="select-scan-screen" class="screen">
-  <div class="scan-container">
-    <button class="back-btn" onclick="goHomeFromSelect()">← Back</button>
-    <h2 style="text-align:center">🔍 Scan QR Code (Select)</h2>
-
-    <div id="qr-reader-select"></div>
-
-    <button class="btn-modern" onclick="startSelectScan()">📷 Scan</button>
-
-    <div>
-      <h3>📄 Scanned Data</h3>
-      <div id="select-scan-results"></div>
-    </div>
-
-    <button class="btn-modern" onclick="generateSharePoint()">🚀 Generate</button>
-  </div>
-</div>
-
-<!-- =====================
-     SCAN SCREEN (ARCHIVING)
-===================== -->
 <div id="scan-screen" class="screen">
   <div class="scan-container">
     <button class="back-btn" onclick="goBackToLogin()">← Back</button>
@@ -491,75 +427,13 @@
 </div>
 
 <script>
-// =====================
-// CONFIGURATION
-// =====================
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUw54iMTR4AbpsoTe5DDJSV4ZXtEZ2TC6WLgO0mrY_KJaBA59gJR7kp3U3QjsnQ_lpkg/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrkQBo504TPG6NZOHM5HeIdfsz96GUpcwXbu1t354-7Jl0uM6LGSyGCZv4FgI5wWxN/exec';
+let archivingScanner;
+let isArchivingScanning = false;
+let scannedItems = [];
+let scanCooldown = false;
+let localQtyMap = {};
 
-// =====================
-// SELECT SCANNER (Original — inchangé)
-// =====================
-let selectScanner;
-let isSelectScanning = false;
-let selectScanCount = 0;
-const MAX_SELECT_SCANS = 10;
-let selectScannedData = [];
-
-function goToSelect() {
-  document.getElementById("home-screen").classList.remove("active");
-  document.getElementById("select-scan-screen").classList.add("active");
-}
-
-function goHomeFromSelect() {
-  stopSelectScan();
-  document.getElementById("select-scan-screen").classList.remove("active");
-  document.getElementById("home-screen").classList.add("active");
-}
-
-function startSelectScan() {
-  if (isSelectScanning || selectScanCount >= MAX_SELECT_SCANS) return;
-
-  if (!selectScanner) {
-    selectScanner = new Html5Qrcode("qr-reader-select");
-  }
-
-  isSelectScanning = true;
-
-  selectScanner.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 220 },
-    text => handleSelectScan(text)
-  ).catch(() => isSelectScanning = false);
-}
-
-function handleSelectScan(text) {
-  if (selectScannedData.includes(text)) return;
-
-  selectScanCount++;
-  selectScannedData.push(text);
-
-  const div = document.createElement("div");
-  div.className = "scan-item";
-  div.style.cssText = "background: white; border-radius: 10px; padding: 8px 12px; border-left: 4px solid #7c3aed; font-size: 0.85rem; margin-bottom: 8px;";
-  div.innerHTML = `<b>Scan ${selectScanCount}:</b> ${text}`;
-  document.getElementById("select-scan-results").appendChild(div);
-
-  stopSelectScan();
-}
-
-function stopSelectScan() {
-  if (selectScanner && isSelectScanning) {
-    selectScanner.stop().finally(() => isSelectScanning = false);
-  }
-}
-
-function generateSharePoint() {
-  alert("🚀 Data ready:\n\n" + selectScannedData.join("\n"));
-}
-
-// =====================
-// ARCHIVING - LOGIN (inchangé sauf logout qui va au scan)
-// =====================
 function goToArchiving() {
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("login-screen").classList.add("active");
@@ -578,7 +452,6 @@ function login() {
   }, 500);
 }
 
-// ✅ logout → va au scan screen + start scanner (comportement original)
 function logout() {
   document.getElementById('status').textContent = 'Logged Out ❌';
   document.getElementById('status').style.color = '#ef4444';
@@ -588,15 +461,6 @@ function logout() {
     startArchivingScan();
   }, 500);
 }
-
-// =====================
-// ARCHIVING - SCANNER
-// =====================
-let archivingScanner;
-let isArchivingScanning = false;
-let scannedItems = [];   // chaque scan ajoute une entrée, même réf OK plusieurs fois
-let scanCooldown = false; // cooldown pour éviter double détection sur la même frame
-let localQtyMap = {};     // { sourceRow: qtyRestante } pour tracker localement
 
 function goBackToLogin() {
   stopArchivingScan();
@@ -629,11 +493,6 @@ function stopArchivingScan() {
   }
 }
 
-/**
- * Chaque détection QR
- * Cooldown 1.5s pour éviter qu'un même QR soit détecté en boucle
- * tant que la caméra pointe dessus — après le cooldown on peut rescanner le même QR
- */
 async function onArchivingScan(decodedText) {
   if (scanCooldown) return;
 
@@ -654,7 +513,6 @@ async function onArchivingScan(decodedText) {
 
       await fetchItemData(spreadsheetId, row);
 
-      // Relâche le cooldown après 800ms
       setTimeout(() => { scanCooldown = false; }, 800);
 
     } else {
@@ -666,9 +524,6 @@ async function onArchivingScan(decodedText) {
   }
 }
 
-/**
- * Fetch les données depuis l'API Apps Script
- */
 async function fetchItemData(spreadsheetId, row) {
   showLoader('Fetching data...');
   
@@ -686,17 +541,14 @@ async function fetchItemData(spreadsheetId, row) {
     }
     
     if (result.success && result.data) {
-      // Calcule la qty locale restante pour cette ligne
       const row = result.data.sourceRow;
       const qtyLocale = (localQtyMap[row] !== undefined) ? localQtyMap[row] : Number(result.data.qtyAvailable);
 
-      // Si la qty locale est déjà 0 → refuse
       if (qtyLocale <= 0) {
         alert('⚠️ Plus de quantité disponible pour cette référence !');
         return;
       }
 
-      // Met à jour qtyAvailable avec la valeur locale avant d'ajouter
       result.data.qtyAvailable = qtyLocale;
       addScannedItem(result.data);
     }
@@ -708,10 +560,6 @@ async function fetchItemData(spreadsheetId, row) {
   }
 }
 
-/**
- * Ajoute un item — même réf peut apparaître plusieurs fois
- * Décrémente le qtyAvailable localement pour les scans suivants du même QR
- */
 function addScannedItem(data) {
   const item = {
     id: Date.now(),
@@ -732,8 +580,6 @@ function addScannedItem(data) {
   
   scannedItems.push(item);
 
-  // Décrémente localement pour les scans suivants du même sourceRow
-  // comme ça le prochain scan aura le bon Dispo affiché
   localQtyMap[item.sourceRow] = (localQtyMap[item.sourceRow] !== undefined ? localQtyMap[item.sourceRow] : item.qtyAvailable) - 1;
 
   updateItemsList();
@@ -745,9 +591,6 @@ function addScannedItem(data) {
   }, 100);
 }
 
-/**
- * Render la liste — affiche ref, sNumber + badges Total/Dispo
- */
 function updateItemsList() {
   const itemsList = document.getElementById('items-list');
   
@@ -772,7 +615,7 @@ function updateItemsList() {
           </div>
           <div class="item-badges">
             <span class="badge badge-total">Total: ${item.totalQty}</span>
-            <span class="badge badge-avail ${isZero ? 'zero' : ''}">Dispo: ${item.qtyAvailable}</span>
+            <span class="badge badge-avail ${isZero ? 'zero' : ''}">Available: ${item.qtyAvailable}</span>
           </div>
         </div>
         <button class="item-remove" onclick="removeItem(${item.id})">×</button>
@@ -791,10 +634,6 @@ function removeItem(itemId) {
   updateCount();
 }
 
-/**
- * 💾 Save All
- * Envoie chaque item séparément en GET pour éviter les problèmes CORS/encodage
- */
 async function saveAll() {
   if (scannedItems.length === 0) {
     alert('No items to save!');
@@ -804,9 +643,6 @@ async function saveAll() {
   showLoader('Saving to Archiving sheet...');
   
   try {
-    let savedCount = 0;
-
-    // On envoie chaque item un par un en GET
     for (const item of scannedItems) {
       const params = new URLSearchParams({
         apiAction: 'saveItem',
@@ -824,24 +660,12 @@ async function saveAll() {
       });
 
       const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
-      const response = await fetch(url);
-      const result = await response.json();
-
-      if (result.success) {
-        savedCount++;
-      } else {
-        console.error('Erreur save item:', result.error);
-      }
+      await fetch(url);
     }
     
     hideLoader();
-
-    if (savedCount > 0) {
-      alert(`✅ Success! ${savedCount} items saved to Archiving sheet.`);
-      clearAll(true);
-    } else {
-      alert('❌ Aucun item sauvegardé.');
-    }
+    alert(`✅ Success! ${scannedItems.length} items saved to Archiving sheet.`);
+    clearAll(true);
     
   } catch (error) {
     hideLoader();
@@ -863,9 +687,6 @@ function clearAll(skipConfirm = false) {
   updateCount();
 }
 
-// =====================
-// LOADER
-// =====================
 function showLoader(message = 'Loading...') {
   let loader = document.getElementById('loader');
   if (!loader) {
