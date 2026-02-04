@@ -793,7 +793,7 @@ function removeItem(itemId) {
 
 /**
  * 💾 Save All
- * Envoie en POST pour éviter les problèmes d'encodage dans l'URL
+ * Envoie chaque item séparément en GET pour éviter les problèmes CORS/encodage
  */
 async function saveAll() {
   if (scannedItems.length === 0) {
@@ -804,41 +804,43 @@ async function saveAll() {
   showLoader('Saving to Archiving sheet...');
   
   try {
-    const itemsPayload = scannedItems.map(item => ({
-      reference: item.reference,
-      sNumber: item.sNumber,
-      season: item.season,
-      description: item.description,
-      fabricCode: item.fabricCode,
-      composition: item.composition,
-      collection: item.collection,
-      action: item.action || '',
-      sourceRow: item.sourceRow,
-      spreadsheetId: item.spreadsheetId
-    }));
+    let savedCount = 0;
 
-    // Envoie en POST avec FormData
-    const formData = new FormData();
-    formData.append('apiAction', 'saveArchiving');
-    formData.append('items', JSON.stringify(itemsPayload));
+    // On envoie chaque item un par un en GET
+    for (const item of scannedItems) {
+      const params = new URLSearchParams({
+        apiAction: 'saveItem',
+        reference: item.reference || '',
+        sNumber: item.sNumber || '',
+        season: item.season || '',
+        description: item.description || '',
+        fabricCode: item.fabricCode || '',
+        composition: item.composition || '',
+        collection: item.collection || '',
+        action: item.action || '',
+        totalQty: String(item.totalQty || ''),
+        sourceRow: String(item.sourceRow || ''),
+        spreadsheetId: item.spreadsheetId || ''
+      });
 
-    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: formData
-    });
-    
-    const result = await response.json();
-    
-    hideLoader();
-    
-    if (result.error) {
-      alert('Error: ' + result.error);
-      return;
+      const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
+      const response = await fetch(url);
+      const result = await response.json();
+
+      if (result.success) {
+        savedCount++;
+      } else {
+        console.error('Erreur save item:', result.error);
+      }
     }
     
-    if (result.success) {
-      alert(`✅ Success! ${result.savedCount} items saved to Archiving sheet.`);
+    hideLoader();
+
+    if (savedCount > 0) {
+      alert(`✅ Success! ${savedCount} items saved to Archiving sheet.`);
       clearAll(true);
+    } else {
+      alert('❌ Aucun item sauvegardé.');
     }
     
   } catch (error) {
