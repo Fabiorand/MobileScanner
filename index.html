@@ -145,7 +145,7 @@
   color: #9ca3af;
 }
 
-.form-group input {
+.form-group input, .form-group select {
   padding: 12px;
   border-radius: 10px;
   border: none;
@@ -407,6 +407,24 @@
   color: white;
 }
 
+/* DETAILS SCREEN */
+#details-screen {
+  background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+  align-items: flex-start;
+  padding-top: 1rem;
+}
+
+#details-content {
+  font-family: monospace;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  overflow-x: auto;
+  max-width: 100%;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
 .loader-overlay {
   position: fixed;
   top: 0;
@@ -447,6 +465,7 @@
   <div class="home-container">
     <h1>📲 QR Portal</h1>
     <button class="btn-modern" onclick="goToModeChoice()">📁 Archiving</button>
+    <button class="btn-modern" onclick="goToDetails()">📊 Details</button>
   </div>
 </div>
 
@@ -481,7 +500,7 @@
     <div class="form-group">
       <label for="name-input">Name</label>
       <input type="text" id="name-input" placeholder="Enter your name">
-      <select id="name-select" style="display:none; padding: 12px; border-radius: 10px; border: none; font-size: 16px; background: rgba(255, 255, 255, 0.1); color: white;">
+      <select id="name-select" style="display:none;">
         <option value="">Select a name...</option>
       </select>
     </div>
@@ -536,10 +555,23 @@
   </div>
 </div>
 
+<!-- DETAILS SCREEN -->
+<div id="details-screen" class="screen">
+  <div class="scan-container">
+    <button class="back-btn" onclick="goHomeFromDetails()">← Back</button>
+    
+    <h2 style="text-align:center; color: #2d3748; margin-bottom: 20px;">📊 ARCHIVING DETAILS</h2>
+    
+    <div id="details-content">
+      <p style="text-align: center; color: #718096;">Loading...</p>
+    </div>
+  </div>
+</div>
+
 <script>
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrkQBo504TPG6NZOHM5HeIdfsz96GUpcwXbu1t354-7Jl0uM6LGSyGCZv4FgI5wWxN/exec';
 
-let currentMode = 'logout'; // 'logout' ou 'login'
+let currentMode = 'logout';
 let formData = {
   name: '',
   location: '',
@@ -552,7 +584,10 @@ let scannedItems = [];
 let scanCooldown = false;
 let localQtyMap = {};
 
-// Navigation
+// ========================================
+// NAVIGATION
+// ========================================
+
 function goToModeChoice() {
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("mode-choice-screen").classList.add("active");
@@ -563,34 +598,39 @@ function goHomeFromMode() {
   document.getElementById("home-screen").classList.add("active");
 }
 
+function goToDetails() {
+  document.getElementById("home-screen").classList.remove("active");
+  document.getElementById("details-screen").classList.add("active");
+  loadArchivingDetails();
+}
+
+function goHomeFromDetails() {
+  document.getElementById("details-screen").classList.remove("active");
+  document.getElementById("home-screen").classList.add("active");
+}
+
 function goToForm(mode) {
   currentMode = mode;
   
   document.getElementById("mode-choice-screen").classList.remove("active");
   document.getElementById("form-screen").classList.add("active");
   
-  // Configure le formulaire selon le mode
   if (mode === 'logout') {
     document.getElementById('form-title').textContent = 'Log Out';
     document.getElementById('location-group').style.display = 'flex';
-    // Affiche input texte
     document.getElementById('name-input').style.display = 'block';
     document.getElementById('name-select').style.display = 'none';
   } else {
     document.getElementById('form-title').textContent = 'Log In';
     document.getElementById('location-group').style.display = 'none';
-    // Affiche dropdown
     document.getElementById('name-input').style.display = 'none';
     document.getElementById('name-select').style.display = 'block';
-    // Charge les noms logged out
     loadLoggedOutNames();
   }
   
-  // Date automatique
   const today = new Date().toLocaleDateString('en-GB');
   document.getElementById('date-input').value = today;
   
-  // Reset inputs
   document.getElementById('name-input').value = '';
   document.getElementById('location-input').value = '';
   document.getElementById('name-select').value = '';
@@ -601,12 +641,122 @@ function goBackToMode() {
   document.getElementById("mode-choice-screen").classList.add("active");
 }
 
+function goBackToForm() {
+  stopArchivingScan();
+  document.getElementById("scan-screen").classList.remove("active");
+  document.getElementById("form-screen").classList.add("active");
+}
+
+// ========================================
+// ARCHIVING DETAILS
+// ========================================
+
+async function loadArchivingDetails() {
+  showLoader('Loading details...');
+  
+  try {
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getArchivingDetails`;
+    
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    hideLoader();
+    
+    if (result.error) {
+      document.getElementById('details-content').innerHTML = 
+        `<p style="color: #ef4444; text-align: center;">❌ Error: ${result.error}</p>`;
+      return;
+    }
+    
+    if (result.success && result.reports) {
+      displayArchivingReport(result.reports);
+    }
+    
+  } catch (error) {
+    hideLoader();
+    console.error('Load details error:', error);
+    document.getElementById('details-content').innerHTML = 
+      '<p style="color: #ef4444; text-align: center;">❌ Connection error</p>';
+  }
+}
+
+function displayArchivingReport(reports) {
+  const content = document.getElementById('details-content');
+  
+  if (reports.length === 0) {
+    content.innerHTML = '<p style="text-align: center; color: #718096;">No data available</p>';
+    return;
+  }
+  
+  let html = '';
+  
+  reports.forEach(report => {
+    const { date, data } = report;
+    const totalQty = data.logOutCount + data.logInCount;
+    
+    html += `
+╔═══════════════════════════════════════════════════════════════╗
+║                  📅 DATE: ${date.padEnd(21, ' ')}║
+╠═══════════════════════════════════════════════════════════════╣
+║  📊 RÉSUMÉ                                                    ║
+║  ├─ Log Out: ${String(data.logOutCount).padStart(2, ' ')} scans                                        ║
+║  ├─ Log In: ${String(data.logInCount).padStart(2, ' ')} scans                                         ║
+║  └─ Total Qty Log: ${String(totalQty).padStart(2, ' ')}                                        ║
+╠═══════════════════════════════════════════════════════════════╣
+║  👥 PERSONNES                                                ║
+╠══════════════╦═══════════╦═══════════╦══════════════════════╣
+║ Name         ║  Log Out  ║  Log In   ║  Location            ║
+╠══════════════╬═══════════╬═══════════╬══════════════════════╣
+`;
+    
+    const peopleNames = Object.keys(data.people).sort();
+    if (peopleNames.length === 0) {
+      html += `║ -            ║     -     ║     -     ║  -                   ║\n`;
+    } else {
+      peopleNames.forEach(name => {
+        const person = data.people[name];
+        html += `║ ${name.substring(0, 12).padEnd(12, ' ')} ║     ${String(person.logOut).padStart(1, ' ')}     ║     ${String(person.logIn).padStart(1, ' ')}     ║  ${person.location.substring(0, 18).padEnd(18, ' ')} ║\n`;
+      });
+    }
+    
+    html += `╠═══════════════════════════════════════════════════════════════╣
+║  📦 PRODUITS SCANNÉS                                         ║
+╠══════════════╦═══════════╦═══════════╦══════════════════════╣
+║ Reference    ║  Log Out  ║  Log In   ║  Qty Available       ║
+║ S-Number     ║           ║           ║                      ║
+╠══════════════╬═══════════╬═══════════╬══════════════════════╣
+`;
+    
+    const productKeys = Object.keys(data.products).sort();
+    if (productKeys.length === 0) {
+      html += `║ -            ║     -     ║     -     ║         -            ║\n`;
+    } else {
+      productKeys.forEach(key => {
+        const product = data.products[key];
+        html += `║ ${product.reference.substring(0, 12).padEnd(12, ' ')} ║     ${String(product.logOut).padStart(1, ' ')}     ║     ${String(product.logIn).padStart(1, ' ')}     ║         ${String(product.qtyAvailable).padStart(1, ' ')}            ║
+║ ${product.sNumber.substring(0, 12).padEnd(12, ' ')} ║           ║           ║                      ║
+╠══════════════╬═══════════╬═══════════╬══════════════════════╣
+`;
+      });
+    }
+    
+    html += `╚══════════════╩═══════════╩═══════════╩══════════════════════╝
+
+`;
+  });
+  
+  content.innerHTML = `<pre>${html}</pre>`;
+}
+
+// ========================================
+// LOGGED OUT NAMES
+// ========================================
+
 async function loadLoggedOutNames() {
   showLoader('Loading names...');
   
   try {
-    // Note: On utilise le spreadsheetId par défaut, mais tu peux le rendre dynamique si besoin
-    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getLoggedOutNames&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc`;
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getLoggedOutNames`;
     
     const response = await fetch(url);
     const result = await response.json();
@@ -621,10 +771,8 @@ async function loadLoggedOutNames() {
     if (result.success && result.names) {
       const select = document.getElementById('name-select');
       
-      // Reset options
       select.innerHTML = '<option value="">Select a name...</option>';
       
-      // Ajoute les noms
       result.names.forEach(name => {
         const option = document.createElement('option');
         option.value = name;
@@ -644,8 +792,11 @@ async function loadLoggedOutNames() {
   }
 }
 
+// ========================================
+// FORM HANDLING
+// ========================================
+
 function advanceToScan() {
-  // Validation
   let name;
   
   if (currentMode === 'logout') {
@@ -667,16 +818,13 @@ function advanceToScan() {
     return;
   }
   
-  // Sauvegarde les données du formulaire
   formData.name = name;
   formData.location = location;
   formData.date = date;
   
-  // Ouvre le scanner
   document.getElementById("form-screen").classList.remove("active");
   document.getElementById("scan-screen").classList.add("active");
   
-  // Configure le badge
   const badge = document.getElementById('mode-badge');
   if (currentMode === 'logout') {
     badge.textContent = 'LOG OUT';
@@ -689,13 +837,10 @@ function advanceToScan() {
   startArchivingScan();
 }
 
-function goBackToForm() {
-  stopArchivingScan();
-  document.getElementById("scan-screen").classList.remove("active");
-  document.getElementById("form-screen").classList.add("active");
-}
+// ========================================
+// SCANNER
+// ========================================
 
-// Scanner
 function startArchivingScan() {
   if (isArchivingScanning) return;
 
@@ -772,7 +917,6 @@ async function fetchItemData(spreadsheetId, row) {
       const row = result.data.sourceRow;
       const qtyLocale = (localQtyMap[row] !== undefined) ? localQtyMap[row] : Number(result.data.qtyAvailable);
 
-      // Pour logout, vérifie si qty > 0
       if (currentMode === 'logout' && qtyLocale <= 0) {
         alert('⚠️ Plus de quantité disponible pour cette référence !');
         return;
@@ -811,7 +955,6 @@ function addScannedItem(data) {
   
   scannedItems.push(item);
 
-  // Mise à jour locale
   if (currentMode === 'logout') {
     localQtyMap[item.sourceRow] = (localQtyMap[item.sourceRow] !== undefined ? localQtyMap[item.sourceRow] : item.qtyAvailable) - 1;
   } else {
@@ -875,6 +1018,10 @@ function removeItem(itemId) {
   updateCount();
 }
 
+// ========================================
+// SAVE & CLEAR
+// ========================================
+
 async function saveAll() {
   if (scannedItems.length === 0) {
     alert('No items to save!');
@@ -898,6 +1045,7 @@ async function saveAll() {
         imageUrl: item.imageUrl || '',
         action: item.action || '',
         totalQty: String(item.totalQty || ''),
+        qtyAvailable: String(item.qtyAvailable || ''),
         sourceRow: String(item.sourceRow || ''),
         spreadsheetId: item.spreadsheetId || '',
         mode: currentMode,
@@ -934,6 +1082,10 @@ function clearAll(skipConfirm = false) {
   updateItemsList();
   updateCount();
 }
+
+// ========================================
+// LOADER
+// ========================================
 
 function showLoader(message = 'Loading...') {
   let loader = document.getElementById('loader');
