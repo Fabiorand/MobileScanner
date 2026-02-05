@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mobile Scanner</title>
+<title>Mobile Scanner V2</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -53,12 +53,13 @@
   transform: scale(0.95);
 }
 
-#login-screen {
+/* MODE CHOICE SCREEN */
+#mode-choice-screen {
   background: radial-gradient(circle at top, #111827, #000);
   color: white;
 }
 
-.login-container {
+.mode-container {
   width: 100%;
   max-width: 360px;
   text-align: center;
@@ -67,17 +68,17 @@
   gap: 1.5rem;
 }
 
-.login-icon {
+.mode-icon {
   font-size: 80px;
   margin-bottom: 20px;
 }
 
-.login-container h2 {
+.mode-container h2 {
   font-size: 28px;
   margin-bottom: 10px;
 }
 
-.login-subtitle {
+.mode-subtitle {
   color: #9ca3af;
   margin-bottom: 30px;
 }
@@ -88,7 +89,7 @@
   gap: 15px;
 }
 
-.btn-login {
+.btn-mode {
   padding: 15px 30px;
   border: none;
   border-radius: 999px;
@@ -98,48 +99,64 @@
   transition: all 0.2s;
 }
 
-.btn-login:active {
+.btn-mode:active {
   transform: scale(0.95);
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-}
-
-.btn-secondary {
+.btn-logout {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
 }
 
-.info-box {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 12px;
-  border-left: 4px solid #7c3aed;
+.btn-login {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
 }
 
-.info-box strong {
-  color: #7c3aed;
+/* FORM SCREEN */
+#form-screen {
+  background: radial-gradient(circle at top, #111827, #000);
+  color: white;
 }
 
-#status {
-  color: #ef4444;
-}
-
-#scan-screen {
-  background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
-  align-items: flex-start;
-  padding-top: 1rem;
-}
-
-.scan-container {
+.form-container {
   width: 100%;
-  max-width: 420px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.form-container h2 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.form-group input {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.form-group input:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: #6b7280;
 }
 
 .back-btn {
@@ -156,6 +173,57 @@
 
 .back-btn:active {
   background: #edf2f7;
+}
+
+.btn-advance {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  color: white;
+  margin-top: 20px;
+}
+
+.btn-advance:active {
+  transform: scale(0.95);
+}
+
+/* SCAN SCREEN */
+#scan-screen {
+  background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+  align-items: flex-start;
+  padding-top: 1rem;
+}
+
+.scan-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+
+.mode-badge {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 12px;
+  margin: 10px 0;
+}
+
+.mode-badge.logout {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+}
+
+.mode-badge.login {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
 }
 
 #qr-reader {
@@ -245,6 +313,15 @@
   justify-content: center;
   font-weight: 600;
   flex-shrink: 0;
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e5e7eb;
 }
 
 .item-details {
@@ -365,40 +442,73 @@
 
 <body>
 
+<!-- HOME SCREEN -->
 <div id="home-screen" class="screen active">
   <div class="home-container">
     <h1>📲 QR Portal</h1>
-    <button class="btn-modern" onclick="goToArchiving()">📁 Archiving</button>
+    <button class="btn-modern" onclick="goToModeChoice()">📁 Archiving</button>
   </div>
 </div>
 
-<div id="login-screen" class="screen">
-  <div class="login-container">
-    <button class="back-btn" onclick="goHomeFromLogin()">← Back</button>
+<!-- MODE CHOICE SCREEN -->
+<div id="mode-choice-screen" class="screen">
+  <div class="mode-container">
+    <button class="back-btn" onclick="goHomeFromMode()">← Back</button>
     
-    <div class="login-icon">🔐</div>
-    <h2>Archiving System</h2>
-    <p class="login-subtitle">Please authenticate to access the scanner</p>
+    <div class="mode-icon">🔄</div>
+    <h2>Choose Mode</h2>
+    <p class="mode-subtitle">Select Log Out or Log In</p>
 
     <div class="button-group">
-      <button class="btn-login btn-primary" onclick="login()">
-        🔓 Log In
+      <button class="btn-mode btn-logout" onclick="goToForm('logout')">
+        📤 Log Out
       </button>
       
-      <button class="btn-login btn-secondary" onclick="logout()">
-        🔒 Log Out
+      <button class="btn-mode btn-login" onclick="goToForm('login')">
+        📥 Log In
       </button>
-    </div>
-
-    <div class="info-box">
-      <p><strong>Status:</strong> <span id="status">Logged Out</span></p>
     </div>
   </div>
 </div>
 
+<!-- FORM SCREEN -->
+<div id="form-screen" class="screen">
+  <div class="form-container">
+    <button class="back-btn" onclick="goBackToMode()">← Back</button>
+    
+    <h2 id="form-title">Log Out</h2>
+
+    <div class="form-group">
+      <label for="name-input">Name</label>
+      <input type="text" id="name-input" placeholder="Enter your name">
+      <select id="name-select" style="display:none; padding: 12px; border-radius: 10px; border: none; font-size: 16px; background: rgba(255, 255, 255, 0.1); color: white;">
+        <option value="">Select a name...</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="location-group">
+      <label for="location-input">Location</label>
+      <input type="text" id="location-input" placeholder="Enter location">
+    </div>
+
+    <div class="form-group">
+      <label for="date-input">Date</label>
+      <input type="text" id="date-input" disabled>
+    </div>
+
+    <button class="btn-advance" onclick="advanceToScan()">
+      ▶️ Advance
+    </button>
+  </div>
+</div>
+
+<!-- SCAN SCREEN -->
 <div id="scan-screen" class="screen">
   <div class="scan-container">
-    <button class="back-btn" onclick="goBackToLogin()">← Back</button>
+    <button class="back-btn" onclick="goBackToForm()">← Back</button>
+    
+    <div id="mode-badge" class="mode-badge logout">LOG OUT</div>
+    
     <h2 style="text-align:center">📸 QR Code Scanner</h2>
 
     <div id="qr-reader"></div>
@@ -428,46 +538,164 @@
 
 <script>
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrkQBo504TPG6NZOHM5HeIdfsz96GUpcwXbu1t354-7Jl0uM6LGSyGCZv4FgI5wWxN/exec';
+
+let currentMode = 'logout'; // 'logout' ou 'login'
+let formData = {
+  name: '',
+  location: '',
+  date: ''
+};
+
 let archivingScanner;
 let isArchivingScanning = false;
 let scannedItems = [];
 let scanCooldown = false;
 let localQtyMap = {};
 
-function goToArchiving() {
+// Navigation
+function goToModeChoice() {
   document.getElementById("home-screen").classList.remove("active");
-  document.getElementById("login-screen").classList.add("active");
+  document.getElementById("mode-choice-screen").classList.add("active");
 }
 
-function goHomeFromLogin() {
-  document.getElementById("login-screen").classList.remove("active");
+function goHomeFromMode() {
+  document.getElementById("mode-choice-screen").classList.remove("active");
   document.getElementById("home-screen").classList.add("active");
 }
 
-function login() {
-  document.getElementById('status').textContent = 'Logged In ✅';
-  document.getElementById('status').style.color = '#10b981';
-  setTimeout(() => {
-    alert('Login successful!');
-  }, 500);
+function goToForm(mode) {
+  currentMode = mode;
+  
+  document.getElementById("mode-choice-screen").classList.remove("active");
+  document.getElementById("form-screen").classList.add("active");
+  
+  // Configure le formulaire selon le mode
+  if (mode === 'logout') {
+    document.getElementById('form-title').textContent = 'Log Out';
+    document.getElementById('location-group').style.display = 'flex';
+    // Affiche input texte
+    document.getElementById('name-input').style.display = 'block';
+    document.getElementById('name-select').style.display = 'none';
+  } else {
+    document.getElementById('form-title').textContent = 'Log In';
+    document.getElementById('location-group').style.display = 'none';
+    // Affiche dropdown
+    document.getElementById('name-input').style.display = 'none';
+    document.getElementById('name-select').style.display = 'block';
+    // Charge les noms logged out
+    loadLoggedOutNames();
+  }
+  
+  // Date automatique
+  const today = new Date().toLocaleDateString('en-GB');
+  document.getElementById('date-input').value = today;
+  
+  // Reset inputs
+  document.getElementById('name-input').value = '';
+  document.getElementById('location-input').value = '';
+  document.getElementById('name-select').value = '';
 }
 
-function logout() {
-  document.getElementById('status').textContent = 'Logged Out ❌';
-  document.getElementById('status').style.color = '#ef4444';
-  setTimeout(() => {
-    document.getElementById("login-screen").classList.remove("active");
-    document.getElementById("scan-screen").classList.add("active");
-    startArchivingScan();
-  }, 500);
+function goBackToMode() {
+  document.getElementById("form-screen").classList.remove("active");
+  document.getElementById("mode-choice-screen").classList.add("active");
 }
 
-function goBackToLogin() {
+async function loadLoggedOutNames() {
+  showLoader('Loading names...');
+  
+  try {
+    // Note: On utilise le spreadsheetId par défaut, mais tu peux le rendre dynamique si besoin
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getLoggedOutNames&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc`;
+    
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    hideLoader();
+    
+    if (result.error) {
+      alert('Error loading names: ' + result.error);
+      return;
+    }
+    
+    if (result.success && result.names) {
+      const select = document.getElementById('name-select');
+      
+      // Reset options
+      select.innerHTML = '<option value="">Select a name...</option>';
+      
+      // Ajoute les noms
+      result.names.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+      
+      if (result.names.length === 0) {
+        alert('No logged out names found. Please log out first.');
+      }
+    }
+    
+  } catch (error) {
+    hideLoader();
+    console.error('Load names error:', error);
+    alert('Connection error. Please try again.');
+  }
+}
+
+function advanceToScan() {
+  // Validation
+  let name;
+  
+  if (currentMode === 'logout') {
+    name = document.getElementById('name-input').value.trim();
+  } else {
+    name = document.getElementById('name-select').value.trim();
+  }
+  
+  const location = document.getElementById('location-input').value.trim();
+  const date = document.getElementById('date-input').value;
+  
+  if (!name) {
+    alert(currentMode === 'logout' ? 'Please enter your name' : 'Please select a name');
+    return;
+  }
+  
+  if (currentMode === 'logout' && !location) {
+    alert('Please enter location');
+    return;
+  }
+  
+  // Sauvegarde les données du formulaire
+  formData.name = name;
+  formData.location = location;
+  formData.date = date;
+  
+  // Ouvre le scanner
+  document.getElementById("form-screen").classList.remove("active");
+  document.getElementById("scan-screen").classList.add("active");
+  
+  // Configure le badge
+  const badge = document.getElementById('mode-badge');
+  if (currentMode === 'logout') {
+    badge.textContent = 'LOG OUT';
+    badge.className = 'mode-badge logout';
+  } else {
+    badge.textContent = 'LOG IN';
+    badge.className = 'mode-badge login';
+  }
+  
+  startArchivingScan();
+}
+
+function goBackToForm() {
   stopArchivingScan();
   document.getElementById("scan-screen").classList.remove("active");
-  document.getElementById("login-screen").classList.add("active");
+  document.getElementById("form-screen").classList.add("active");
 }
 
+// Scanner
 function startArchivingScan() {
   if (isArchivingScanning) return;
 
@@ -544,7 +772,8 @@ async function fetchItemData(spreadsheetId, row) {
       const row = result.data.sourceRow;
       const qtyLocale = (localQtyMap[row] !== undefined) ? localQtyMap[row] : Number(result.data.qtyAvailable);
 
-      if (qtyLocale <= 0) {
+      // Pour logout, vérifie si qty > 0
+      if (currentMode === 'logout' && qtyLocale <= 0) {
         alert('⚠️ Plus de quantité disponible pour cette référence !');
         return;
       }
@@ -570,6 +799,8 @@ function addScannedItem(data) {
     fabricCode: data.fabricCode || 'N/A',
     composition: data.composition || 'N/A',
     collection: data.collection || 'N/A',
+    filename: data.filename || '',
+    imageUrl: data.imageUrl || '',
     totalQty: Number(data.totalQty) || 0,
     qtyAvailable: Number(data.qtyAvailable) || 0,
     sourceRow: data.sourceRow,
@@ -580,7 +811,12 @@ function addScannedItem(data) {
   
   scannedItems.push(item);
 
-  localQtyMap[item.sourceRow] = (localQtyMap[item.sourceRow] !== undefined ? localQtyMap[item.sourceRow] : item.qtyAvailable) - 1;
+  // Mise à jour locale
+  if (currentMode === 'logout') {
+    localQtyMap[item.sourceRow] = (localQtyMap[item.sourceRow] !== undefined ? localQtyMap[item.sourceRow] : item.qtyAvailable) - 1;
+  } else {
+    localQtyMap[item.sourceRow] = (localQtyMap[item.sourceRow] !== undefined ? localQtyMap[item.sourceRow] : item.qtyAvailable) + 1;
+  }
 
   updateItemsList();
   updateCount();
@@ -601,9 +837,14 @@ function updateItemsList() {
   
   itemsList.innerHTML = scannedItems.map((item, index) => {
     const isZero = item.qtyAvailable <= 0;
+    const imageHtml = item.imageUrl 
+      ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
+      : '<div class="item-image"></div>';
+    
     return `
       <div class="item-card">
         <div class="item-number">${index + 1}</div>
+        ${imageHtml}
         <div class="item-details">
           <div>
             <strong>Reference</strong>
@@ -653,10 +894,17 @@ async function saveAll() {
         fabricCode: item.fabricCode || '',
         composition: item.composition || '',
         collection: item.collection || '',
+        filename: item.filename || '',
+        imageUrl: item.imageUrl || '',
         action: item.action || '',
         totalQty: String(item.totalQty || ''),
         sourceRow: String(item.sourceRow || ''),
-        spreadsheetId: item.spreadsheetId || ''
+        spreadsheetId: item.spreadsheetId || '',
+        mode: currentMode,
+        logoutName: currentMode === 'logout' ? formData.name : '',
+        loginName: currentMode === 'login' ? formData.name : '',
+        date: formData.date,
+        location: formData.location || ''
       });
 
       const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
