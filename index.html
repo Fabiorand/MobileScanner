@@ -3,16 +3,41 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mobile Scanner V3</title>
+<title>QR Inventory System</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --primary: #4f46e5;
+  --secondary: #22c55e;
+  --danger: #ef4444;
+  --text: #0f172a;
+  --muted: #94a3b8;
+  --radius: 20px;
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
 .screen {
   display: none;
   position: fixed;
   inset: 0;
-  background: #f3f4f6;
+  background: var(--bg);
   z-index: 10;
   align-items: center;
   justify-content: center;
@@ -24,349 +49,357 @@
   display: flex;
 }
 
+/* HOME SCREEN */
 #home-screen {
-  background: radial-gradient(circle at top, #111827, #000);
-  color: white;
+  background: linear-gradient(180deg, #fff, #eef2ff);
+  color: var(--text);
 }
 
 .home-container {
   width: 100%;
   max-width: 360px;
-  text-align: center;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  text-align: center;
+}
+
+.home-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.home-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 40px;
 }
 
 .btn-modern {
   padding: 1rem 1.6rem;
   border-radius: 999px;
   font-weight: 600;
-  background: #030712;
+  background: var(--primary);
   color: #fff;
   border: none;
+  box-shadow: var(--shadow);
   cursor: pointer;
-  font-size: 1rem;
+  transition: transform 0.2s;
 }
 
 .btn-modern:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 /* MODE CHOICE SCREEN */
 #mode-choice-screen {
-  background: radial-gradient(circle at top, #111827, #000);
-  color: white;
+  background: var(--bg);
 }
 
 .mode-container {
   width: 100%;
   max-width: 360px;
-  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .mode-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
+  font-size: 70px;
+  text-align: center;
 }
 
 .mode-container h2 {
-  font-size: 28px;
-  margin-bottom: 10px;
+  font-size: 26px;
+  text-align: center;
 }
 
 .mode-subtitle {
-  color: #9ca3af;
-  margin-bottom: 30px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .btn-mode {
-  padding: 15px 30px;
+  padding: 14px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius);
   font-size: 16px;
   font-weight: 600;
+  box-shadow: var(--shadow);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s;
+  text-align: left;
 }
 
 .btn-mode:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 .btn-logout {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .btn-login {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: #dcfce7;
+  color: #166534;
 }
 
 .btn-details {
-  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
-  color: white;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.mode-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.mode-card-desc {
+  font-size: 13px;
+  opacity: 0.8;
 }
 
 /* FORM SCREEN */
 #form-screen {
-  background: radial-gradient(circle at top, #111827, #000);
-  color: white;
+  background: var(--bg);
 }
 
 .form-container {
   width: 100%;
   max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
 }
 
-.form-container h2 {
+.form-title {
   font-size: 24px;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 24px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
-  font-size: 14px;
+  color: var(--muted);
+  font-size: 13px;
   font-weight: 600;
-  color: #9ca3af;
+  display: block;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input,
 .form-group select {
+  width: 100%;
   padding: 12px;
-  border-radius: 10px;
-  border: none;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  font-size: 15px;
+  background: #fff;
+  color: var(--text);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
 .form-group input:disabled {
-  background: rgba(255, 255, 255, 0.05);
-  color: #6b7280;
-}
-
-.form-group select {
-  cursor: pointer;
-}
-
-.back-btn {
-  background: #f7fafc;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  color: #7c3aed;
-  font-weight: 600;
-  align-self: flex-start;
-}
-
-.back-btn:active {
-  background: #edf2f7;
+  background: #f1f5f9;
+  color: var(--muted);
 }
 
 .btn-advance {
-  padding: 15px 30px;
+  width: 100%;
+  padding: 14px;
   border: none;
   border-radius: 999px;
-  font-size: 16px;
+  background: var(--primary);
+  color: #fff;
   font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
-  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
-  color: white;
   margin-top: 20px;
+  transition: transform 0.2s;
 }
 
 .btn-advance:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 /* SCAN SCREEN */
 #scan-screen {
-  background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+  background: var(--bg);
   align-items: flex-start;
-  padding-top: 1rem;
+  padding-top: 20px;
 }
 
 .scan-container {
   width: 100%;
   max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-bottom: 2rem;
+}
+
+.scan-title {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .mode-badge {
-  text-align: center;
-  font-size: 24px;
+  border-radius: 999px;
+  padding: 8px 20px;
   font-weight: 700;
-  padding: 10px 20px;
-  border-radius: 12px;
-  margin: 10px 0;
+  margin: 16px auto;
+  text-align: center;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  max-width: fit-content;
+  display: block;
 }
 
 .mode-badge.logout {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  color: #dc2626;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .mode-badge.login {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  color: #059669;
+  background: #dcfce7;
+  color: #166534;
 }
 
-#qr-reader {
+#qr-reader,
+#details-qr-reader {
   width: 260px;
   height: 260px;
   margin: auto;
-  background: white;
-  border: 4px dashed #374151;
-  border-radius: 16px;
-  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
-#qr-reader::before,
-#qr-reader::after {
-  content: "";
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  border: 4px solid #7c3aed;
-}
-
-#qr-reader::before {
-  top: -4px;
-  left: -4px;
-  border-right: none;
-  border-bottom: none;
-}
-
-#qr-reader::after {
-  bottom: -4px;
-  right: -4px;
-  border-left: none;
-  border-top: none;
-}
-
-#qr-reader video {
+#qr-reader video,
+#details-qr-reader video {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
-  border-radius: 12px;
 }
 
-.scanner-info {
+.scan-info {
   text-align: center;
-  color: #718096;
-  margin: 10px 0;
+  margin: 20px 0;
+}
+
+.scan-info-text {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 8px;
 }
 
 .scan-count {
-  font-size: 18px;
-  font-weight: 600;
-  color: #7c3aed;
-  margin-top: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
 }
 
 .scanned-items {
-  margin: 20px 0;
-  max-height: 300px;
-  overflow-y: auto;
+  margin: 24px 0;
 }
 
 .scanned-items h3 {
-  color: #2d3748;
-  margin-bottom: 15px;
-  font-size: 20px;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.items-list {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .item-card {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 15px;
-  border-radius: 12px;
+  background: var(--card);
+  padding: 14px;
+  border-radius: 18px;
   margin-bottom: 10px;
-  border-left: 5px solid #7c3aed;
+  box-shadow: var(--shadow);
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 15px;
 }
 
 .item-number {
-  background: #7c3aed;
+  background: var(--primary);
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
   flex-shrink: 0;
 }
 
 .item-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
   object-fit: cover;
-  flex-shrink: 0;
   background: #e5e7eb;
+  flex-shrink: 0;
 }
 
 .item-details {
   flex: 1;
+  min-width: 0;
 }
 
 .item-details strong {
-  color: #7c3aed;
+  color: var(--primary);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .item-details p {
-  color: #2d3748;
+  color: var(--text);
   font-size: 15px;
-  font-weight: 500;
-  margin-top: 3px;
-}
-
-.item-remove {
-  background: #ef4444;
-  color: white;
-  border: none;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item-badges {
   display: flex;
   gap: 6px;
-  margin-top: 6px;
+  flex-wrap: wrap;
 }
 
 .badge {
@@ -377,164 +410,197 @@
 }
 
 .badge-total {
-  background: #e2e8f0;
-  color: #2d3748;
+  background: #f1f5f9;
+  color: var(--text);
 }
 
 .badge-avail {
-  background: #d1fae5;
-  color: #059669;
+  background: #dcfce7;
+  color: #166534;
 }
 
 .badge-avail.zero {
   background: #fee2e2;
-  color: #dc2626;
+  color: #991b1b;
+}
+
+.item-remove {
+  background: var(--danger);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.item-remove:active {
+  transform: scale(0.9);
 }
 
 .action-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 .btn-action {
-  flex: 1;
-  padding: 15px;
+  padding: 14px;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 999px;
   font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-action:active {
+  transform: scale(0.98);
 }
 
 .btn-success {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: var(--secondary);
   color: white;
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: var(--danger);
   color: white;
 }
 
 /* DETAILS SCREEN */
 #details-screen {
-  background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+  background: var(--bg);
   align-items: flex-start;
-  padding-top: 1rem;
+  padding-top: 20px;
 }
 
 .details-container {
   width: 100%;
   max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-bottom: 2rem;
 }
 
-#details-qr-reader {
-  width: 260px;
-  height: 260px;
-  margin: auto;
-  background: white;
-  border: 4px dashed #374151;
-  border-radius: 16px;
-  position: relative;
-}
-
-#details-qr-reader::before,
-#details-qr-reader::after {
-  content: "";
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  border: 4px solid #7c3aed;
-}
-
-#details-qr-reader::before {
-  top: -4px;
-  left: -4px;
-  border-right: none;
-  border-bottom: none;
-}
-
-#details-qr-reader::after {
-  bottom: -4px;
-  right: -4px;
-  border-left: none;
-  border-top: none;
-}
-
-#details-qr-reader video {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover;
-  border-radius: 12px;
+.details-title {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--primary);
 }
 
 .product-image {
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   height: auto;
-  border-radius: 16px;
-  margin: 20px auto;
-  display: block;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  margin: 20px 0;
+}
+
+.details-content {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-top: 20px;
+}
+
+.details-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.product-ref {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .archiving-table {
   background: white;
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 15px;
-  margin-top: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow);
   overflow-x: auto;
 }
 
 .archiving-table h3 {
-  color: #7c3aed;
-  margin-bottom: 15px;
+  color: var(--primary);
   font-size: 18px;
+  margin-bottom: 16px;
   text-align: center;
 }
 
-.archiving-table table {
+table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
 }
 
-.archiving-table th {
-  background: #f3f4f6;
-  color: #7c3aed;
-  padding: 10px 8px;
+th {
+  background: #f8fafc;
+  color: var(--muted);
+  padding: 12px 8px;
   text-align: left;
   font-weight: 600;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
 }
 
-.archiving-table td {
-  padding: 10px 8px;
-  border-bottom: 1px solid #e5e7eb;
-  color: #2d3748;
+td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--text);
+  font-size: 14px;
 }
 
-.archiving-table tr:last-child td {
+tr:last-child td {
   border-bottom: none;
 }
 
-.archiving-table tr:hover {
-  background: #f9fafb;
+tr:hover {
+  background: #fafbfc;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  background: #eef2ff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: transform 0.2s;
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+}
+
+/* LOADER */
 .loader-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -542,21 +608,50 @@
 }
 
 .loader-content {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
+  background: var(--card);
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
   text-align: center;
+  min-width: 200px;
 }
 
-.loader-icon {
-  font-size: 40px;
-  margin-bottom: 10px;
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 16px;
+  border: 4px solid #e9ecef;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .loader-text {
-  color: #7c3aed;
+  color: var(--primary);
   font-weight: 600;
   font-size: 16px;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 </style>
 </head>
@@ -566,31 +661,35 @@
 <!-- HOME SCREEN -->
 <div id="home-screen" class="screen active">
   <div class="home-container">
-    <h1>📲 QR Portal</h1>
-    <button class="btn-modern" onclick="goToModeChoice()">📁 Archiving</button>
+    <h1 class="home-title">QR Inventory</h1>
+    <p class="home-subtitle">Manage your inventory with ease</p>
+    <button class="btn-modern" onclick="goToModeChoice()">Get Started</button>
   </div>
 </div>
 
 <!-- MODE CHOICE SCREEN -->
 <div id="mode-choice-screen" class="screen">
   <div class="mode-container">
-    <button class="back-btn" onclick="goHomeFromMode()">← Back</button>
+    <button class="back-btn" onclick="goHomeFromMode()">←</button>
     
     <div class="mode-icon">🔄</div>
     <h2>Choose Mode</h2>
-    <p class="mode-subtitle">Select Log Out, Log In, or Details</p>
+    <p class="mode-subtitle">Select an action</p>
 
     <div class="button-group">
       <button class="btn-mode btn-logout" onclick="goToForm('logout')">
-        📤 Log Out
+        <div class="mode-card-title">Log Out</div>
+        <div class="mode-card-desc">Remove items from inventory</div>
       </button>
       
       <button class="btn-mode btn-login" onclick="goToForm('login')">
-        📥 Log In
+        <div class="mode-card-title">Log In</div>
+        <div class="mode-card-desc">Return items to inventory</div>
       </button>
       
       <button class="btn-mode btn-details" onclick="goToDetails()">
-        🔍 Details
+        <div class="mode-card-title">Details</div>
+        <div class="mode-card-desc">View product information</div>
       </button>
     </div>
   </div>
@@ -599,14 +698,14 @@
 <!-- FORM SCREEN -->
 <div id="form-screen" class="screen">
   <div class="form-container">
-    <button class="back-btn" onclick="goBackToMode()">← Back</button>
+    <button class="back-btn" onclick="goBackToMode()">←</button>
     
-    <h2 id="form-title">Log Out</h2>
+    <h2 class="form-title" id="form-title">Log Out</h2>
 
     <div class="form-group">
       <label for="name-input">Name</label>
       <input type="text" id="name-input" placeholder="Enter your name">
-      <select id="name-select" style="display:none; padding: 12px; border-radius: 10px; border: none; font-size: 16px; background: rgba(255, 255, 255, 0.1); color: white;">
+      <select id="name-select" style="display:none;">
         <option value="">Select a name...</option>
       </select>
     </div>
@@ -621,42 +720,36 @@
       <input type="text" id="date-input" disabled>
     </div>
 
-    <button class="btn-advance" onclick="advanceToScan()">
-      ▶️ Advance
-    </button>
+    <button class="btn-advance" onclick="advanceToScan()">Continue</button>
   </div>
 </div>
 
 <!-- SCAN SCREEN -->
 <div id="scan-screen" class="screen">
   <div class="scan-container">
-    <button class="back-btn" onclick="goBackToForm()">← Back</button>
+    <button class="back-btn" onclick="goBackToForm()">←</button>
     
-    <div id="mode-badge" class="mode-badge logout">LOG OUT</div>
+    <div id="mode-badge" class="mode-badge logout">Log Out</div>
     
-    <h2 style="text-align:center">📸 QR Code Scanner</h2>
+    <h2 class="scan-title">Scan QR Code</h2>
 
     <div id="qr-reader"></div>
 
-    <div class="scanner-info">
-      <p>📸 Position the QR code in the frame</p>
+    <div class="scan-info">
+      <p class="scan-info-text">Position the QR code in the frame</p>
       <p class="scan-count">Scanned: <span id="count">0</span> items</p>
     </div>
 
     <div class="scanned-items">
       <h3>Scanned Items</h3>
-      <div id="items-list">
-        <p style="text-align: center; color: #718096; padding: 20px;">No items scanned yet</p>
+      <div id="items-list" class="items-list">
+        <p class="empty-state">No items scanned yet</p>
       </div>
     </div>
 
     <div class="action-buttons">
-      <button class="btn-action btn-success" onclick="saveAll()">
-        💾 Save All
-      </button>
-      <button class="btn-action btn-danger" onclick="clearAll()">
-        🗑️ Clear All
-      </button>
+      <button class="btn-action btn-success" onclick="saveAll()">Save All</button>
+      <button class="btn-action btn-danger" onclick="clearAll()">Clear All</button>
     </div>
   </div>
 </div>
@@ -664,33 +757,36 @@
 <!-- DETAILS SCREEN -->
 <div id="details-screen" class="screen">
   <div class="details-container">
-    <button class="back-btn" onclick="goBackToModeFromDetails()">← Back</button>
+    <button class="back-btn" onclick="goBackToModeFromDetails()">←</button>
     
-    <h2 style="text-align:center; color:#7c3aed">🔍 Product Details</h2>
+    <h2 class="details-title">Product Details</h2>
 
     <div id="details-qr-reader"></div>
 
-    <div class="scanner-info">
-      <p>📸 Scan QR code to view details</p>
+    <div class="scan-info">
+      <p class="scan-info-text">Scan QR code to view details</p>
     </div>
 
     <div id="details-content" style="display:none;">
       <img id="product-image" class="product-image" alt="Product" />
       
-      <div class="archiving-table">
-        <h3>📦 Archiving History</h3>
-        <p style="text-align:center; color:#7c3aed; font-weight:600; margin-bottom:10px;">
-          <span id="product-ref"></span> - <span id="product-snum"></span>
-        </p>
-        <div style="overflow-x: auto;">
-          <table id="archiving-table">
+      <div class="details-content">
+        <div class="details-header">
+          <h3 class="details-title">Archiving History</h3>
+          <p class="product-ref">
+            <span id="product-ref"></span> - <span id="product-snum"></span>
+          </p>
+        </div>
+        
+        <div class="archiving-table">
+          <table>
             <thead>
               <tr>
                 <th>Date</th>
                 <th>Log Out</th>
                 <th>Log In</th>
-                <th>Total Qty</th>
-                <th>Qty Avail</th>
+                <th>Total</th>
+                <th>Available</th>
               </tr>
             </thead>
             <tbody id="archiving-tbody">
@@ -705,12 +801,7 @@
 <script>
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbsCnpVLvyZRy9snsjdV5K4YFUh2a9s9D9O5Q9niwTKG_dpMDCZIg0fnDUysPWegCnRQ/exec';
 let currentMode = 'logout';
-let formData = {
-  name: '',
-  location: '',
-  date: ''
-};
-
+let formData = { name: '', location: '', date: '' };
 let archivingScanner;
 let detailsScanner;
 let isArchivingScanning = false;
@@ -719,7 +810,6 @@ let scannedItems = [];
 let scanCooldown = false;
 let localQtyMap = {};
 
-// Navigation
 function goToModeChoice() {
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("mode-choice-screen").classList.add("active");
@@ -732,13 +822,12 @@ function goHomeFromMode() {
 
 function goToForm(mode) {
   currentMode = mode;
-  
   document.getElementById("mode-choice-screen").classList.remove("active");
   document.getElementById("form-screen").classList.add("active");
   
   if (mode === 'logout') {
     document.getElementById('form-title').textContent = 'Log Out';
-    document.getElementById('location-group').style.display = 'flex';
+    document.getElementById('location-group').style.display = 'block';
     document.getElementById('name-input').style.display = 'block';
     document.getElementById('name-select').style.display = 'none';
   } else {
@@ -751,7 +840,6 @@ function goToForm(mode) {
   
   const today = new Date().toLocaleDateString('en-GB');
   document.getElementById('date-input').value = today;
-  
   document.getElementById('name-input').value = '';
   document.getElementById('location-input').value = '';
   document.getElementById('name-select').value = '';
@@ -780,10 +868,8 @@ async function loadLoggedOutNames() {
   
   try {
     const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getLoggedOutNames&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc`;
-    
     const response = await fetch(url);
     const result = await response.json();
-    
     hideLoader();
     
     if (result.error) {
@@ -794,7 +880,6 @@ async function loadLoggedOutNames() {
     if (result.success && result.names) {
       const select = document.getElementById('name-select');
       select.innerHTML = '<option value="">Select a name...</option>';
-      
       result.names.forEach(name => {
         const option = document.createElement('option');
         option.value = name;
@@ -806,7 +891,6 @@ async function loadLoggedOutNames() {
         alert('No logged out names found. Please log out first.');
       }
     }
-    
   } catch (error) {
     hideLoader();
     console.error('Load names error:', error);
@@ -815,13 +899,9 @@ async function loadLoggedOutNames() {
 }
 
 function advanceToScan() {
-  let name;
-  
-  if (currentMode === 'logout') {
-    name = document.getElementById('name-input').value.trim();
-  } else {
-    name = document.getElementById('name-select').value.trim();
-  }
+  let name = currentMode === 'logout' 
+    ? document.getElementById('name-input').value.trim()
+    : document.getElementById('name-select').value.trim();
   
   const location = document.getElementById('location-input').value.trim();
   const date = document.getElementById('date-input').value;
@@ -845,10 +925,10 @@ function advanceToScan() {
   
   const badge = document.getElementById('mode-badge');
   if (currentMode === 'logout') {
-    badge.textContent = 'LOG OUT';
+    badge.textContent = 'Log Out';
     badge.className = 'mode-badge logout';
   } else {
-    badge.textContent = 'LOG IN';
+    badge.textContent = 'Log In';
     badge.className = 'mode-badge login';
   }
   
@@ -861,14 +941,11 @@ function goBackToForm() {
   document.getElementById("form-screen").classList.add("active");
 }
 
-// Archiving Scanner
 function startArchivingScan() {
   if (isArchivingScanning) return;
-
   if (!archivingScanner) {
     archivingScanner = new Html5Qrcode("qr-reader");
   }
-
   archivingScanner.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 220 },
@@ -889,7 +966,6 @@ function stopArchivingScan() {
 
 async function onArchivingScan(decodedText) {
   if (scanCooldown) return;
-
   console.log('QR Scanned:', decodedText);
   
   try {
@@ -900,15 +976,9 @@ async function onArchivingScan(decodedText) {
     
     if (spreadsheetId && row) {
       scanCooldown = true;
-
-      if (navigator.vibrate) {
-        navigator.vibrate(200);
-      }
-
+      if (navigator.vibrate) navigator.vibrate(200);
       await fetchItemData(spreadsheetId, row);
-
       setTimeout(() => { scanCooldown = false; }, 800);
-
     } else {
       alert('Invalid QR Code: Missing parameters');
     }
@@ -923,10 +993,8 @@ async function fetchItemData(spreadsheetId, row) {
   
   try {
     const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItem&id=${spreadsheetId}&row=${row}`;
-    
     const response = await fetch(url);
     const result = await response.json();
-    
     hideLoader();
     
     if (result.error) {
@@ -939,14 +1007,13 @@ async function fetchItemData(spreadsheetId, row) {
       const qtyLocale = (localQtyMap[row] !== undefined) ? localQtyMap[row] : Number(result.data.qtyAvailable);
 
       if (currentMode === 'logout' && qtyLocale <= 0) {
-        alert('⚠️ Plus de quantité disponible pour cette référence !');
+        alert('No quantity available for this reference');
         return;
       }
 
       result.data.qtyAvailable = qtyLocale;
       addScannedItem(result.data);
     }
-    
   } catch (error) {
     hideLoader();
     console.error('Fetch error:', error);
@@ -995,7 +1062,7 @@ function updateItemsList() {
   const itemsList = document.getElementById('items-list');
   
   if (scannedItems.length === 0) {
-    itemsList.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No items scanned yet</p>';
+    itemsList.innerHTML = '<p class="empty-state">No items scanned yet</p>';
     return;
   }
   
@@ -1010,14 +1077,8 @@ function updateItemsList() {
         <div class="item-number">${index + 1}</div>
         ${imageHtml}
         <div class="item-details">
-          <div>
-            <strong>Reference</strong>
-            <p>${item.reference}</p>
-          </div>
-          <div style="margin-top: 5px;">
-            <strong>S-Number</strong>
-            <p>${item.sNumber}</p>
-          </div>
+          <strong>Reference</strong>
+          <p>${item.reference}</p>
           <div class="item-badges">
             <span class="badge badge-total">Total: ${item.totalQty}</span>
             <span class="badge badge-avail ${isZero ? 'zero' : ''}">Available: ${item.qtyAvailable}</span>
@@ -1045,7 +1106,7 @@ async function saveAll() {
     return;
   }
   
-  showLoader('Saving to Archiving sheet...');
+  showLoader('Saving...');
   
   try {
     for (const item of scannedItems) {
@@ -1076,9 +1137,8 @@ async function saveAll() {
     }
     
     hideLoader();
-    alert(`✅ Success! ${scannedItems.length} items saved to Archiving sheet.`);
+    alert(`Success! ${scannedItems.length} items saved.`);
     clearAll(true);
-    
   } catch (error) {
     hideLoader();
     console.error('Save error:', error);
@@ -1088,10 +1148,7 @@ async function saveAll() {
 
 function clearAll(skipConfirm = false) {
   if (scannedItems.length === 0) return;
-  
-  if (!skipConfirm && !confirm('Are you sure you want to clear all items?')) {
-    return;
-  }
+  if (!skipConfirm && !confirm('Are you sure you want to clear all items?')) return;
   
   scannedItems = [];
   localQtyMap = {};
@@ -1099,14 +1156,11 @@ function clearAll(skipConfirm = false) {
   updateCount();
 }
 
-// Details Scanner
 function startDetailsScan() {
   if (isDetailsScanning) return;
-
   if (!detailsScanner) {
     detailsScanner = new Html5Qrcode("details-qr-reader");
   }
-
   detailsScanner.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 220 },
@@ -1135,10 +1189,7 @@ async function onDetailsScan(decodedText) {
     const row = params.get('row');
     
     if (spreadsheetId && row) {
-      if (navigator.vibrate) {
-        navigator.vibrate(200);
-      }
-      
+      if (navigator.vibrate) navigator.vibrate(200);
       await fetchArchivingDetails(spreadsheetId, row);
     } else {
       alert('Invalid QR Code: Missing parameters');
@@ -1153,10 +1204,8 @@ async function fetchArchivingDetails(spreadsheetId, row) {
   
   try {
     const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getArchivingDetails&id=${spreadsheetId}&row=${row}`;
-    
     const response = await fetch(url);
     const result = await response.json();
-    
     hideLoader();
     
     if (result.error) {
@@ -1167,7 +1216,6 @@ async function fetchArchivingDetails(spreadsheetId, row) {
     if (result.success) {
       displayArchivingDetails(result);
     }
-    
   } catch (error) {
     hideLoader();
     console.error('Fetch details error:', error);
@@ -1203,7 +1251,7 @@ function displayArchivingDetails(data) {
       tbody.appendChild(row);
     });
   } else {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#9ca3af;">No archiving history found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No archiving history found</td></tr>';
   }
   
   document.getElementById('details-content').style.display = 'block';
@@ -1217,7 +1265,7 @@ function showLoader(message = 'Loading...') {
     loader.className = 'loader-overlay';
     loader.innerHTML = `
       <div class="loader-content">
-        <div class="loader-icon">⏳</div>
+        <div class="loader-spinner"></div>
         <div class="loader-text">${message}</div>
       </div>
     `;
