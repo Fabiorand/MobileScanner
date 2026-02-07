@@ -3,299 +3,378 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QR Inventory System</title>
+<title>QR Inventory</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-:root {
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --primary: #4f46e5;
-  --secondary: #22c55e;
-  --danger: #ef4444;
-  --text: #0f172a;
-  --muted: #94a3b8;
-  --radius: 20px;
-  --shadow: 0 10px 30px rgba(0,0,0,.08);
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --red: #ef4444;
+  --red-light: #fee2e2;
+  --green: #10b981;
+  --green-light: #d1fae5;
+  --blue: #3b82f6;
+  --blue-light: #dbeafe;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+}
+
 body {
-  background: var(--bg);
-  color: var(--text);
+  background: var(--white);
+  color: var(--black);
   -webkit-font-smoothing: antialiased;
 }
 
 .screen {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 10;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  overflow-y: auto;
+  min-height: 100vh;
 }
 
 .screen.active {
+  display: block;
+}
+
+.container {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  padding-top: 20px;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--black);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
 }
 
 /* HOME SCREEN */
-#home-screen {
-  background: linear-gradient(180deg, #fff, #eef2ff);
-  color: var(--text);
-}
-
-.home-container {
-  width: 100%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.hero {
   text-align: center;
+  margin-bottom: 48px;
 }
 
-.home-title {
-  font-size: 32px;
+.hero-title {
+  font-size: 36px;
   font-weight: 700;
-  margin-bottom: 8px;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: 17px;
+  color: var(--gray-600);
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 0 auto 40px;
+}
+
+.btn-large {
+  width: 100%;
+  padding: 20px;
+  border-radius: 16px;
+  border: none;
+  background: var(--black);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-large:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.btn-selection {
+  margin-top: 16px;
+  background: #3b82f6;
+}
+
+/* MODE CHOICE */
+.nav-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding-top: 20px;
+}
+
+.btn-back {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-200);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  transition: all 0.2s;
+}
+
+.btn-back:active {
+  transform: scale(0.95);
+  background: var(--gray-50);
+}
+
+.nav-title {
+  font-size: 24px;
+  font-weight: 700;
   letter-spacing: -0.5px;
 }
 
-.home-subtitle {
-  font-size: 16px;
-  color: var(--muted);
-  margin-bottom: 40px;
-}
-
-.btn-modern {
-  padding: 1rem 1.6rem;
-  border-radius: 999px;
-  font-weight: 600;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.btn-modern:active {
-  transform: scale(0.98);
-}
-
-/* MODE CHOICE SCREEN */
-#mode-choice-screen {
-  background: var(--bg);
-}
-
-.mode-container {
-  width: 100%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.mode-icon {
-  font-size: 70px;
-  text-align: center;
-}
-
-.mode-container h2 {
-  font-size: 26px;
-  text-align: center;
-}
-
-.mode-subtitle {
-  color: var(--muted);
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.btn-mode {
-  padding: 14px;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 16px;
-  font-weight: 600;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform 0.2s;
-  text-align: left;
-}
-
-.btn-mode:active {
-  transform: scale(0.98);
-}
-
-.btn-logout {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.btn-login {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.btn-details {
-  background: #eef2ff;
-  color: #3730a3;
-}
-
-.mode-card-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.mode-card-desc {
+.section-label {
   font-size: 13px;
-  opacity: 0.8;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
 }
 
-/* FORM SCREEN */
-#form-screen {
-  background: var(--bg);
+.cards-grid {
+  display: grid;
+  gap: 16px;
 }
 
-.form-container {
-  width: 100%;
-  max-width: 360px;
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
+.card {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.card:active {
+  transform: scale(0.98);
+  border-color: var(--black);
+}
+
+.card.logout {
+  border-color: var(--red);
+  background: var(--red-light);
+}
+
+.card.login {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+.card.details {
+  border-color: var(--blue);
+  background: var(--blue-light);
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.card-desc {
+  font-size: 15px;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+/* FORM */
+.form-wrapper {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 32px 24px;
+  margin-top: 24px;
 }
 
 .form-title {
   font-size: 24px;
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  letter-spacing: -0.5px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.form-group label {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
+.form-label {
   display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--black);
   margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
-.form-group input,
-.form-group select {
+.form-input,
+.form-select {
   width: 100%;
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  font-size: 15px;
-  background: #fff;
-  color: var(--text);
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-.form-group input:disabled {
-  background: #f1f5f9;
-  color: var(--muted);
-}
-
-.btn-advance {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 999px;
-  background: var(--primary);
-  color: #fff;
-  font-weight: 600;
+  padding: 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
   font-size: 16px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: transform 0.2s;
+  color: var(--black);
+  background: var(--white);
+  transition: all 0.2s;
 }
 
-.btn-advance:active {
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--black);
+}
+
+.form-input:disabled {
+  background: var(--gray-50);
+  color: var(--gray-500);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  border: none;
+  background: var(--black);
+  color: var(--white);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-submit:active {
   transform: scale(0.98);
+  opacity: 0.9;
 }
 
 /* SCAN SCREEN */
-#scan-screen {
-  background: var(--bg);
-  align-items: flex-start;
-  padding-top: 20px;
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
 
-.scan-container {
-  width: 100%;
-  max-width: 420px;
-}
-
-.scan-title {
-  font-size: 24px;
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 14px;
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 20px;
+  letter-spacing: 0.3px;
 }
 
-.mode-badge {
-  border-radius: 999px;
-  padding: 8px 20px;
+.status-badge.logout {
+  background: var(--red-light);
+  color: var(--red);
+  border: 2px solid var(--red);
+}
+
+.status-badge.login {
+  background: var(--green-light);
+  color: var(--green);
+  border: 2px solid var(--green);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.btn-home {
+  padding: 10px 20px;
+  border-radius: 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+  font-size: 14px;
   font-weight: 700;
-  margin: 16px auto;
-  text-align: center;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  max-width: fit-content;
-  display: block;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
 }
 
-.mode-badge.logout {
-  background: #fee2e2;
-  color: #991b1b;
+.btn-home:active {
+  transform: scale(0.95);
+  background: var(--black);
+  color: var(--white);
 }
 
-.mode-badge.login {
-  background: #dcfce7;
-  color: #166534;
+.scanner-box {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 #qr-reader,
 #details-qr-reader {
-  width: 260px;
-  height: 260px;
-  margin: auto;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 100%;
+  height: 300px;
+  margin: 0 auto 20px;
+  border-radius: 16px;
   overflow: hidden;
+  background: var(--gray-50);
 }
 
 #qr-reader video,
@@ -307,89 +386,95 @@ body {
 
 .scan-info {
   text-align: center;
-  margin: 20px 0;
 }
 
-.scan-info-text {
-  color: var(--muted);
-  font-size: 14px;
+.scan-text {
+  font-size: 15px;
+  color: var(--gray-600);
   margin-bottom: 8px;
 }
 
 .scan-count {
-  font-weight: 700;
-  color: var(--primary);
-  font-size: 16px;
-}
-
-.scanned-items {
-  margin: 24px 0;
-}
-
-.scanned-items h3 {
-  color: var(--text);
   font-size: 18px;
   font-weight: 700;
+  color: var(--black);
+}
+
+/* ITEMS */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
 }
 
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
 .items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
   max-height: 400px;
   overflow-y: auto;
 }
 
-.item-card {
-  background: var(--card);
-  padding: 14px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  box-shadow: var(--shadow);
+.item {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 12px;
 }
 
 .item-number {
-  background: var(--primary);
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--black);
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
   flex-shrink: 0;
 }
 
 .item-image {
-  width: 55px;
-  height: 55px;
+  width: 60px;
+  height: 60px;
   border-radius: 12px;
   object-fit: cover;
-  background: #e5e7eb;
+  background: var(--gray-100);
   flex-shrink: 0;
+  border: 2px solid var(--gray-200);
 }
 
-.item-details {
+.item-info {
   flex: 1;
   min-width: 0;
 }
 
-.item-details strong {
-  color: var(--primary);
+.item-label {
   font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  display: block;
   margin-bottom: 4px;
 }
 
-.item-details p {
-  color: var(--text);
-  font-size: 15px;
-  font-weight: 600;
+.item-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--black);
   margin-bottom: 8px;
   white-space: nowrap;
   overflow: hidden;
@@ -399,140 +484,115 @@ body {
 .item-badges {
   display: flex;
   gap: 6px;
-  flex-wrap: wrap;
 }
 
 .badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 999px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .badge-total {
-  background: #f1f5f9;
-  color: var(--text);
+  background: var(--gray-100);
+  color: var(--gray-600);
 }
 
-.badge-avail {
-  background: #dcfce7;
-  color: #166534;
+.badge-available {
+  background: var(--green-light);
+  color: var(--green);
 }
 
-.badge-avail.zero {
-  background: #fee2e2;
-  color: #991b1b;
+.badge-available.zero {
+  background: var(--red-light);
+  color: var(--red);
 }
 
-.item-remove {
-  background: var(--danger);
-  color: white;
+.btn-remove {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  background: var(--red);
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 18px;
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: all 0.2s;
 }
 
-.item-remove:active {
+.btn-remove:active {
   transform: scale(0.9);
 }
 
-.action-buttons {
+/* ACTIONS */
+.actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: 24px;
 }
 
 .btn-action {
-  padding: 14px;
+  padding: 16px;
+  border-radius: 12px;
   border: none;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
 }
 
 .btn-action:active {
   transform: scale(0.98);
 }
 
-.btn-success {
-  background: var(--secondary);
-  color: white;
+.btn-save {
+  background: var(--black);
+  color: var(--white);
 }
 
-.btn-danger {
-  background: var(--danger);
-  color: white;
+.btn-clear {
+  background: var(--white);
+  color: var(--black);
+  border: 2px solid var(--gray-200);
 }
 
-/* DETAILS SCREEN */
-#details-screen {
-  background: var(--bg);
-  align-items: flex-start;
-  padding-top: 20px;
-}
-
-.details-container {
-  width: 100%;
-  max-width: 420px;
-}
-
-.details-title {
-  font-size: 24px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--primary);
-}
-
+/* DETAILS */
 .product-image {
   width: 100%;
-  max-width: 100%;
-  height: auto;
   border-radius: 20px;
-  box-shadow: var(--shadow);
-  margin: 20px 0;
+  margin-bottom: 24px;
+  border: 2px solid var(--gray-200);
 }
 
-.details-content {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  margin-top: 20px;
+.details-card {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-top: 24px;
 }
 
 .details-header {
   text-align: center;
-  margin-bottom: 20px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--gray-200);
+  margin-bottom: 24px;
+}
+
+.details-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
 }
 
 .product-ref {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text);
-}
-
-.archiving-table {
-  background: white;
-  border-radius: 20px;
-  padding: 15px;
-  box-shadow: var(--shadow);
-  overflow-x: auto;
-}
-
-.archiving-table h3 {
-  color: var(--primary);
-  font-size: 18px;
-  margin-bottom: 16px;
-  text-align: center;
+  color: var(--gray-600);
 }
 
 table {
@@ -541,22 +601,22 @@ table {
 }
 
 th {
-  background: #f8fafc;
-  color: var(--muted);
-  padding: 12px 8px;
+  background: var(--gray-50);
+  padding: 12px 10px;
   text-align: left;
-  font-weight: 600;
   font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-600);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--gray-200);
 }
 
 td {
-  padding: 12px 8px;
-  border-bottom: 1px solid #f1f5f9;
-  color: var(--text);
-  font-size: 14px;
+  padding: 14px 10px;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 15px;
+  color: var(--black);
 }
 
 tr:last-child td {
@@ -564,32 +624,24 @@ tr:last-child td {
 }
 
 tr:hover {
-  background: #fafbfc;
+  background: var(--gray-50);
 }
 
-.empty-state {
+/* EMPTY STATE */
+.empty {
   text-align: center;
-  padding: 32px;
-  color: var(--muted);
-  font-size: 14px;
+  padding: 60px 24px;
 }
 
-/* BACK BUTTON */
-.back-btn {
-  background: #eef2ff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 999px;
-  color: var(--primary);
-  font-weight: 600;
-  font-size: 24px;
-  cursor: pointer;
+.empty-icon {
+  font-size: 64px;
   margin-bottom: 16px;
-  transition: transform 0.2s;
+  opacity: 0.3;
 }
 
-.back-btn:active {
-  transform: scale(0.95);
+.empty-text {
+  font-size: 16px;
+  color: var(--gray-500);
 }
 
 /* LOADER */
@@ -599,29 +651,28 @@ tr:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
 }
 
-.loader-content {
-  background: var(--card);
-  padding: 32px;
+.loader-card {
+  background: var(--white);
+  padding: 40px;
   border-radius: 20px;
-  box-shadow: var(--shadow);
   text-align: center;
   min-width: 200px;
 }
 
 .loader-spinner {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 16px;
-  border: 4px solid #e9ecef;
-  border-top-color: var(--primary);
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 20px;
+  border: 4px solid var(--gray-200);
+  border-top-color: var(--black);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -631,9 +682,9 @@ tr:hover {
 }
 
 .loader-text {
-  color: var(--primary);
-  font-weight: 600;
   font-size: 16px;
+  font-weight: 700;
+  color: var(--black);
 }
 
 /* SCROLLBAR */
@@ -646,12 +697,12 @@ tr:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--gray-300);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--gray-400);
 }
 </style>
 </head>
@@ -660,117 +711,140 @@ tr:hover {
 
 <!-- HOME SCREEN -->
 <div id="home-screen" class="screen active">
-  <div class="home-container">
-    <h1 class="home-title">QR Inventory</h1>
-    <p class="home-subtitle">Manage your inventory with ease</p>
-    <button class="btn-modern" onclick="goToModeChoice()">Get Started</button>
+  <div class="container">
+    <div class="header">
+      <img src="https://drive.google.com/uc?id=1uzpOps_Nm3P06WVBALPwyYIx-DLwP1Pm" alt="Tropic Logo" class="logo">
+      <div class="avatar">QR</div>
+    </div>
+
+    <div class="hero">
+      <h1 class="hero-title">Everything you need in one app</h1>
+      <p class="hero-subtitle">Finding your dream job is more easier than before</p>
+      <button class="btn-large" onclick="goToModeChoice()">Archiving</button>
+      <button class="btn-large btn-selection" onclick="goToSelection()">Selection</button>
+    </div>
   </div>
 </div>
 
 <!-- MODE CHOICE SCREEN -->
 <div id="mode-choice-screen" class="screen">
-  <div class="mode-container">
-    <button class="back-btn" onclick="goHomeFromMode()">←</button>
-    
-    <div class="mode-icon">🔄</div>
-    <h2>Choose Mode</h2>
-    <p class="mode-subtitle">Select an action</p>
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goHome()">←</button>
+      <div class="nav-title">Select Mode</div>
+    </div>
 
-    <div class="button-group">
-      <button class="btn-mode btn-logout" onclick="goToForm('logout')">
-        <div class="mode-card-title">Log Out</div>
-        <div class="mode-card-desc">Remove items from inventory</div>
-      </button>
-      
-      <button class="btn-mode btn-login" onclick="goToForm('login')">
-        <div class="mode-card-title">Log In</div>
-        <div class="mode-card-desc">Return items to inventory</div>
-      </button>
-      
-      <button class="btn-mode btn-details" onclick="goToDetails()">
-        <div class="mode-card-title">Details</div>
-        <div class="mode-card-desc">View product information</div>
-      </button>
+    <div class="section-label">Choose Action</div>
+    
+    <div class="cards-grid">
+      <div class="card logout" onclick="goToForm('logout')">
+        <div class="card-title">Log Out</div>
+        <div class="card-desc">Remove items from inventory</div>
+      </div>
+
+      <div class="card login" onclick="goToForm('login')">
+        <div class="card-title">Log In</div>
+        <div class="card-desc">Return items to inventory</div>
+      </div>
+
+      <div class="card details" onclick="goToDetails()">
+        <div class="card-title">Details</div>
+        <div class="card-desc">View product information</div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- FORM SCREEN -->
 <div id="form-screen" class="screen">
-  <div class="form-container">
-    <button class="back-btn" onclick="goBackToMode()">←</button>
-    
-    <h2 class="form-title" id="form-title">Log Out</h2>
-
-    <div class="form-group">
-      <label for="name-input">Name</label>
-      <input type="text" id="name-input" placeholder="Enter your name">
-      <select id="name-select" style="display:none;">
-        <option value="">Select a name...</option>
-      </select>
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goBackToMode()">←</button>
+      <div class="nav-title" id="form-title">Log Out</div>
     </div>
 
-    <div class="form-group" id="location-group">
-      <label for="location-input">Location</label>
-      <input type="text" id="location-input" placeholder="Enter location">
-    </div>
+    <div class="form-wrapper">
+      <h2 class="form-title">User Information</h2>
 
-    <div class="form-group">
-      <label for="date-input">Date</label>
-      <input type="text" id="date-input" disabled>
-    </div>
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input type="text" id="name-input" class="form-input" placeholder="Enter your name">
+        <select id="name-select" class="form-select" style="display:none;">
+          <option value="">Select a name...</option>
+        </select>
+      </div>
 
-    <button class="btn-advance" onclick="advanceToScan()">Continue</button>
+      <div class="form-group" id="location-group">
+        <label class="form-label">Location</label>
+        <input type="text" id="location-input" class="form-input" placeholder="Enter location">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="text" id="date-input" class="form-input" disabled>
+      </div>
+
+      <button class="btn-submit" onclick="advanceToScan()">Continue</button>
+    </div>
   </div>
 </div>
 
 <!-- SCAN SCREEN -->
 <div id="scan-screen" class="screen">
-  <div class="scan-container">
-    <button class="back-btn" onclick="goBackToForm()">←</button>
-    
-    <div id="mode-badge" class="mode-badge logout">Log Out</div>
-    
-    <h2 class="scan-title">Scan QR Code</h2>
-
-    <div id="qr-reader"></div>
-
-    <div class="scan-info">
-      <p class="scan-info-text">Position the QR code in the frame</p>
-      <p class="scan-count">Scanned: <span id="count">0</span> items</p>
+  <div class="container">
+    <div class="top-bar">
+      <div id="mode-badge" class="status-badge logout">
+        <span class="status-dot"></span>
+        <span>Log Out</span>
+      </div>
+      <button class="btn-home" onclick="goHome()">Home</button>
     </div>
 
-    <div class="scanned-items">
-      <h3>Scanned Items</h3>
-      <div id="items-list" class="items-list">
-        <p class="empty-state">No items scanned yet</p>
+    <div class="scanner-box">
+      <div id="qr-reader"></div>
+      <div class="scan-info">
+        <p class="scan-text">Position QR code in frame</p>
+        <p class="scan-count">Scanned: <span id="count">0</span></p>
       </div>
     </div>
 
-    <div class="action-buttons">
-      <button class="btn-action btn-success" onclick="saveAll()">Save All</button>
-      <button class="btn-action btn-danger" onclick="clearAll()">Clear All</button>
+    <div class="section-header">
+      <div class="section-title">Scanned Items</div>
+    </div>
+
+    <div id="items-list" class="items-list">
+      <div class="empty">
+        <div class="empty-icon">📦</div>
+        <p class="empty-text">No items scanned yet</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-action btn-save" onclick="saveAll()">Save All</button>
+      <button class="btn-action btn-clear" onclick="clearAll()">Clear</button>
     </div>
   </div>
 </div>
 
 <!-- DETAILS SCREEN -->
 <div id="details-screen" class="screen">
-  <div class="details-container">
-    <button class="back-btn" onclick="goBackToModeFromDetails()">←</button>
-    
-    <h2 class="details-title">Product Details</h2>
+  <div class="container">
+    <div class="top-bar">
+      <div class="nav-title">Product Details</div>
+      <button class="btn-home" onclick="goHome()">Home</button>
+    </div>
 
-    <div id="details-qr-reader"></div>
-
-    <div class="scan-info">
-      <p class="scan-info-text">Scan QR code to view details</p>
+    <div class="scanner-box">
+      <div id="details-qr-reader"></div>
+      <div class="scan-info">
+        <p class="scan-text">Scan QR code to view details</p>
+      </div>
     </div>
 
     <div id="details-content" style="display:none;">
       <img id="product-image" class="product-image" alt="Product" />
       
-      <div class="details-content">
+      <div class="details-card">
         <div class="details-header">
           <h3 class="details-title">Archiving History</h3>
           <p class="product-ref">
@@ -778,7 +852,7 @@ tr:hover {
           </p>
         </div>
         
-        <div class="archiving-table">
+        <div style="overflow-x: auto;">
           <table>
             <thead>
               <tr>
@@ -786,7 +860,7 @@ tr:hover {
                 <th>Log Out</th>
                 <th>Log In</th>
                 <th>Total</th>
-                <th>Available</th>
+                <th>Avail</th>
               </tr>
             </thead>
             <tbody id="archiving-tbody">
@@ -799,7 +873,8 @@ tr:hover {
 </div>
 
 <script>
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxw90r6eoeOqAL79ifMd7OX2Wg_cfd4brXEV0_IscgUucGnBTpCJZ6_-TjiBicIa1ds5g/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtq9lebTqBpeOsAHV075UiXC9BoHg_96Wa6NyOARVaCqCFaSE_acjjst9PbBI0TEJB/exec';
+
 let currentMode = 'logout';
 let formData = { name: '', location: '', date: '' };
 let archivingScanner;
@@ -810,14 +885,25 @@ let scannedItems = [];
 let scanCooldown = false;
 let localQtyMap = {};
 
+function goHome() {
+  stopArchivingScan();
+  stopDetailsScan();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('home-screen').classList.add('active');
+  scannedItems = [];
+  localQtyMap = {};
+  updateItemsList();
+  updateCount();
+}
+
 function goToModeChoice() {
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("mode-choice-screen").classList.add("active");
 }
 
-function goHomeFromMode() {
-  document.getElementById("mode-choice-screen").classList.remove("active");
-  document.getElementById("home-screen").classList.add("active");
+function goToSelection() {
+  alert("Selection feature coming soon!\n\nThis will include:\n• Multi-item scanning\n• PDF generation with images\n• Batch processing");
+  // TODO: Implement Selection screen with PDF generation features
 }
 
 function goToForm(mode) {
@@ -857,14 +943,8 @@ function goBackToMode() {
   document.getElementById("mode-choice-screen").classList.add("active");
 }
 
-function goBackToModeFromDetails() {
-  stopDetailsScan();
-  document.getElementById("details-screen").classList.remove("active");
-  document.getElementById("mode-choice-screen").classList.add("active");
-}
-
 async function loadLoggedOutNames() {
-  showLoader('Loading names...');
+  showLoader('Loading...');
   
   try {
     const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getLoggedOutNames&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc`;
@@ -873,7 +953,7 @@ async function loadLoggedOutNames() {
     hideLoader();
     
     if (result.error) {
-      alert('Error loading names: ' + result.error);
+      alert('Error: ' + result.error);
       return;
     }
     
@@ -888,13 +968,13 @@ async function loadLoggedOutNames() {
       });
       
       if (result.names.length === 0) {
-        alert('No logged out names found. Please log out first.');
+        alert('No logged out names found');
       }
     }
   } catch (error) {
     hideLoader();
-    console.error('Load names error:', error);
-    alert('Connection error. Please try again.');
+    console.error('Error:', error);
+    alert('Connection error');
   }
 }
 
@@ -907,7 +987,7 @@ function advanceToScan() {
   const date = document.getElementById('date-input').value;
   
   if (!name) {
-    alert(currentMode === 'logout' ? 'Please enter your name' : 'Please select a name');
+    alert(currentMode === 'logout' ? 'Please enter name' : 'Please select name');
     return;
   }
   
@@ -916,29 +996,21 @@ function advanceToScan() {
     return;
   }
   
-  formData.name = name;
-  formData.location = location;
-  formData.date = date;
+  formData = { name, location, date };
   
   document.getElementById("form-screen").classList.remove("active");
   document.getElementById("scan-screen").classList.add("active");
   
   const badge = document.getElementById('mode-badge');
   if (currentMode === 'logout') {
-    badge.textContent = 'Log Out';
-    badge.className = 'mode-badge logout';
+    badge.innerHTML = '<span class="status-dot"></span><span>Log Out</span>';
+    badge.className = 'status-badge logout';
   } else {
-    badge.textContent = 'Log In';
-    badge.className = 'mode-badge login';
+    badge.innerHTML = '<span class="status-dot"></span><span>Log In</span>';
+    badge.className = 'status-badge login';
   }
   
   startArchivingScan();
-}
-
-function goBackToForm() {
-  stopArchivingScan();
-  document.getElementById("scan-screen").classList.remove("active");
-  document.getElementById("form-screen").classList.add("active");
 }
 
 function startArchivingScan() {
@@ -954,7 +1026,7 @@ function startArchivingScan() {
     isArchivingScanning = true;
   }).catch(err => {
     console.error('Scanner error:', err);
-    alert('Camera access error. Please allow camera permissions.');
+    alert('Camera error');
   });
 }
 
@@ -966,7 +1038,6 @@ function stopArchivingScan() {
 
 async function onArchivingScan(decodedText) {
   if (scanCooldown) return;
-  console.log('QR Scanned:', decodedText);
   
   try {
     const url = new URL(decodedText);
@@ -980,16 +1051,16 @@ async function onArchivingScan(decodedText) {
       await fetchItemData(spreadsheetId, row);
       setTimeout(() => { scanCooldown = false; }, 800);
     } else {
-      alert('Invalid QR Code: Missing parameters');
+      alert('Invalid QR code');
     }
   } catch (e) {
     scanCooldown = false;
-    alert('Invalid QR Code format');
+    alert('Invalid QR code');
   }
 }
 
 async function fetchItemData(spreadsheetId, row) {
-  showLoader('Fetching data...');
+  showLoader('Loading...');
   
   try {
     const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItem&id=${spreadsheetId}&row=${row}`;
@@ -1007,7 +1078,7 @@ async function fetchItemData(spreadsheetId, row) {
       const qtyLocale = (localQtyMap[row] !== undefined) ? localQtyMap[row] : Number(result.data.qtyAvailable);
 
       if (currentMode === 'logout' && qtyLocale <= 0) {
-        alert('No quantity available for this reference');
+        alert('No quantity available');
         return;
       }
 
@@ -1016,8 +1087,8 @@ async function fetchItemData(spreadsheetId, row) {
     }
   } catch (error) {
     hideLoader();
-    console.error('Fetch error:', error);
-    alert('Connection error. Please check your internet.');
+    console.error('Error:', error);
+    alert('Connection error');
   }
 }
 
@@ -1062,7 +1133,7 @@ function updateItemsList() {
   const itemsList = document.getElementById('items-list');
   
   if (scannedItems.length === 0) {
-    itemsList.innerHTML = '<p class="empty-state">No items scanned yet</p>';
+    itemsList.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><p class="empty-text">No items scanned yet</p></div>';
     return;
   }
   
@@ -1073,18 +1144,18 @@ function updateItemsList() {
       : '<div class="item-image"></div>';
     
     return `
-      <div class="item-card">
+      <div class="item">
         <div class="item-number">${index + 1}</div>
         ${imageHtml}
-        <div class="item-details">
-          <strong>Reference</strong>
-          <p>${item.reference}</p>
+        <div class="item-info">
+          <div class="item-label">Reference</div>
+          <div class="item-value">${item.reference}</div>
           <div class="item-badges">
             <span class="badge badge-total">Total: ${item.totalQty}</span>
-            <span class="badge badge-avail ${isZero ? 'zero' : ''}">Available: ${item.qtyAvailable}</span>
+            <span class="badge badge-available ${isZero ? 'zero' : ''}">Avail: ${item.qtyAvailable}</span>
           </div>
         </div>
-        <button class="item-remove" onclick="removeItem(${item.id})">×</button>
+        <button class="btn-remove" onclick="removeItem(${item.id})">×</button>
       </div>
     `;
   }).join('');
@@ -1102,7 +1173,7 @@ function removeItem(itemId) {
 
 async function saveAll() {
   if (scannedItems.length === 0) {
-    alert('No items to save!');
+    alert('No items to save');
     return;
   }
   
@@ -1137,18 +1208,18 @@ async function saveAll() {
     }
     
     hideLoader();
-    alert(`Success! ${scannedItems.length} items saved.`);
+    alert(`Success! ${scannedItems.length} items saved`);
     clearAll(true);
   } catch (error) {
     hideLoader();
-    console.error('Save error:', error);
-    alert('Connection error. Please try again.');
+    console.error('Error:', error);
+    alert('Connection error');
   }
 }
 
 function clearAll(skipConfirm = false) {
   if (scannedItems.length === 0) return;
-  if (!skipConfirm && !confirm('Are you sure you want to clear all items?')) return;
+  if (!skipConfirm && !confirm('Clear all items?')) return;
   
   scannedItems = [];
   localQtyMap = {};
@@ -1168,8 +1239,8 @@ function startDetailsScan() {
   ).then(() => {
     isDetailsScanning = true;
   }).catch(err => {
-    console.error('Details scanner error:', err);
-    alert('Camera access error. Please allow camera permissions.');
+    console.error('Scanner error:', err);
+    alert('Camera error');
   });
 }
 
@@ -1180,8 +1251,6 @@ function stopDetailsScan() {
 }
 
 async function onDetailsScan(decodedText) {
-  console.log('Details QR Scanned:', decodedText);
-  
   try {
     const url = new URL(decodedText);
     const params = new URLSearchParams(url.search);
@@ -1192,15 +1261,15 @@ async function onDetailsScan(decodedText) {
       if (navigator.vibrate) navigator.vibrate(200);
       await fetchArchivingDetails(spreadsheetId, row);
     } else {
-      alert('Invalid QR Code: Missing parameters');
+      alert('Invalid QR code');
     }
   } catch (e) {
-    alert('Invalid QR Code format');
+    alert('Invalid QR code');
   }
 }
 
 async function fetchArchivingDetails(spreadsheetId, row) {
-  showLoader('Loading details...');
+  showLoader('Loading...');
   
   try {
     const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getArchivingDetails&id=${spreadsheetId}&row=${row}`;
@@ -1218,8 +1287,8 @@ async function fetchArchivingDetails(spreadsheetId, row) {
     }
   } catch (error) {
     hideLoader();
-    console.error('Fetch details error:', error);
-    alert('Connection error. Please check your internet.');
+    console.error('Error:', error);
+    alert('Connection error');
   }
 }
 
@@ -1251,7 +1320,7 @@ function displayArchivingDetails(data) {
       tbody.appendChild(row);
     });
   } else {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No archiving history found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">No history found</td></tr>';
   }
   
   document.getElementById('details-content').style.display = 'block';
@@ -1264,7 +1333,7 @@ function showLoader(message = 'Loading...') {
     loader.id = 'loader';
     loader.className = 'loader-overlay';
     loader.innerHTML = `
-      <div class="loader-content">
+      <div class="loader-card">
         <div class="loader-spinner"></div>
         <div class="loader-text">${message}</div>
       </div>
