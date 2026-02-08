@@ -644,18 +644,11 @@ tr:hover {
 }
 
 /* SELECTION PDF SUCCESS SCREEN */
-.pdf-container {
-  padding: 40px 24px;
-  text-align: center;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .pdf-success {
   max-width: 400px;
-  margin: 0 auto;
+  margin: 60px auto 0;
+  text-align: center;
+  padding: 0 24px;
 }
 
 .success-icon {
@@ -707,6 +700,7 @@ tr:hover {
   transform: scale(0.98);
   background: var(--gray-100);
 }
+
 
 /* EMPTY STATE */
 .empty {
@@ -957,22 +951,27 @@ tr:hover {
 <!-- SELECTION FORM SCREEN -->
 <!-- ========================================= -->
 <div id="selection-form-screen" class="screen">
-  <div class="form-container">
-    <button class="back-btn" onclick="goBackToHomeFromSelection()">←</button>
-    
-    <h2 class="form-title">Selection</h2>
-
-    <div class="form-group">
-      <label for="customer-input">Customer Name</label>
-      <input type="text" id="customer-input" placeholder="Enter customer name">
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goBackToHomeFromSelection()">←</button>
+      <div class="nav-title">Selection</div>
     </div>
 
-    <div class="form-group">
-      <label for="selection-date-input">Date</label>
-      <input type="text" id="selection-date-input" disabled>
-    </div>
+    <div class="form-wrapper">
+      <h2 class="form-title">Customer Information</h2>
 
-    <button class="btn-advance" onclick="advanceToSelectionScan()">Continue</button>
+      <div class="form-group">
+        <label class="form-label">Customer Name</label>
+        <input type="text" id="customer-input" class="form-input" placeholder="Enter customer name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="text" id="selection-date-input" class="form-input" disabled>
+      </div>
+
+      <button class="btn-submit" onclick="advanceToSelectionScan()">Continue</button>
+    </div>
   </div>
 </div>
 
@@ -980,24 +979,31 @@ tr:hover {
 <!-- SELECTION SCAN SCREEN -->
 <!-- ========================================= -->
 <div id="selection-scan-screen" class="screen">
-  <div class="scan-container">
-    <button class="back-btn" onclick="goBackToSelectionForm()">←</button>
-    
-    <div class="mode-badge" style="background: #dbeafe; color: #3b82f6;">Selection</div>
-    
-    <h2 class="scan-title">Scan Items</h2>
-
-    <div id="selection-qr-reader"></div>
-
-    <div class="scan-info">
-      <p class="scan-info-text">Scan items for PDF generation</p>
-      <p class="scan-count">Scanned: <span id="selection-count">0</span> items</p>
+  <div class="container">
+    <div class="top-bar">
+      <div class="status-badge" style="background: #dbeafe; color: #3b82f6; border: 2px solid #3b82f6;">
+        <span class="status-dot"></span>
+        <span>Selection</span>
+      </div>
+      <button class="btn-home" onclick="goHome()">Home</button>
     </div>
 
-    <div class="scanned-items">
-      <h3>Selected Items</h3>
-      <div id="selection-items-list" class="items-list">
-        <div class="empty"><div class="empty-icon">📦</div><p class="empty-text">No items scanned yet</p></div>
+    <div class="scanner-box">
+      <div id="selection-qr-reader"></div>
+      <div class="scan-info">
+        <p class="scan-text">Scan items for PDF generation</p>
+        <p class="scan-count">Scanned: <span id="selection-count">0</span></p>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Selected Items</div>
+    </div>
+
+    <div id="selection-items-list" class="items-list">
+      <div class="empty">
+        <div class="empty-icon">📦</div>
+        <p class="empty-text">No items scanned yet</p>
       </div>
     </div>
 
@@ -1012,13 +1018,13 @@ tr:hover {
 <!-- SELECTION PDF READY SCREEN -->
 <!-- ========================================= -->
 <div id="selection-pdf-screen" class="screen">
-  <div class="pdf-container">
+  <div class="container" style="padding-top: 80px;">
     <div class="pdf-success">
       <div class="success-icon">✓</div>
       <h2 class="success-title">PDF Generated!</h2>
       <p class="success-text">Your selection has been saved and PDF is ready</p>
       
-      <button class="btn-large" onclick="openSelectionPDF()">PDF Ready - Open</button>
+      <button class="btn-submit" onclick="openSelectionPDF()">PDF Ready - Open</button>
       <button class="btn-secondary" onclick="goBackToHomeFromPDF()">Back to Home</button>
     </div>
   </div>
@@ -1717,8 +1723,11 @@ async function saveToSelectionSheet() {
       date: selectionFormData.date,
       reference: item.reference,
       sNumber: item.sNumber,
-      filename: item.filename || '',
-      zoomFilename: '',
+      season: item.season || '',
+      description: item.description || '',
+      fabricCode: item.fabricCode || '',
+      composition: item.composition || '',
+      collection: item.collection || '',
       spreadsheetId: item.spreadsheetId,
       sourceRow: item.sourceRow
     }));
