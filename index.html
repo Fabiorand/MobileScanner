@@ -991,6 +991,8 @@ tr:hover {
                 <th>Date</th>
                 <th>Check Out</th>
                 <th>Check In</th>
+                <th>Destination</th>
+                <th>Qty Log</th>
                 <th>Qty Avail</th>
                 <th>Total</th>
               </tr>
@@ -1584,13 +1586,15 @@ function displayArchivingDetails(data) {
         <td>${entry.date || 'N/A'}</td>
         <td>${entry.checkOutName || '-'}</td>
         <td>${entry.checkInName || '-'}</td>
+        <td>${entry.destination || '-'}</td>
+        <td>${entry.qtyLog || 1}</td>
         <td>${entry.qtyAvailable || 0}</td>
         <td>${entry.totalQty || 0}</td>
       `;
       tbody.appendChild(row);
     });
   } else {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">No history for today</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gray-500)">No history for today</td></tr>';
   }
   
   document.getElementById('details-content').style.display = 'block';
