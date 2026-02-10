@@ -45,6 +45,7 @@ body {
 .screen {
   display: none;
   min-height: 100vh;
+  padding-bottom: 100px;
 }
 
 .screen.active {
@@ -58,19 +59,12 @@ body {
   min-height: 100vh;
 }
 
-/* HEADER */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 40px;
   padding-top: 20px;
-}
-
-.logo {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
 }
 
 .avatar {
@@ -87,7 +81,6 @@ body {
   letter-spacing: 1px;
 }
 
-/* HOME SCREEN */
 .hero {
   text-align: center;
   margin-bottom: 48px;
@@ -133,7 +126,6 @@ body {
   background: #000000;
 }
 
-/* MODE CHOICE */
 .nav-header {
   display: flex;
   align-items: center;
@@ -223,7 +215,6 @@ body {
   line-height: 1.5;
 }
 
-/* FORM */
 .form-wrapper {
   background: var(--white);
   border: 2px solid var(--gray-200);
@@ -295,7 +286,6 @@ body {
   opacity: 0.9;
 }
 
-/* SCAN SCREEN */
 .top-bar {
   display: flex;
   align-items: center;
@@ -400,7 +390,6 @@ body {
   color: var(--black);
 }
 
-/* ITEMS */
 .section-header {
   display: flex;
   align-items: center;
@@ -542,7 +531,6 @@ body {
   transform: scale(0.9);
 }
 
-/* ACTIONS */
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -575,12 +563,14 @@ body {
   border: 2px solid var(--gray-200);
 }
 
-/* DETAILS */
 .product-image {
   width: 100%;
+  max-height: 400px;
   border-radius: 20px;
   margin-bottom: 24px;
   border: 2px solid var(--gray-200);
+  object-fit: contain;
+  background: var(--gray-50);
 }
 
 .details-card {
@@ -618,9 +608,9 @@ table {
 
 th {
   background: var(--gray-50);
-  padding: 12px 10px;
+  padding: 12px 8px;
   text-align: left;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--gray-600);
   text-transform: uppercase;
@@ -629,9 +619,9 @@ th {
 }
 
 td {
-  padding: 14px 10px;
+  padding: 14px 8px;
   border-bottom: 1px solid var(--gray-200);
-  font-size: 15px;
+  font-size: 14px;
   color: var(--black);
 }
 
@@ -643,66 +633,6 @@ tr:hover {
   background: var(--gray-50);
 }
 
-/* SELECTION PDF SUCCESS SCREEN */
-.pdf-success {
-  max-width: 400px;
-  margin: 60px auto 0;
-  text-align: center;
-  padding: 0 24px;
-}
-
-.success-icon {
-  width: 80px;
-  height: 80px;
-  background: var(--green);
-  color: var(--white);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  font-weight: 700;
-  margin: 0 auto 24px;
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
-}
-
-.success-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--black);
-  letter-spacing: -0.5px;
-}
-
-.success-text {
-  font-size: 16px;
-  color: var(--gray-600);
-  margin-bottom: 32px;
-  line-height: 1.6;
-}
-
-.btn-secondary {
-  width: 100%;
-  padding: 16px;
-  margin-top: 12px;
-  border-radius: 16px;
-  border: 2px solid var(--gray-300);
-  background: var(--white);
-  color: var(--black);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-}
-
-.btn-secondary:active {
-  transform: scale(0.98);
-  background: var(--gray-100);
-}
-
-
-/* EMPTY STATE */
 .empty {
   text-align: center;
   padding: 60px 24px;
@@ -719,7 +649,6 @@ tr:hover {
   color: var(--gray-500);
 }
 
-/* LOADER */
 .loader-overlay {
   position: fixed;
   top: 0;
@@ -762,7 +691,6 @@ tr:hover {
   color: var(--black);
 }
 
-/* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -779,10 +707,6 @@ tr:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray-400);
 }
-
-/* ========================================= */
-/* BOTTOM NAVIGATION BAR */
-/* ========================================= */
 
 .bottom-nav {
   position: fixed;
@@ -850,12 +774,6 @@ tr:hover {
   font-weight: 600;
 }
 
-/* Padding bottom pour tous les screens pour éviter que le contenu soit caché par le bottom nav */
-.screen {
-  padding-bottom: 100px;
-}
-
-/* Responsive pour petits écrans */
 @media (max-width: 375px) {
   .bottom-nav {
     bottom: 15px;
@@ -873,6 +791,70 @@ tr:hover {
   }
 }
 
+.pdf-wrapper {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.pdf-icon {
+  font-size: 96px;
+  margin-bottom: 24px;
+}
+
+.pdf-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.pdf-count {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--blue);
+  margin: 20px 0;
+}
+
+.pdf-message {
+  font-size: 16px;
+  color: var(--gray-600);
+  margin-bottom: 40px;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 16px;
+  margin-top: 12px;
+  border-radius: 16px;
+  border: 2px solid var(--gray-300);
+  background: var(--white);
+  color: var(--black);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+  background: var(--gray-100);
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--green);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+}
 </style>
 </head>
 
@@ -882,10 +864,8 @@ tr:hover {
 <div id="home-screen" class="screen active">
   <div class="container">
     <div class="header">
-      
       <div class="avatar">TC</div>
     </div>
-
     <div class="hero">
       <h1 class="hero-title">Inventory Management</h1>
       <p class="hero-subtitle">Scan QR codes to manage your collection with precision and ease</p>
@@ -902,20 +882,16 @@ tr:hover {
       <button class="btn-back" onclick="goHome()">←</button>
       <div class="nav-title">Select Mode</div>
     </div>
-
     <div class="section-label">Choose Action</div>
-    
     <div class="cards-grid">
       <div class="card logout" onclick="goToForm('logout')">
-        <div class="card-title">Log Out</div>
+        <div class="card-title">Check Out</div>
         <div class="card-desc">Remove items from inventory</div>
       </div>
-
       <div class="card login" onclick="goToForm('login')">
-        <div class="card-title">Log In</div>
+        <div class="card-title">Check In</div>
         <div class="card-desc">Return items to inventory</div>
       </div>
-
       <div class="card details" onclick="goToDetails()">
         <div class="card-title">Details</div>
         <div class="card-desc">View product information</div>
@@ -929,12 +905,10 @@ tr:hover {
   <div class="container">
     <div class="nav-header">
       <button class="btn-back" onclick="goBackToMode()">←</button>
-      <div class="nav-title" id="form-title">Log Out</div>
+      <div class="nav-title" id="form-title">Check Out</div>
     </div>
-
     <div class="form-wrapper">
       <h2 class="form-title">User Information</h2>
-
       <div class="form-group">
         <label class="form-label">Name</label>
         <input type="text" id="name-input" class="form-input" placeholder="Enter your name">
@@ -942,21 +916,18 @@ tr:hover {
           <option value="">Select a name...</option>
         </select>
       </div>
-
       <div class="form-group" id="location-group">
-        <label class="form-label">Location</label>
-        <input type="text" id="location-input" class="form-input" placeholder="Enter location">
+        <label class="form-label">Destination</label>
+        <input type="text" id="location-input" class="form-input" placeholder="Enter destination">
       </div>
-
       <div class="form-group">
         <label class="form-label">Date</label>
         <input type="text" id="date-input" class="form-input" disabled>
       </div>
-
       <button class="btn-submit" onclick="advanceToScan()">Continue</button>
     </div>
   </div>
-</div>
+</div>  
 
 <!-- SCAN SCREEN -->
 <div id="scan-screen" class="screen">
@@ -964,11 +935,10 @@ tr:hover {
     <div class="top-bar">
       <div id="mode-badge" class="status-badge logout">
         <span class="status-dot"></span>
-        <span>Log Out</span>
+        <span>Check Out</span>
       </div>
       <button class="btn-home" onclick="goHome()">Home</button>
     </div>
-
     <div class="scanner-box">
       <div id="qr-reader"></div>
       <div class="scan-info">
@@ -976,18 +946,15 @@ tr:hover {
         <p class="scan-count">Scanned: <span id="count">0</span></p>
       </div>
     </div>
-
     <div class="section-header">
       <div class="section-title">Scanned Items</div>
     </div>
-
     <div id="items-list" class="items-list">
       <div class="empty">
         <div class="empty-icon">📦</div>
         <p class="empty-text">No items scanned yet</p>
       </div>
     </div>
-
     <div class="actions">
       <button class="btn-action btn-save" onclick="saveAll()">Save All</button>
       <button class="btn-action btn-clear" onclick="clearAll()">Clear</button>
@@ -1002,34 +969,30 @@ tr:hover {
       <div class="nav-title">Product Details</div>
       <button class="btn-home" onclick="goHome()">Home</button>
     </div>
-
     <div class="scanner-box">
       <div id="details-qr-reader"></div>
       <div class="scan-info">
         <p class="scan-text">Scan QR code to view details</p>
       </div>
     </div>
-
     <div id="details-content" style="display:none;">
       <img id="product-image" class="product-image" alt="Product" />
-      
       <div class="details-card">
         <div class="details-header">
-          <h3 class="details-title">Archiving History</h3>
+          <h3 class="details-title">Today's History</h3>
           <p class="product-ref">
             <span id="product-ref"></span> - <span id="product-snum"></span>
           </p>
         </div>
-        
         <div style="overflow-x: auto;">
           <table>
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Log Out</th>
-                <th>Log In</th>
+                <th>Check Out</th>
+                <th>Check In</th>
+                <th>Qty Avail</th>
                 <th>Total</th>
-                <th>Avail</th>
               </tr>
             </thead>
             <tbody id="archiving-tbody">
@@ -1041,102 +1004,83 @@ tr:hover {
   </div>
 </div>
 
-<!-- ========================================= -->
-<!-- SELECTION FORM SCREEN -->
-<!-- ========================================= -->
+<!-- SELECTION SCREENS - INCHANGÉES -->
 <div id="selection-form-screen" class="screen">
   <div class="container">
     <div class="nav-header">
       <button class="btn-back" onclick="goBackToHomeFromSelection()">←</button>
       <div class="nav-title">Selection</div>
     </div>
-
     <div class="form-wrapper">
       <h2 class="form-title">Customer Information</h2>
-
       <div class="form-group">
         <label class="form-label">Customer Name</label>
         <input type="text" id="customer-input" class="form-input" placeholder="Enter customer name">
       </div>
-
       <div class="form-group">
         <label class="form-label">Date</label>
         <input type="text" id="selection-date-input" class="form-input" disabled>
       </div>
-
       <button class="btn-submit" onclick="advanceToSelectionScan()">Continue</button>
     </div>
   </div>
 </div>
 
-<!-- ========================================= -->
-<!-- SELECTION SCAN SCREEN -->
-<!-- ========================================= -->
 <div id="selection-scan-screen" class="screen">
   <div class="container">
     <div class="top-bar">
-      <div class="status-badge" style="background: #dbeafe; color: #3b82f6; border: 2px solid #3b82f6;">
+      <div class="status-badge" style="background: var(--blue-light); color: var(--blue); border-color: var(--blue);">
         <span class="status-dot"></span>
-        <span>Selection</span>
+        <span>Scanning</span>
       </div>
-      <button class="btn-home" onclick="goHome()">Home</button>
+      <button class="btn-home" onclick="goBackToSelectionForm()">Back</button>
     </div>
-
-    <div class="scanner-box">
-      <div id="selection-qr-reader"></div>
-      <div class="scan-info">
-        <p class="scan-text">Scan items for PDF generation</p>
-        <p class="scan-count">Scanned: <span id="selection-count">0</span></p>
-      </div>
+    <div class="scan-wrapper" style="position: relative;">
+      <div class="selection-count-badge" id="selection-count" style="position:absolute;top:10px;right:10px;background:var(--black);color:var(--white);padding:8px 16px;border-radius:20px;font-weight:700;z-index:10;">0</div>
+      <div id="selection-qr-reader" style="width:100%;height:300px;border-radius:16px;overflow:hidden;margin-bottom:20px;"></div>
     </div>
-
-    <div class="section-header">
-      <div class="section-title">Selected Items</div>
-    </div>
-
-    <div id="selection-items-list" class="items-list">
+    <div class="items-list" id="selection-items-list">
       <div class="empty">
         <div class="empty-icon">📦</div>
         <p class="empty-text">No items scanned yet</p>
       </div>
     </div>
-
-    <div class="actions">
-      <button class="btn-action btn-success" onclick="generateSelectionPDF()">Generate PDF</button>
-      <button class="btn-action btn-clear" onclick="clearSelectionItems()">Clear All</button>
+    <div class="action-buttons" style="display:grid;gap:12px;margin-top:24px;">
+      <button class="btn-large" onclick="generateSelectionPDF()">
+        <span>📄 Generate PDF & Save</span>
+      </button>
+      <button class="btn-secondary" onclick="clearSelectionItems()">
+        <span>Clear All</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ========================================= -->
-<!-- SELECTION PDF READY SCREEN -->
-<!-- ========================================= -->
 <div id="selection-pdf-screen" class="screen">
-  <div class="container" style="padding-top: 80px;">
-    <div class="pdf-success">
-      <div class="success-icon">✓</div>
-      <h2 class="success-title">PDF Generated!</h2>
-      <p class="success-text">Your selection has been saved and PDF is ready</p>
-      
-      <button class="btn-submit" onclick="openSelectionPDF()">PDF Ready - Open</button>
-      <button class="btn-secondary" onclick="goBackToHomeFromPDF()">Back to Home</button>
+  <div class="container">
+    <div class="pdf-wrapper">
+      <div class="pdf-icon">📄</div>
+      <h2 class="pdf-title">PDF Created!</h2>
+      <div class="pdf-count" id="pdf-item-count">0</div>
+      <p class="pdf-message">items processed with images</p>
+      <button class="btn-large" onclick="openSelectionPDF()">
+        <span>👁️ Open PDF</span>
+      </button>
+      <button class="btn-large btn-selection" onclick="goBackToHomeFromPDF()" style="margin-top: 16px; background: var(--gray-700);">
+        Back to Home
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ========================================= -->
-<!-- BOTTOM NAVIGATION BAR -->
-<!-- ========================================= -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <!-- BOUTON BACK -->
   <button class="nav-btn" id="nav-back" onclick="handleBackNav()">
     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M19 12H5M12 19l-7-7 7-7"/>
     </svg>
     <span class="nav-label">Back</span>
   </button>
-
-  <!-- BOUTON HOME -->
   <button class="nav-btn active" id="nav-home" onclick="handleHomeNav()">
     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -1144,8 +1088,6 @@ tr:hover {
     </svg>
     <span class="nav-label">Home</span>
   </button>
-
-  <!-- BOUTON SELECTION -->
   <button class="nav-btn" id="nav-selection" onclick="handleSelectionNav()">
     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -1156,8 +1098,6 @@ tr:hover {
     </svg>
     <span class="nav-label">Selection</span>
   </button>
-
-  <!-- BOUTON ARCHIVING -->
   <button class="nav-btn" id="nav-archiving" onclick="handleArchivingNav()">
     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
@@ -1195,25 +1135,34 @@ function goHome() {
   localQtyMap = {};
   updateItemsList();
   updateCount();
+  updateBottomNav('home');
 }
 
 function goToModeChoice() {
+  stopArchivingScan();
+  stopDetailsScan();
+  stopSelectionScan();
+  selectionItems = [];
+  selectionFormData = { customer: '', date: '' };
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("mode-choice-screen").classList.add("active");
+  updateBottomNav('archiving');
 }
 
 function goToSelection() {
+  stopArchivingScan();
+  stopDetailsScan();
+  stopSelectionScan();
+  scannedItems = [];
+  localQtyMap = {};
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("selection-form-screen").classList.add("active");
-  
-  // Auto-fill date
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
   document.getElementById('selection-date-input').value = formattedDate;
   selectionFormData.date = formattedDate;
-  
-  // Clear customer input
   document.getElementById('customer-input').value = '';
+  updateBottomNav('selection');
 }
 
 function goToForm(mode) {
@@ -1222,12 +1171,12 @@ function goToForm(mode) {
   document.getElementById("form-screen").classList.add("active");
   
   if (mode === 'logout') {
-    document.getElementById('form-title').textContent = 'Log Out';
+    document.getElementById('form-title').textContent = 'Check Out';
     document.getElementById('location-group').style.display = 'block';
     document.getElementById('name-input').style.display = 'block';
     document.getElementById('name-select').style.display = 'none';
   } else {
-    document.getElementById('form-title').textContent = 'Log In';
+    document.getElementById('form-title').textContent = 'Check In';
     document.getElementById('location-group').style.display = 'none';
     document.getElementById('name-input').style.display = 'none';
     document.getElementById('name-select').style.display = 'block';
@@ -1278,7 +1227,7 @@ async function loadLoggedOutNames() {
       });
       
       if (result.names.length === 0) {
-        alert('No logged out names found');
+        alert('No checked out names found');
       }
     }
   } catch (error) {
@@ -1302,7 +1251,7 @@ function advanceToScan() {
   }
   
   if (currentMode === 'logout' && !location) {
-    alert('Please enter location');
+    alert('Please enter destination');
     return;
   }
   
@@ -1313,14 +1262,15 @@ function advanceToScan() {
   
   const badge = document.getElementById('mode-badge');
   if (currentMode === 'logout') {
-    badge.innerHTML = '<span class="status-dot"></span><span>Log Out</span>';
+    badge.innerHTML = '<span class="status-dot"></span><span>Check Out</span>';
     badge.className = 'status-badge logout';
   } else {
-    badge.innerHTML = '<span class="status-dot"></span><span>Log In</span>';
+    badge.innerHTML = '<span class="status-dot"></span><span>Check In</span>';
     badge.className = 'status-badge login';
   }
   
   startArchivingScan();
+  updateBottomNav('archiving');
 }
 
 function startArchivingScan() {
@@ -1451,12 +1401,12 @@ function updateItemsList() {
     const isZero = item.qtyAvailable <= 0;
     const imageHtml = item.imageUrl 
       ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
-      : '<div class="item-image" style="background: var(--gray-200);"></div>';
+      : '<div class="item-image" style="background: var(--gray-200); display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--gray-500);">No img</div>';
     
     return `
       <div class="item">
         <div class="item-number">${index + 1}</div>
-        
+        ${imageHtml}
         <div class="item-info">
           <div class="item-ref-group">
             <div class="item-label">Reference</div>
@@ -1473,7 +1423,7 @@ function updateItemsList() {
         </div>
         <button class="btn-remove" onclick="removeItem(${item.id})">×</button>
       </div>
-    `${imageHtml};
+    `;
   }).join('');
 }
 
@@ -1482,6 +1432,10 @@ function updateCount() {
 }
 
 function removeItem(itemId) {
+  const removedItem = scannedItems.find(item => item.id === itemId);
+  if (removedItem) {
+    delete localQtyMap[removedItem.sourceRow];
+  }
   scannedItems = scannedItems.filter(item => item.id !== itemId);
   updateItemsList();
   updateCount();
@@ -1628,15 +1582,15 @@ function displayArchivingDetails(data) {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${entry.date || 'N/A'}</td>
-        <td>${entry.logoutName || '-'}</td>
-        <td>${entry.loginName || '-'}</td>
-        <td>${entry.totalQty || 0}</td>
+        <td>${entry.checkOutName || '-'}</td>
+        <td>${entry.checkInName || '-'}</td>
         <td>${entry.qtyAvailable || 0}</td>
+        <td>${entry.totalQty || 0}</td>
       `;
       tbody.appendChild(row);
     });
   } else {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">No history found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">No history for today</td></tr>';
   }
   
   document.getElementById('details-content').style.display = 'block';
@@ -1663,16 +1617,14 @@ function hideLoader() {
   if (loader) loader.remove();
 }
 
-// ========================================
-// SELECTION FUNCTIONS
-// ========================================
-
+// SELECTION FUNCTIONS - INCHANGÉES
 function goBackToHomeFromSelection() {
   stopSelectionScan();
   document.getElementById("selection-form-screen").classList.remove("active");
   document.getElementById("home-screen").classList.add("active");
   selectionItems = [];
   selectionFormData = { customer: '', date: '' };
+  updateBottomNav('home');
 }
 
 function advanceToSelectionScan() {
@@ -1682,12 +1634,12 @@ function advanceToSelectionScan() {
     alert('Please enter customer name');
     return;
   }
- const isAllCaps = /^[A-Z0-9\s.,;:!?'"\-()\/]+$/.test(customerName);
-
-if (!isAllCaps) {
-  alert("❌ ERREUR : Le nom du customer doit être entièrement en CAPITALES.");
-  return; // Bloque la navigation
-}
+  
+  const isAllCaps = /^[A-Z0-9\s.,;:!?'"\-()\/]+$/.test(customerName);
+  if (!isAllCaps) {
+    alert("❌ ERROR: Customer name must be in CAPITALS.");
+    return;
+  }
   
   selectionFormData.customer = customerName;
   
@@ -1695,6 +1647,7 @@ if (!isAllCaps) {
   document.getElementById("selection-scan-screen").classList.add("active");
   
   initSelectionScanner();
+  updateBottomNav('selection');
 }
 
 function goBackToSelectionForm() {
@@ -1718,31 +1671,13 @@ function initSelectionScanner() {
     console.error('Scanner error:', err);
     alert('Camera error');
   });
-  // if (selectionScanner) {
-  //   selectionScanner.clear();
-  // }
-  
-  // selectionScanner = new Html5QrcodeScanner("selection-qr-reader", {
-  //   fps: 10,
-  //   qrbox: { width: 250, height: 250 },
-  //   rememberLastUsedCamera: true
-  // });
-  
-  // selectionScanner.render(onSelectionScanSuccess, onSelectionScanError);
-  // isSelectionScanning = true;
 }
+
 function stopSelectionScan() {
   if (selectionScanner && isSelectionScanning) {
     selectionScanner.stop().then(() => { isSelectionScanning = false; }).catch(() => { isSelectionScanning = false; });
   }
 }
-
-// function stopSelectionScan() {
-//   if (selectionScanner && isSelectionScanning) {
-//     selectionScanner.clear();
-//     isSelectionScanning = false;
-//   }
-// }
 
 async function onSelectionScanSuccess(decodedText) {
   if (scanCooldown) return;
@@ -1781,10 +1716,6 @@ async function onSelectionScanSuccess(decodedText) {
     console.error('Error:', error);
     alert('Connection error');
   }
-}
-
-function onSelectionScanError(error) {
-  // Ignore
 }
 
 function updateSelectionItemsList() {
@@ -1866,6 +1797,7 @@ async function generateSelectionPDF() {
     
     if (pdfResult.success) {
       selectionPDFUrl = pdfResult.pdfUrl;
+      document.getElementById('pdf-item-count').textContent = selectionItems.length;
       stopSelectionScan();
       document.getElementById("selection-scan-screen").classList.remove("active");
       document.getElementById("selection-pdf-screen").classList.add("active");
@@ -1895,14 +1827,10 @@ async function saveToSelectionSheet() {
       sourceRow: item.sourceRow
     }));
     
-    const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=saveSelection`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        items: JSON.stringify(itemsToSave)
-      })
-    });
+    const itemsJson = JSON.stringify(itemsToSave);
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=saveSelection&items=${encodeURIComponent(itemsJson)}`;
     
+    const response = await fetch(url);
     const result = await response.json();
     return result;
   } catch (error) {
@@ -1948,17 +1876,10 @@ function goBackToHomeFromPDF() {
   updateBottomNav('home');
 }
 
-// ========================================
-// BOTTOM NAVIGATION BAR FUNCTIONS
-// ========================================
-
-let navigationHistory = ['home'];
-
+// BOTTOM NAV
 function updateBottomNav(activeScreen) {
-  // Retirer l'état actif de tous les boutons
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
   
-  // Activer le bouton correspondant
   if (activeScreen === 'home') {
     document.getElementById('nav-home').classList.add('active');
   } else if (activeScreen.includes('selection')) {
@@ -1969,7 +1890,6 @@ function updateBottomNav(activeScreen) {
 }
 
 function handleBackNav() {
-  // Vérifier quel écran est actif et revenir en arrière
   const activeScreen = document.querySelector('.screen.active');
   
   if (!activeScreen) {
@@ -1979,7 +1899,6 @@ function handleBackNav() {
   
   const screenId = activeScreen.id;
   
-  // Navigation intelligente selon l'écran actuel
   if (screenId === 'home-screen') {
     alert('You are already on the home screen');
   } else if (screenId === 'selection-form-screen') {
@@ -1995,123 +1914,50 @@ function handleBackNav() {
   } else if (screenId === 'scan-screen') {
     goHome();
   } else if (screenId === 'details-screen') {
-    goBackToModeFromDetails();
+    goHome();
   } else {
     goHome();
   }
 }
 
 function handleHomeNav() {
-  // Arrêter tous les scanners
   stopArchivingScan();
   stopDetailsScan();
   stopSelectionScan();
-  
-  // Réinitialiser les données
   scannedItems = [];
   selectionItems = [];
   localQtyMap = {};
-  
-  // Aller à Home
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('home-screen').classList.add('active');
-  
   updateBottomNav('home');
 }
 
 function handleSelectionNav() {
-  // Arrêter tous les scanners
   stopArchivingScan();
   stopDetailsScan();
   stopSelectionScan();
-  
-  // Réinitialiser les données Archiving
   scannedItems = [];
   localQtyMap = {};
-  
-  // Aller directement au formulaire Selection
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('selection-form-screen').classList.add('active');
-  
-  // Auto-fill date
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
   document.getElementById('selection-date-input').value = formattedDate;
   selectionFormData.date = formattedDate;
-  
-  // Clear customer input
   document.getElementById('customer-input').value = '';
-  
   updateBottomNav('selection');
 }
 
 function handleArchivingNav() {
-  // Arrêter tous les scanners
   stopArchivingScan();
   stopDetailsScan();
   stopSelectionScan();
-  
-  // Réinitialiser les données Selection
   selectionItems = [];
   selectionFormData = { customer: '', date: '' };
-  
-  // Aller directement au choix de mode Archiving
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('mode-choice-screen').classList.add('active');
-  
   updateBottomNav('archiving');
 }
-
-// Mettre à jour les fonctions existantes pour gérer le bottom nav
-const originalGoHome = goHome;
-goHome = function() {
-  originalGoHome();
-  updateBottomNav('home');
-};
-
-const originalGoToSelection = goToSelection;
-goToSelection = function() {
-  // Arrêter tous les scanners
-  stopArchivingScan();
-  stopDetailsScan();
-  stopSelectionScan();
-  
-  // Réinitialiser Archiving
-  scannedItems = [];
-  localQtyMap = {};
-  
-  // Appeler la fonction originale
-  originalGoToSelection();
-  updateBottomNav('selection');
-};
-
-const originalGoToModeChoice = goToModeChoice;
-goToModeChoice = function() {
-  // Arrêter tous les scanners
-  stopArchivingScan();
-  stopDetailsScan();
-  stopSelectionScan();
-  
-  // Réinitialiser Selection
-  selectionItems = [];
-  selectionFormData = { customer: '', date: '' };
-  
-  // Appeler la fonction originale
-  originalGoToModeChoice();
-  updateBottomNav('archiving');
-};
-
-const originalAdvanceToSelectionScan = advanceToSelectionScan;
-advanceToSelectionScan = function() {
-  originalAdvanceToSelectionScan();
-  updateBottomNav('selection');
-};
-
-const originalAdvanceToScan = advanceToScan;
-advanceToScan = function() {
-  originalAdvanceToScan();
-  updateBottomNav('archiving');
-};
 
 </script>
 
