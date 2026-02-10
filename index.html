@@ -45,7 +45,6 @@ body {
 .screen {
   display: none;
   min-height: 100vh;
-  padding-bottom: 100px;
 }
 
 .screen.active {
@@ -368,8 +367,7 @@ body {
 }
 
 #qr-reader,
-#details-qr-reader,
-#selection-qr-reader {
+#details-qr-reader {
   width: 100%;
   max-width: 100%;
   height: 300px;
@@ -380,8 +378,7 @@ body {
 }
 
 #qr-reader video,
-#details-qr-reader video,
-#selection-qr-reader video {
+#details-qr-reader video {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
@@ -578,11 +575,6 @@ body {
   border: 2px solid var(--gray-200);
 }
 
-.btn-success {
-  background: var(--green);
-  color: var(--white);
-}
-
 /* DETAILS */
 .product-image {
   width: 100%;
@@ -708,6 +700,7 @@ tr:hover {
   transform: scale(0.98);
   background: var(--gray-100);
 }
+
 
 /* EMPTY STATE */
 .empty {
@@ -857,6 +850,11 @@ tr:hover {
   font-weight: 600;
 }
 
+/* Padding bottom pour tous les screens pour éviter que le contenu soit caché par le bottom nav */
+.screen {
+  padding-bottom: 100px;
+}
+
 /* Responsive pour petits écrans */
 @media (max-width: 375px) {
   .bottom-nav {
@@ -884,6 +882,7 @@ tr:hover {
 <div id="home-screen" class="screen active">
   <div class="container">
     <div class="header">
+      
       <div class="avatar">TC</div>
     </div>
 
@@ -1171,6 +1170,7 @@ tr:hover {
 
 <script>
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
+
 let currentMode = 'logout';
 let formData = { name: '', location: '', date: '' };
 let archivingScanner;
@@ -1456,7 +1456,7 @@ function updateItemsList() {
     return `
       <div class="item">
         <div class="item-number">${index + 1}</div>
-        ${imageHtml}
+        
         <div class="item-info">
           <div class="item-ref-group">
             <div class="item-label">Reference</div>
@@ -1473,7 +1473,7 @@ function updateItemsList() {
         </div>
         <button class="btn-remove" onclick="removeItem(${item.id})">×</button>
       </div>
-    `;
+    `${imageHtml};
   }).join('');
 }
 
@@ -1682,6 +1682,12 @@ function advanceToSelectionScan() {
     alert('Please enter customer name');
     return;
   }
+ const isAllCaps = /^[A-Z0-9\s.,;:!?'"\-()\/]+$/.test(customerName);
+
+if (!isAllCaps) {
+  alert("❌ ERREUR : Le nom du customer doit être entièrement en CAPITALES.");
+  return; // Bloque la navigation
+}
   
   selectionFormData.customer = customerName;
   
@@ -1698,26 +1704,45 @@ function goBackToSelectionForm() {
 }
 
 function initSelectionScanner() {
-  if (selectionScanner) {
-    selectionScanner.clear();
+  if (isSelectionScanning) return;
+  if (!selectionScanner) {
+    selectionScanner = new Html5Qrcode("selection-qr-reader");
   }
-  
-  selectionScanner = new Html5QrcodeScanner("selection-qr-reader", {
-    fps: 10,
-    qrbox: { width: 250, height: 250 },
-    rememberLastUsedCamera: true
+  selectionScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 220 },
+    decodedText => onSelectionScanSuccess(decodedText)
+  ).then(() => {
+    isSelectionScanning = true;
+  }).catch(err => {
+    console.error('Scanner error:', err);
+    alert('Camera error');
   });
+  // if (selectionScanner) {
+  //   selectionScanner.clear();
+  // }
   
-  selectionScanner.render(onSelectionScanSuccess, onSelectionScanError);
-  isSelectionScanning = true;
+  // selectionScanner = new Html5QrcodeScanner("selection-qr-reader", {
+  //   fps: 10,
+  //   qrbox: { width: 250, height: 250 },
+  //   rememberLastUsedCamera: true
+  // });
+  
+  // selectionScanner.render(onSelectionScanSuccess, onSelectionScanError);
+  // isSelectionScanning = true;
 }
-
 function stopSelectionScan() {
   if (selectionScanner && isSelectionScanning) {
-    selectionScanner.clear();
-    isSelectionScanning = false;
+    selectionScanner.stop().then(() => { isSelectionScanning = false; }).catch(() => { isSelectionScanning = false; });
   }
 }
+
+// function stopSelectionScan() {
+//   if (selectionScanner && isSelectionScanning) {
+//     selectionScanner.clear();
+//     isSelectionScanning = false;
+//   }
+// }
 
 async function onSelectionScanSuccess(decodedText) {
   if (scanCooldown) return;
@@ -1970,7 +1995,7 @@ function handleBackNav() {
   } else if (screenId === 'scan-screen') {
     goHome();
   } else if (screenId === 'details-screen') {
-    goHome();
+    goBackToModeFromDetails();
   } else {
     goHome();
   }
