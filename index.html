@@ -933,7 +933,7 @@ tr:hover {
   </div>
 </div>
 
-<!-- CHECK IN LISTS SCREEN (NOUVEAU) -->
+<!-- CHECK IN LISTS SCREEN -->
 <div id="checkin-lists-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -1170,7 +1170,7 @@ let selectionPDFUrl = '';
 let scanCooldown = false;
 let localQtyMap = {};
 
-// NOUVELLES VARIABLES POUR CHECK IN
+// VARIABLES POUR CHECK IN
 let checkedOutItems = [];
 let checkinItems = [];
 
@@ -1326,10 +1326,10 @@ function advanceToScan() {
   formData = { name, location, date, remarks };
   
   if (currentMode === 'login') {
-    // NOUVEAU FLOW : Charger les items check out de cette personne
+    // FLOW CHECK IN : Charger les items check out
     loadCheckedOutItems(name);
   } else {
-    // Flow Check Out normal (inchangé)
+    // FLOW CHECK OUT : Scanner normalement
     document.getElementById("form-screen").classList.remove("active");
     document.getElementById("scan-screen").classList.add("active");
     
@@ -1342,7 +1342,7 @@ function advanceToScan() {
   }
 }
 
-// NOUVELLE FONCTION : Charger les items check out
+// ✅ CORRECTION 1 : Charger TOUS les items check out (sans déduplication)
 async function loadCheckedOutItems(name) {
   showLoader('Loading items...');
   
@@ -1376,7 +1376,6 @@ async function loadCheckedOutItems(name) {
   }
 }
 
-// NOUVELLES FONCTIONS : Gérer les 2 listes
 function updateCheckedOutList() {
   const list = document.getElementById('checkedout-items-list');
   
@@ -1469,6 +1468,7 @@ function clearCheckin() {
   updateCheckinList();
 }
 
+// ✅ CORRECTION 2 : Save Check In + recharger les noms
 async function saveCheckin() {
   if (checkinItems.length === 0) {
     alert('No items to check in');
@@ -1506,6 +1506,10 @@ async function saveCheckin() {
     
     hideLoader();
     alert(`Success! ${checkinItems.length} items checked in`);
+    
+    // ✅ NOUVEAU : Recharger les noms pour mettre à jour le dropdown
+    await loadLoggedOutNames();
+    
     checkedOutItems = [];
     checkinItems = [];
     goHome();
