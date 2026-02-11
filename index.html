@@ -920,6 +920,10 @@ tr:hover {
         <label class="form-label">Destination</label>
         <input type="text" id="location-input" class="form-input" placeholder="Enter destination">
       </div>
+      <div class="form-group" id="remarks-group">
+        <label class="form-label">Remarks</label>
+        <input type="text" id="remarks-input" class="form-input" placeholder="Enter remarks (optional)">
+      </div>
       <div class="form-group">
         <label class="form-label">Date</label>
         <input type="text" id="date-input" class="form-input" disabled>
@@ -927,7 +931,45 @@ tr:hover {
       <button class="btn-submit" onclick="advanceToScan()">Continue</button>
     </div>
   </div>
-</div>  
+</div>
+
+<!-- CHECK IN LISTS SCREEN (NOUVEAU) -->
+<div id="checkin-lists-screen" class="screen">
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goBackToForm()">←</button>
+      <div class="nav-title" id="checkin-name-title">Check In</div>
+    </div>
+
+    <!-- LISTE 1 : Items Check Out -->
+    <div class="section-header">
+      <div class="section-title">Checked Out Items</div>
+    </div>
+    <div id="checkedout-items-list" class="items-list">
+      <div class="empty">
+        <div class="empty-icon">📦</div>
+        <p class="empty-text">No items checked out</p>
+      </div>
+    </div>
+
+    <!-- LISTE 2 : Items à Check In -->
+    <div class="section-header" style="margin-top: 32px;">
+      <div class="section-title">Items to Check In</div>
+    </div>
+    <div id="checkin-items-list" class="items-list">
+      <div class="empty">
+        <div class="empty-icon">✅</div>
+        <p class="empty-text">No items selected</p>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions" style="margin-top: 24px;">
+      <button class="btn-action btn-save" onclick="saveCheckin()">Save All</button>
+      <button class="btn-action btn-clear" onclick="clearCheckin()">Clear</button>
+    </div>
+  </div>
+</div>
 
 <!-- SCAN SCREEN -->
 <div id="scan-screen" class="screen">
@@ -1006,7 +1048,7 @@ tr:hover {
   </div>
 </div>
 
-<!-- SELECTION SCREENS - INCHANGÉES -->
+<!-- SELECTION SCREENS -->
 <div id="selection-form-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -1114,7 +1156,7 @@ tr:hover {
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
 
 let currentMode = 'logout';
-let formData = { name: '', location: '', date: '' };
+let formData = { name: '', location: '', date: '', remarks: '' };
 let archivingScanner;
 let detailsScanner;
 let selectionScanner;
@@ -1128,6 +1170,10 @@ let selectionPDFUrl = '';
 let scanCooldown = false;
 let localQtyMap = {};
 
+// NOUVELLES VARIABLES POUR CHECK IN
+let checkedOutItems = [];
+let checkinItems = [];
+
 function goHome() {
   stopArchivingScan();
   stopDetailsScan();
@@ -1135,6 +1181,8 @@ function goHome() {
   document.getElementById('home-screen').classList.add('active');
   scannedItems = [];
   localQtyMap = {};
+  checkedOutItems = [];
+  checkinItems = [];
   updateItemsList();
   updateCount();
   updateBottomNav('home');
@@ -1146,6 +1194,8 @@ function goToModeChoice() {
   stopSelectionScan();
   selectionItems = [];
   selectionFormData = { customer: '', date: '' };
+  checkedOutItems = [];
+  checkinItems = [];
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("mode-choice-screen").classList.add("active");
   updateBottomNav('archiving');
@@ -1157,6 +1207,8 @@ function goToSelection() {
   stopSelectionScan();
   scannedItems = [];
   localQtyMap = {};
+  checkedOutItems = [];
+  checkinItems = [];
   document.getElementById("home-screen").classList.remove("active");
   document.getElementById("selection-form-screen").classList.add("active");
   const today = new Date();
@@ -1175,11 +1227,13 @@ function goToForm(mode) {
   if (mode === 'logout') {
     document.getElementById('form-title').textContent = 'Check Out';
     document.getElementById('location-group').style.display = 'block';
+    document.getElementById('remarks-group').style.display = 'block';
     document.getElementById('name-input').style.display = 'block';
     document.getElementById('name-select').style.display = 'none';
   } else {
     document.getElementById('form-title').textContent = 'Check In';
     document.getElementById('location-group').style.display = 'none';
+    document.getElementById('remarks-group').style.display = 'none';
     document.getElementById('name-input').style.display = 'none';
     document.getElementById('name-select').style.display = 'block';
     loadLoggedOutNames();
@@ -1189,6 +1243,7 @@ function goToForm(mode) {
   document.getElementById('date-input').value = today;
   document.getElementById('name-input').value = '';
   document.getElementById('location-input').value = '';
+  document.getElementById('remarks-input').value = '';
   document.getElementById('name-select').value = '';
 }
 
@@ -1201,7 +1256,17 @@ function goToDetails() {
 
 function goBackToMode() {
   document.getElementById("form-screen").classList.remove("active");
+  document.getElementById("checkin-lists-screen").classList.remove("active");
   document.getElementById("mode-choice-screen").classList.add("active");
+  checkedOutItems = [];
+  checkinItems = [];
+}
+
+function goBackToForm() {
+  document.getElementById("checkin-lists-screen").classList.remove("active");
+  document.getElementById("form-screen").classList.add("active");
+  checkedOutItems = [];
+  checkinItems = [];
 }
 
 async function loadLoggedOutNames() {
@@ -1245,6 +1310,7 @@ function advanceToScan() {
     : document.getElementById('name-select').value.trim();
   
   const location = document.getElementById('location-input').value.trim();
+  const remarks = document.getElementById('remarks-input').value.trim();
   const date = document.getElementById('date-input').value;
   
   if (!name) {
@@ -1257,22 +1323,197 @@ function advanceToScan() {
     return;
   }
   
-  formData = { name, location, date };
+  formData = { name, location, date, remarks };
   
-  document.getElementById("form-screen").classList.remove("active");
-  document.getElementById("scan-screen").classList.add("active");
-  
-  const badge = document.getElementById('mode-badge');
-  if (currentMode === 'logout') {
+  if (currentMode === 'login') {
+    // NOUVEAU FLOW : Charger les items check out de cette personne
+    loadCheckedOutItems(name);
+  } else {
+    // Flow Check Out normal (inchangé)
+    document.getElementById("form-screen").classList.remove("active");
+    document.getElementById("scan-screen").classList.add("active");
+    
+    const badge = document.getElementById('mode-badge');
     badge.innerHTML = '<span class="status-dot"></span><span>Check Out</span>';
     badge.className = 'status-badge logout';
-  } else {
-    badge.innerHTML = '<span class="status-dot"></span><span>Check In</span>';
-    badge.className = 'status-badge login';
+    
+    startArchivingScan();
+    updateBottomNav('archiving');
+  }
+}
+
+// NOUVELLE FONCTION : Charger les items check out
+async function loadCheckedOutItems(name) {
+  showLoader('Loading items...');
+  
+  try {
+    const url = `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getCheckedOutItems&name=${encodeURIComponent(name)}`;
+    const response = await fetch(url);
+    const result = await response.json();
+    hideLoader();
+    
+    if (result.error) {
+      alert('Error: ' + result.error);
+      return;
+    }
+    
+    if (result.success && result.items) {
+      checkedOutItems = result.items;
+      checkinItems = [];
+      
+      document.getElementById("form-screen").classList.remove("active");
+      document.getElementById("checkin-lists-screen").classList.add("active");
+      document.getElementById("checkin-name-title").textContent = `Check In - ${name}`;
+      
+      updateCheckedOutList();
+      updateCheckinList();
+      updateBottomNav('archiving');
+    }
+  } catch (error) {
+    hideLoader();
+    console.error('Error:', error);
+    alert('Connection error');
+  }
+}
+
+// NOUVELLES FONCTIONS : Gérer les 2 listes
+function updateCheckedOutList() {
+  const list = document.getElementById('checkedout-items-list');
+  
+  if (checkedOutItems.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><p class="empty-text">No items checked out</p></div>';
+    return;
   }
   
-  startArchivingScan();
-  updateBottomNav('archiving');
+  list.innerHTML = checkedOutItems.map((item, index) => {
+    const imageHtml = item.imageUrl 
+      ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
+      : '<div class="item-image" style="background: var(--gray-200);"></div>';
+    
+    return `
+      <div class="item">
+        <div class="item-number">${index + 1}</div>
+        ${imageHtml}
+        <div class="item-info">
+          <div class="item-ref-group">
+            <div class="item-label">Reference</div>
+            <div class="item-value">${item.reference}</div>
+          </div>
+          <div class="item-snum-group">
+            <div class="item-label">S-Number</div>
+            <div class="item-value-small">${item.sNumber || 'N/A'}</div>
+          </div>
+        </div>
+        <button class="btn-remove" onclick="moveToCheckin(${index})" style="background: var(--green);">→</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateCheckinList() {
+  const list = document.getElementById('checkin-items-list');
+  
+  if (checkinItems.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><p class="empty-text">No items selected</p></div>';
+    return;
+  }
+  
+  list.innerHTML = checkinItems.map((item, index) => {
+    const imageHtml = item.imageUrl 
+      ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
+      : '<div class="item-image" style="background: var(--gray-200);"></div>';
+    
+    return `
+      <div class="item">
+        <div class="item-number">${index + 1}</div>
+        ${imageHtml}
+        <div class="item-info">
+          <div class="item-ref-group">
+            <div class="item-label">Reference</div>
+            <div class="item-value">${item.reference}</div>
+          </div>
+          <div class="item-snum-group">
+            <div class="item-label">S-Number</div>
+            <div class="item-value-small">${item.sNumber || 'N/A'}</div>
+          </div>
+        </div>
+        <button class="btn-remove" onclick="moveBackToCheckedOut(${index})">←</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function moveToCheckin(index) {
+  const item = checkedOutItems[index];
+  checkedOutItems.splice(index, 1);
+  checkinItems.push(item);
+  updateCheckedOutList();
+  updateCheckinList();
+}
+
+function moveBackToCheckedOut(index) {
+  const item = checkinItems[index];
+  checkinItems.splice(index, 1);
+  checkedOutItems.push(item);
+  updateCheckedOutList();
+  updateCheckinList();
+}
+
+function clearCheckin() {
+  if (checkinItems.length === 0) return;
+  if (!confirm('Clear all selected items?')) return;
+  
+  checkedOutItems = [...checkedOutItems, ...checkinItems];
+  checkinItems = [];
+  updateCheckedOutList();
+  updateCheckinList();
+}
+
+async function saveCheckin() {
+  if (checkinItems.length === 0) {
+    alert('No items to check in');
+    return;
+  }
+  
+  showLoader('Saving...');
+  
+  try {
+    for (const item of checkinItems) {
+      const params = new URLSearchParams({
+        apiAction: 'saveItem',
+        reference: item.reference || '',
+        sNumber: item.sNumber || '',
+        season: item.season || '',
+        description: item.description || '',
+        fabricCode: item.fabricCode || '',
+        composition: item.composition || '',
+        collection: item.collection || '',
+        filename: item.filename || '',
+        imageUrl: item.imageUrl || '',
+        totalQty: String(item.totalQty || ''),
+        sourceRow: String(item.sourceRow || ''),
+        spreadsheetId: item.spreadsheetId || '',
+        mode: 'login',
+        loginName: formData.name,
+        date: new Date().toLocaleDateString('en-GB'),
+        location: '',
+        remarks: ''
+      });
+
+      const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
+      await fetch(url);
+    }
+    
+    hideLoader();
+    alert(`Success! ${checkinItems.length} items checked in`);
+    checkedOutItems = [];
+    checkinItems = [];
+    goHome();
+  } catch (error) {
+    hideLoader();
+    console.error('Error:', error);
+    alert('Connection error');
+  }
 }
 
 function startArchivingScan() {
@@ -1472,7 +1713,8 @@ async function saveAll() {
         logoutName: currentMode === 'logout' ? formData.name : '',
         loginName: currentMode === 'login' ? formData.name : '',
         date: formData.date,
-        location: formData.location || ''
+        location: formData.location || '',
+        remarks: formData.remarks || ''
       });
 
       const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
@@ -1621,7 +1863,7 @@ function hideLoader() {
   if (loader) loader.remove();
 }
 
-// SELECTION FUNCTIONS - INCHANGÉES
+// SELECTION FUNCTIONS
 function goBackToHomeFromSelection() {
   stopSelectionScan();
   document.getElementById("selection-form-screen").classList.remove("active");
@@ -1888,7 +2130,7 @@ function updateBottomNav(activeScreen) {
     document.getElementById('nav-home').classList.add('active');
   } else if (activeScreen.includes('selection')) {
     document.getElementById('nav-selection').classList.add('active');
-  } else if (activeScreen.includes('mode') || activeScreen.includes('form') || activeScreen.includes('scan') || activeScreen.includes('details')) {
+  } else if (activeScreen.includes('mode') || activeScreen.includes('form') || activeScreen.includes('scan') || activeScreen.includes('details') || activeScreen.includes('checkin')) {
     document.getElementById('nav-archiving').classList.add('active');
   }
 }
@@ -1915,6 +2157,8 @@ function handleBackNav() {
     goHome();
   } else if (screenId === 'form-screen') {
     goBackToMode();
+  } else if (screenId === 'checkin-lists-screen') {
+    goBackToForm();
   } else if (screenId === 'scan-screen') {
     goHome();
   } else if (screenId === 'details-screen') {
@@ -1930,6 +2174,8 @@ function handleHomeNav() {
   stopSelectionScan();
   scannedItems = [];
   selectionItems = [];
+  checkedOutItems = [];
+  checkinItems = [];
   localQtyMap = {};
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('home-screen').classList.add('active');
@@ -1941,6 +2187,8 @@ function handleSelectionNav() {
   stopDetailsScan();
   stopSelectionScan();
   scannedItems = [];
+  checkedOutItems = [];
+  checkinItems = [];
   localQtyMap = {};
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('selection-form-screen').classList.add('active');
@@ -1957,6 +2205,8 @@ function handleArchivingNav() {
   stopDetailsScan();
   stopSelectionScan();
   selectionItems = [];
+  checkedOutItems = [];
+  checkinItems = [];
   selectionFormData = { customer: '', date: '' };
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('mode-choice-screen').classList.add('active');
