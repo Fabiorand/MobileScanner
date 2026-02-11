@@ -979,7 +979,7 @@ tr:hover {
       <img id="product-image" class="product-image" alt="Product" />
       <div class="details-card">
         <div class="details-header">
-          <h3 class="details-title">Today's History</h3>
+          <h3 class="details-title">History</h3>
           <p class="product-ref">
             <span id="product-ref"></span> - <span id="product-snum"></span>
           </p>
@@ -1594,7 +1594,7 @@ function displayArchivingDetails(data) {
       tbody.appendChild(row);
     });
   } else {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gray-500)">No history for today</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gray-500)">No history</td></tr>';
   }
   
   document.getElementById('details-content').style.display = 'block';
