@@ -1034,6 +1034,7 @@ tr:hover {
                 <th>Check Out</th>
                 <th>Check In</th>
                 <th>Destination</th>
+                <th>Remarks</th>
                 <th>Qty Log</th>
                 <th>Qty Avail</th>
                 <th>Total</th>
@@ -1326,10 +1327,8 @@ function advanceToScan() {
   formData = { name, location, date, remarks };
   
   if (currentMode === 'login') {
-    // FLOW CHECK IN : Charger les items check out
     loadCheckedOutItems(name);
   } else {
-    // FLOW CHECK OUT : Scanner normalement
     document.getElementById("form-screen").classList.remove("active");
     document.getElementById("scan-screen").classList.add("active");
     
@@ -1342,7 +1341,6 @@ function advanceToScan() {
   }
 }
 
-// ✅ CORRECTION 1 : Charger TOUS les items check out (sans déduplication)
 async function loadCheckedOutItems(name) {
   showLoader('Loading items...');
   
@@ -1358,7 +1356,11 @@ async function loadCheckedOutItems(name) {
     }
     
     if (result.success && result.items) {
-      checkedOutItems = result.items;
+      checkedOutItems = result.items.map(item => ({
+        ...item,
+        qtyAvailable: Number(item.qtyAvailable) || 0,
+        totalQty: Number(item.totalQty) || 0
+      }));
       checkinItems = [];
       
       document.getElementById("form-screen").classList.remove("active");
@@ -1402,6 +1404,10 @@ function updateCheckedOutList() {
             <div class="item-label">S-Number</div>
             <div class="item-value-small">${item.sNumber || 'N/A'}</div>
           </div>
+          <div class="item-badges">
+            <span class="badge badge-total">Total: ${item.totalQty}</span>
+            <span class="badge badge-available">Avail: ${item.qtyAvailable}</span>
+          </div>
         </div>
         <button class="btn-remove" onclick="moveToCheckin(${index})" style="background: var(--green);">→</button>
       </div>
@@ -1422,6 +1428,8 @@ function updateCheckinList() {
       ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
       : '<div class="item-image" style="background: var(--gray-200);"></div>';
     
+    const newQtyAvail = item.qtyAvailable + 1;
+    
     return `
       <div class="item">
         <div class="item-number">${index + 1}</div>
@@ -1434,6 +1442,10 @@ function updateCheckinList() {
           <div class="item-snum-group">
             <div class="item-label">S-Number</div>
             <div class="item-value-small">${item.sNumber || 'N/A'}</div>
+          </div>
+          <div class="item-badges">
+            <span class="badge badge-total">Total: ${item.totalQty}</span>
+            <span class="badge badge-available">Avail: ${newQtyAvail}</span>
           </div>
         </div>
         <button class="btn-remove" onclick="moveBackToCheckedOut(${index})">←</button>
@@ -1468,7 +1480,6 @@ function clearCheckin() {
   updateCheckinList();
 }
 
-// ✅ CORRECTION 2 : Save Check In + recharger les noms
 async function saveCheckin() {
   if (checkinItems.length === 0) {
     alert('No items to check in');
@@ -1480,35 +1491,25 @@ async function saveCheckin() {
   try {
     for (const item of checkinItems) {
       const params = new URLSearchParams({
-        apiAction: 'saveItem',
-        reference: item.reference || '',
-        sNumber: item.sNumber || '',
-        season: item.season || '',
-        description: item.description || '',
-        fabricCode: item.fabricCode || '',
-        composition: item.composition || '',
-        collection: item.collection || '',
-        filename: item.filename || '',
-        imageUrl: item.imageUrl || '',
-        totalQty: String(item.totalQty || ''),
-        sourceRow: String(item.sourceRow || ''),
-        spreadsheetId: item.spreadsheetId || '',
-        mode: 'login',
+        apiAction: 'saveCheckin',
+        archivingRow: String(item.archivingRow),
         loginName: formData.name,
         date: new Date().toLocaleDateString('en-GB'),
-        location: '',
-        remarks: ''
+        sourceRow: String(item.sourceRow || ''),
+        spreadsheetId: item.spreadsheetId || ''
       });
 
       const url = `${GOOGLE_APPS_SCRIPT_URL}?${params.toString()}`;
-      await fetch(url);
+      const response = await fetch(url);
+      const result = await response.json();
+      
+      if (result.error) {
+        console.error('Error saving item:', result.error);
+      }
     }
     
     hideLoader();
     alert(`Success! ${checkinItems.length} items checked in`);
-    
-    // ✅ NOUVEAU : Recharger les noms pour mettre à jour le dropdown
-    await loadLoggedOutNames();
     
     checkedOutItems = [];
     checkinItems = [];
@@ -1833,6 +1834,7 @@ function displayArchivingDetails(data) {
         <td>${entry.checkOutName || '-'}</td>
         <td>${entry.checkInName || '-'}</td>
         <td>${entry.destination || '-'}</td>
+        <td>${entry.remarks || '-'}</td>
         <td>${entry.qtyLog || 1}</td>
         <td>${entry.qtyAvailable || 0}</td>
         <td>${entry.totalQty || 0}</td>
@@ -1840,7 +1842,7 @@ function displayArchivingDetails(data) {
       tbody.appendChild(row);
     });
   } else {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gray-500)">No history</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray-500)">No history</td></tr>';
   }
   
   document.getElementById('details-content').style.display = 'block';
