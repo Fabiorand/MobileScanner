@@ -1436,9 +1436,7 @@ body {
 
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// QR INVENTORY - JAVASCRIPT COMPLET
-// ═══════════════════════════════════════════════════════════════
+
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
 const ARCHIVING_SPREADSHEET_ID = '1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc';
@@ -1452,7 +1450,7 @@ let isCheckoutScanning = false;
 let checkoutItems = [];
 let checkoutFormData = {};
 
-// ✅ CHECK IN VARIABLES (NOUVEAU)
+// CHECK IN VARIABLES
 let checkinScanner;
 let isCheckinScanning = false;
 let currentScannedReference = '';
@@ -1552,7 +1550,7 @@ function goHome() {
 }
 
 // ====================================
-// ✅ NOUVEAU CHECK IN
+// ✅ CHECK IN COMPLET
 // ====================================
 function goToCheckIn() {
   currentScannedReference = '';
@@ -1690,7 +1688,6 @@ async function loadCheckinNames(reference) {
     }
     
     if (result.success) {
-      // ✅ FILTRER LES NOMS QUI ONT ENCORE DES ITEMS
       const activeNames = result.names.filter(name => {
         return result.data[name] && result.data[name].items.length > 0;
       });
@@ -1702,7 +1699,6 @@ async function loadCheckinNames(reference) {
         showScreen('checkin-names-screen');
       } else {
         alert('All items have been checked in for this product');
-        // ✅ Rester sur l'écran de scan
         startCheckinScan();
       }
     }
@@ -1713,6 +1709,39 @@ async function loadCheckinNames(reference) {
   }
 }
 
+function renderCheckinNames(names) {
+  const namesList = document.getElementById('checkin-names-list');
+  
+  if (names.length === 0) {
+    namesList.innerHTML = '<div class="empty"><div class="empty-icon">👤</div><p class="empty-text">No names available</p></div>';
+    return;
+  }
+  
+  namesList.innerHTML = names.map(name => {
+    const count = checkinNamesData[name].items.length;
+    return `
+      <div class="name-card" onclick="selectCheckinName('${name}')">
+        <div class="name-card-info">
+          <div class="name-card-name">${name}</div>
+          <div class="name-card-count">${count} item${count > 1 ? 's' : ''}</div>
+        </div>
+        <div class="name-card-arrow">→</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectCheckinName(name) {
+  currentCheckinName = name;
+  checkedOutItems = checkinNamesData[name].items;
+  toCheckinItems = [];
+  
+  document.getElementById('checkin-selected-name').textContent = name;
+  
+  renderCheckinLists();
+  showScreen('checkin-items-screen');
+}
+
 function renderCheckinLists() {
   const outList = document.getElementById('checkedout-items-list');
   const inList = document.getElementById('tocheckin-items-list');
@@ -1720,53 +1749,65 @@ function renderCheckinLists() {
   if (checkedOutItems.length === 0) {
     outList.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><p class="empty-text">No items</p></div>';
   } else {
-    outList.innerHTML = checkedOutItems.map((item, index) => `
-      <div class="item">
-        <div class="item-number">${index + 1}</div>
-        <div class="item-image"></div>
-        <div class="item-info">
-          <div style="margin-bottom: 8px;">
-            <div class="item-label">Reference</div>
-            <div class="item-value">${item.reference}</div>
+    outList.innerHTML = checkedOutItems.map((item, index) => {
+      const imageHtml = item.imageUrl 
+        ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
+        : '<div class="item-image" style="background: var(--gray-200);"></div>';
+      
+      return `
+        <div class="item">
+          <div class="item-number">${index + 1}</div>
+          ${imageHtml}
+          <div class="item-info">
+            <div style="margin-bottom: 8px;">
+              <div class="item-label">Reference</div>
+              <div class="item-value">${item.reference}</div>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <div class="item-label">S-Number</div>
+              <div class="item-value-small">${item.sNumber}</div>
+            </div>
+            <div class="item-badges">
+              <span class="badge badge-total">Total: ${item.totalQty}</span>
+              <span class="badge badge-available">Avail: ${item.qtyAvailable}</span>
+            </div>
           </div>
-          <div style="margin-bottom: 10px;">
-            <div class="item-label">S-Number</div>
-            <div class="item-value-small">${item.sNumber}</div>
-          </div>
-          <div class="item-badges">
-            <span class="badge badge-total">Total: ${item.totalQty}</span>
-            <span class="badge badge-available">Avail: ${item.qtyAvailable}</span>
-          </div>
+          <button class="btn-remove" onclick="moveToCheckin(${index})" style="background: var(--green);">→</button>
         </div>
-        <button class="btn-remove" onclick="moveToCheckin(${index})" style="background: var(--green);">→</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
   
   if (toCheckinItems.length === 0) {
     inList.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><p class="empty-text">No items selected</p></div>';
   } else {
-    inList.innerHTML = toCheckinItems.map((item, index) => `
-      <div class="item">
-        <div class="item-number">${index + 1}</div>
-        <div class="item-image"></div>
-        <div class="item-info">
-          <div style="margin-bottom: 8px;">
-            <div class="item-label">Reference</div>
-            <div class="item-value">${item.reference}</div>
+    inList.innerHTML = toCheckinItems.map((item, index) => {
+      const imageHtml = item.imageUrl 
+        ? `<img src="${item.imageUrl}" alt="${item.reference}" class="item-image" onerror="this.style.display='none'">`
+        : '<div class="item-image" style="background: var(--gray-200);"></div>';
+      
+      return `
+        <div class="item">
+          <div class="item-number">${index + 1}</div>
+          ${imageHtml}
+          <div class="item-info">
+            <div style="margin-bottom: 8px;">
+              <div class="item-label">Reference</div>
+              <div class="item-value">${item.reference}</div>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <div class="item-label">S-Number</div>
+              <div class="item-value-small">${item.sNumber}</div>
+            </div>
+            <div class="item-badges">
+              <span class="badge badge-total">Total: ${item.totalQty}</span>
+              <span class="badge badge-available">Avail: ${Number(item.qtyAvailable) + 1}</span>
+            </div>
           </div>
-          <div style="margin-bottom: 10px;">
-            <div class="item-label">S-Number</div>
-            <div class="item-value-small">${item.sNumber}</div>
-          </div>
-          <div class="item-badges">
-            <span class="badge badge-total">Total: ${item.totalQty}</span>
-            <span class="badge badge-available">Avail: ${Number(item.qtyAvailable) + 1}</span>
-          </div>
+          <button class="btn-remove" onclick="moveBackToCheckedOut(${index})">←</button>
         </div>
-        <button class="btn-remove" onclick="moveBackToCheckedOut(${index})">←</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 }
 
