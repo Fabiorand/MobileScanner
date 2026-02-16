@@ -1848,10 +1848,11 @@ async function saveCheckinAll() {
     for (let i = 0; i < toCheckinItems.length; i++) {
       const item = toCheckinItems[i];
       
+      // ✅ NE PAS ENVOYER loginName, l'Apps Script va le récupérer automatiquement
       const params = new URLSearchParams({
         apiAction: 'saveCheckinWithID',
         archivingRow: String(item.archivingRow || ''),
-        loginName: currentUser ? currentUser.username : 'Unknown',
+        loginName: '',  // ✅ VIDE ! Apps Script va garder le nom du Check Out
         date: new Date().toLocaleDateString('en-GB'),
         spreadsheetId: item.spreadsheetId || '',
         sourceRow: String(item.sourceRow || ''),
