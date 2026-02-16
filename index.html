@@ -1690,13 +1690,20 @@ async function loadCheckinNames(reference) {
     }
     
     if (result.success) {
-      if (result.names && result.names.length > 0) {
+      // ✅ FILTRER LES NOMS QUI ONT ENCORE DES ITEMS
+      const activeNames = result.names.filter(name => {
+        return result.data[name] && result.data[name].items.length > 0;
+      });
+      
+      if (activeNames.length > 0) {
         checkinNamesData = result.data;
-        renderCheckinNames(result.names);
+        renderCheckinNames(activeNames);
         stopCheckinScan();
         showScreen('checkin-names-screen');
       } else {
-        alert('No checked out items found for this product');
+        alert('All items have been checked in for this product');
+        // ✅ Rester sur l'écran de scan
+        startCheckinScan();
       }
     }
   } catch (error) {
@@ -1704,39 +1711,6 @@ async function loadCheckinNames(reference) {
     console.error('Error:', error);
     alert('Connection error');
   }
-}
-
-function renderCheckinNames(names) {
-  const namesList = document.getElementById('checkin-names-list');
-  
-  if (names.length === 0) {
-    namesList.innerHTML = '<div class="empty"><div class="empty-icon">👤</div><p class="empty-text">No names available</p></div>';
-    return;
-  }
-  
-  namesList.innerHTML = names.map(name => {
-    const count = checkinNamesData[name].items.length;
-    return `
-      <div class="name-card" onclick="selectCheckinName('${name}')">
-        <div class="name-card-info">
-          <div class="name-card-name">${name}</div>
-          <div class="name-card-count">${count} item${count > 1 ? 's' : ''}</div>
-        </div>
-        <div class="name-card-arrow">→</div>
-      </div>
-    `;
-  }).join('');
-}
-
-function selectCheckinName(name) {
-  currentCheckinName = name;
-  checkedOutItems = checkinNamesData[name].items;
-  toCheckinItems = [];
-  
-  document.getElementById('checkin-selected-name').textContent = name;
-  
-  renderCheckinLists();
-  showScreen('checkin-items-screen');
 }
 
 function renderCheckinLists() {
