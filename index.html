@@ -8,6 +8,10 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
+/* ====================================
+   QR INVENTORY - CSS COMPLET
+   ==================================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -21,7 +25,6 @@
   --violet: #7C3AED;
   --violet-light: #C4B5FD;
   --violet-dark: #6D28D9;
-  
   
   --gray-50: #fafafa;
   --gray-100: #f5f5f5;
@@ -697,9 +700,6 @@ body {
   color: var(--gray-500);
 }
 
-.hidden {
-  display: none !important;
-}
 /* ====================================
    🔄 LOADER
    ==================================== */
@@ -849,18 +849,42 @@ body {
   font-weight: 700;
   color: var(--black);
 }
+
+.hidden {
+  display: none !important;
+}
 </style>
 </head>
 
 <body>
+<!-- ═══════════════════════════════════════════════════════════════
+     PARTIE 2A : HTML - LOGIN & HOME
+     ═══════════════════════════════════════════════════════════════ -->
 
-<!-- LOGIN SCREEN -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QR Inventory</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
+<!-- TON CSS ICI -->
+<style>
+/* Colle le contenu de PART1_CSS.css ici */
+</style>
+
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LOGIN SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
 <div id="login-screen" class="screen login-screen active">
   <div class="login-card">
     <div class="login-logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
       </svg>
     </div>
     <h1 class="login-title">QR Inventory</h1>
@@ -882,7 +906,9 @@ body {
   </div>
 </div>
 
-<!-- HOME SCREEN -->
+<!-- ═══════════════════════════════════════════════════════════════
+     HOME SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
 <div id="home-screen" class="screen home-screen">
   <div class="home-header">
     <div class="header-top">
@@ -966,7 +992,37 @@ body {
   </div>
 </div>
 
-<!-- CHECK IN FORM -->
+<!-- ═══════════════════════════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">TC</div>
+      <div class="sidebar-user-info">
+        <h3 id="sidebarName">Tropic</h3>
+        <p id="sidebarEmail">demo@example.com</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-menu">
+    <div class="sidebar-item danger" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      <span>Log Out</span>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════════════════
+     PARTIE 2B : HTML - CHECK IN & CHECK OUT
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- CHECK IN FORM SCREEN -->
 <div id="checkin-form-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -990,7 +1046,7 @@ body {
   </div>
 </div>
 
-<!-- CHECK IN LISTS -->
+<!-- CHECK IN LISTS SCREEN -->
 <div id="checkin-lists-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -1025,41 +1081,49 @@ body {
   </div>
 </div>
 
-<!-- CHECK OUT FORM -->
-<div class="form-wrapper">
-  <h2 class="form-title">User Information</h2>
-  
-  <div class="form-group">
-    <label class="form-label">Type</label>
-    <select id="type-select" class="form-select">
-      <option value="">Select type...</option>
-      <option value="Internal">Internal</option>
-      <option value="External">External</option>
-    </select>
+<!-- CHECK OUT FORM SCREEN -->
+<div id="checkout-form-screen" class="screen">
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goHome()">←</button>
+      <div class="nav-title">Check Out</div>
+    </div>
+    <div class="form-wrapper">
+      <h2 class="form-title">User Information</h2>
+      
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select id="checkout-type" class="form-select">
+          <option value="">Select type...</option>
+          <option value="Internal">Internal</option>
+          <option value="External">External</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input type="text" id="checkout-name" class="form-input" placeholder="Enter name">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Destination</label>
+        <input type="text" id="checkout-destination" class="form-input" placeholder="Enter destination">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Remarks</label>
+        <input type="text" id="checkout-remarks" class="form-input" placeholder="Remarks (optional)">
+      </div>
+      
+      <div style="text-align: right; font-size: 14px; color: var(--gray-600); margin-top: 16px;">
+        <span id="checkout-date-display"></span>
+      </div>
+      
+      <button class="btn-submit" onclick="advanceToCheckoutScan()">Continue</button>
+    </div>
   </div>
-  
-  <div class="form-group">
-    <label class="form-label">Name</label>
-    <input type="text" id="name-input" class="form-input" placeholder="Enter your name">
-  </div>
-  
-  <div class="form-group" id="location-group">
-    <label class="form-label">Destination</label>
-    <input type="text" id="location-input" class="form-input" placeholder="Enter destination">
-  </div>
-  
-  <div class="form-group" id="remarks-group">
-    <label class="form-label">Remarks</label>
-    <input type="text" id="remarks-input" class="form-input" placeholder="Enter remarks (optional)">
-  </div>
-  
-  <!-- ✅ DATE EN BAS À DROITE -->
-  <div style="text-align: right; font-size: 14px; color: var(--gray-600); margin-top: 16px;">
-    <span id="checkout-date-display"></span>
-  </div>
-  
-  <button class="btn-submit" onclick="advanceToCheckoutScan()">Continue</button>
 </div>
+
 <!-- CHECK OUT SCAN SCREEN -->
 <div id="checkout-scan-screen" class="screen">
   <div class="container">
@@ -1079,7 +1143,6 @@ body {
       </div>
     </div>
     
-    <!-- SEARCH S-NUMBER -->
     <div style="background: var(--white); border: 2px solid var(--gray-200); border-radius: 20px; padding: 20px; margin-bottom: 24px;">
       <div style="display: flex; gap: 12px;">
         <input 
@@ -1114,8 +1177,33 @@ body {
     </div>
   </div>
 </div>
+<!-- ═══════════════════════════════════════════════════════════════
+     PARTIE 2C : HTML - SELECTION & AUTRES PAGES + BOTTOM NAV
+     ═══════════════════════════════════════════════════════════════ -->
 
-<!-- PITCH SUBMITTED -->
+<!-- SELECTION FORM SCREEN -->
+<div id="selection-form-screen" class="screen">
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goHome()">←</button>
+      <div class="nav-title">Selection</div>
+    </div>
+    <div class="form-wrapper">
+      <h2 class="form-title">Customer Information</h2>
+      <div class="form-group">
+        <label class="form-label">Customer Name</label>
+        <input type="text" class="form-input" id="selection-customer" placeholder="CUSTOMER NAME">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="text" class="form-input" id="selection-date-input" disabled>
+      </div>
+      <button class="btn-submit" onclick="continueSelection()">Continue to Scan</button>
+    </div>
+  </div>
+</div>
+
+<!-- PITCH SUBMITTED SCREEN -->
 <div id="pitch-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -1142,7 +1230,7 @@ body {
   </div>
 </div>
 
-<!-- DETAILS -->
+<!-- DETAILS SCREEN -->
 <div id="details-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -1156,7 +1244,7 @@ body {
   </div>
 </div>
 
-<!-- QC CHECK -->
+<!-- QC CHECK SCREEN -->
 <div id="qc-screen" class="screen">
   <div class="container">
     <div class="nav-header">
@@ -1166,53 +1254,6 @@ body {
     <div class="empty">
       <div class="empty-icon">✓</div>
       <p class="empty-text">QC Check coming soon</p>
-    </div>
-  </div>
-</div>
-
-<!-- SELECTION FORM -->
-<div id="selection-form-screen" class="screen">
-  <div class="container">
-    <div class="nav-header">
-      <button class="btn-back" onclick="goHome()">←</button>
-      <div class="nav-title">Selection</div>
-    </div>
-    <div class="form-wrapper">
-      <h2 class="form-title">Customer Information</h2>
-      <div class="form-group">
-        <label class="form-label">Customer Name</label>
-        <input type="text" class="form-input" id="selection-customer" placeholder="CUSTOMER NAME">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Date</label>
-        <input type="text" class="form-input" id="selection-date-input" disabled>
-      </div>
-      <button class="btn-submit" onclick="continueSelection()">Continue to Scan</button>
-    </div>
-  </div>
-</div>
-
-<!-- SIDEBAR -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-user">
-      <div class="sidebar-avatar" id="sidebarAvatar">TC</div>
-      <div class="sidebar-user-info">
-        <h3 id="sidebarName">Tropic</h3>
-        <p id="sidebarEmail">demo@example.com</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="sidebar-menu">
-    <div class="sidebar-item danger" onclick="logout()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
-      </svg>
-      <span>Log Out</span>
     </div>
   </div>
 </div>
@@ -1255,15 +1296,23 @@ body {
   </button>
 </nav>
 
+<!-- TON JAVASCRIPT ICI -->
+
+
+</body>
+</html>
+
 <script>
+// ═══════════════════════════════════════════════════════════════
+// PARTIE 3 : JAVASCRIPT COMPLET
+// ═══════════════════════════════════════════════════════════════
+
 const API_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
 const ARCHIVING_SPREADSHEET_ID = '1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc';
 
 let currentUser = null;
 let checkedOutItems = [];
 let checkinItems = [];
-
-// ✅ CHECK OUT VARIABLES
 let checkoutScanner;
 let isCheckoutScanning = false;
 let checkoutItems = [];
@@ -1271,7 +1320,7 @@ let checkoutFormData = {};
 let scanCooldown = false;
 
 // ====================================
-// 🔐 LOGIN AVEC API
+// 🔐 LOGIN
 // ====================================
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -1297,6 +1346,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       document.getElementById('sidebarName').textContent = username;
       document.getElementById('sidebarEmail').textContent = result.user.email;
       
+      // ✅ CACHER LOGIN ET MONTRER HOME
       showScreen('home-screen');
     } else {
       alert('Invalid credentials');
@@ -1323,9 +1373,13 @@ function logout() {
 }
 
 function showScreen(screenId) {
+  // ✅ CACHER TOUTES LES SCREENS
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  
+  // ✅ MONTRER LA SCREEN DEMANDÉE
   document.getElementById(screenId).classList.add('active');
   
+  // ✅ CACHER/MONTRER BOTTOM NAV
   if (screenId === 'login-screen') {
     document.getElementById('bottomNav').classList.add('hidden');
   } else {
@@ -1478,7 +1532,7 @@ function goBackToCheckinForm() {
 }
 
 // ====================================
-// 📤 CHECK OUT COMPLET
+// 📤 CHECK OUT
 // ====================================
 function goToCheckOut() {
   const today = new Date().toLocaleDateString('en-GB');
@@ -1515,8 +1569,7 @@ function advanceToCheckoutScan() {
   checkoutFormData = { type, name, destination, remarks, date };
   checkoutItems = [];
   
-  document.getElementById("checkout-form-screen").classList.remove("active");
-  document.getElementById("checkout-scan-screen").classList.add("active");
+  showScreen('checkout-scan-screen');
   
   startCheckoutScan();
   updateCheckoutList();
@@ -1596,7 +1649,6 @@ async function fetchCheckoutItem(spreadsheetId, row) {
   }
 }
 
-// ✅ SEARCH S-NUMBER
 async function searchCheckoutItem() {
   const sNumber = document.getElementById('checkout-search-input').value.trim();
   
