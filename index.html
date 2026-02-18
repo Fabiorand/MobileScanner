@@ -11,13 +11,10 @@
 /* ====================================
    QR INVENTORY - CSS COMPLET
    ==================================== */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+* { margin: 0; padding: 0; 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+  }
 
 :root {
   --black: #000000;
@@ -57,24 +54,34 @@ body {
 
 .screen {
   display: none;
+  position: absolute;
+  inset: 0;
   min-height: 100vh;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .screen.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
+.screen:not(.login-screen) {
+  padding-bottom: 100px;
+}
+
+
 
 /* ====================================
    🔐 LOGIN SCREEN
    ==================================== */
 .login-screen {
   min-height: 100vh;
-  display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
   padding: 24px;
 }
+
 
 .login-card {
   background: var(--white);
@@ -171,14 +178,25 @@ body {
    🏠 HOME SCREEN
    ==================================== */
 .home-screen {
-  padding-bottom: 100px;
+  flex-direction: column;      /* disposition verticale */
+  align-items: stretch;        /* prend toute la largeur */
+  justify-content: flex-start; /* commence en haut */
+  overflow-y: auto;            /* scroll vertical */
+  padding-bottom: 100px;       /* espace bas si navbar fixe */
+  background: var(--gray-50);  /* ou ta couleur précédente */
+}
+.home-screen .home-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
 }
 
-.home-header {
+/* .home-header {
   background: var(--white);
   padding: 24px;
   border-bottom: 1px solid var(--gray-200);
-}
+} */
 
 .header-top {
   display: flex;
@@ -222,15 +240,21 @@ body {
   font-weight: 700;
   letter-spacing: -0.5px;
 }
-
-.home-content {
+.home-screen .home-container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   padding: 24px;
 }
+/* .home-content {
+  padding: 24px;
+} */
 
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  margin: 2%;
 }
 
 .action-card {
@@ -828,7 +852,7 @@ body {
   background: var(--gray-50);
 }
 
-#checkout-qr-reader video, #checkin-qr-reader video {
+#checkout-qr-reader video, #checkin-qr-reader video, #selection-qr-reader video {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
@@ -924,44 +948,243 @@ body {
 .hidden {
   display: none !important;
 }
+/* --------------------------------- */
+/* selection block */
+/* --------------------------------- */
+
+/* Conteneur général */
+.snumber-container {
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Groupe label + input */
+.snumber-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label */
+.snumber-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+/* Wrapper input + bouton */
+.snumber-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+/* Input */
+.snumber-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.snumber-input:focus {
+  border-color: #4a90e2;
+}
+
+/* Bouton */
+.snumber-btn {
+  padding: 10px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.snumber-btn:hover {
+  background-color: #357ABD;
+}
+/* btn */
+
+.btn-large {
+  width: 100%;
+  padding: 20px;
+  border-radius: 16px;
+  border: none;
+  background: var(--black);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-large:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.btn-selection {
+  margin-top: 16px;
+  background: #000000;
+}
+
+
+.btn-secondary {
+  width: 100%;
+  padding: 16px;
+  margin-top: 12px;
+  border-radius: 16px;
+  border: 2px solid var(--gray-300);
+  background: var(--white);
+  color: var(--black);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+  background: var(--gray-100);
+}
+
+/* pdf */
+
+.pdf-wrapper {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.pdf-icon {
+  font-size: 96px;
+  margin-bottom: 24px;
+}
+
+.pdf-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.pdf-count {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--blue);
+  margin: 20px 0;
+}
+
+.pdf-message {
+  font-size: 16px;
+  color: var(--gray-600);
+  margin-bottom: 40px;
+}
+/* __________________________ */
+/* pitch                      */
+/* __________________________ */
+
+/* Container principal du pitch-screen */
+#pitch-screen .container {
+  display: flex;
+  max-width: 800px;
+  width: 100%;
+  flex-direction: column;
+  height: calc(100vh - 60px - 60px); /* header + bottom nav (60px chacun approximatif) */
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Wrapper du tableau pour occuper tout l'espace restant */
+#pitch-screen .table-wrapper {
+  flex: 1;                /* prend tout l'espace vertical restant */
+  display: flex;
+  flex-direction: column;
+  overflow: auto;          /* scroll vertical et horizontal si nécessaire */
+  background: white;
+  border: 2px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+/* Tableau responsive */
+#pitch-screen table {
+  width: 100%;             /* occupe toute la largeur du wrapper */
+  min-width: 800px;        /* largeur minimale pour lisibilité */
+  border-collapse: collapse;
+  table-layout: auto;
+}
+/* Header du tableau */
+#pitch-screen th {
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-600);
+  text-align: left;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+/* Cellules du tableau */
+#pitch-screen td {
+  padding: 12px;
+  font-size: 14px;
+  color: var(--gray-800);
+  border-bottom: 1px solid var(--gray-200);
+}
+/* Sticky pour la première ligne du thead (titres) */
+#pitch-screen table thead tr:first-child th {
+  position: sticky;
+  top: 0;                 /* collé en haut du wrapper */
+  background: white;
+  z-index: 3;             /* au-dessus de la ligne des filtres et des cellules */
+  border-bottom: 2px solid var(--gray-200);
+}
+/* Première ligne du thead (titres) */
+#pitch-screen table thead tr:first-child th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 3;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+/* Ligne des filtres (ajoutée dynamiquement) */
+#pitch-screen table thead tr.filters-row th {
+  position: sticky;
+  top: 40px; /* hauteur approximative de la première ligne des titres, ajuste si nécessaire */
+  background: #f9f9f9;
+  z-index: 2;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+/* Input/select des filtres */
+#pitch-screen table thead tr.filters-row input,
+#pitch-screen table thead tr.filters-row select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 8px;
+}
+
+/* Scroll horizontal si l'écran est trop petit */
+#pitch-screen .table-wrapper {
+  overflow-x: auto;
+}
+
+
 </style>
 </head>
 
 <body>
-<!-- ═══════════════════════════════════════════════════════════════
-     PARTIE 2A : HTML - LOGIN & HOME
-     ═══════════════════════════════════════════════════════════════ -->
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QR Inventory</title>
-<script src="https://unpkg.com/html5-qrcode"></script>
-
-<!-- TON CSS ICI -->
-<style>
-/* Colle le contenu de PART1_CSS.css ici */
-</style>
-
-</head>
-<body>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QR Inventory</title>
-<script src="https://unpkg.com/html5-qrcode"></script>
-
-<style>
-/* COLLE TON CSS_COMPLET_FINAL.css ICI */
-</style>
-
-</head>
-<body>
 
 <!-- ═══════════════════════════════════════════════════════════════
      LOGIN SCREEN
@@ -1043,7 +1266,7 @@ body {
         <div class="action-title">Check Out</div>
       </div>
 
-      <div class="action-card pitch" onclick="goToPitch()">
+      <div class="action-card pitch" onclick="goToPitchScreen()">
         <div class="action-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -1317,54 +1540,82 @@ body {
     <div class="nav-header">
       <button class="btn-back" onclick="goHome()">←</button>
       <div class="nav-title">Selection</div>
+      <div class="form-group1">
+        <input type="text" id="selection-date-input" class="form-input1" disabled>
+      </div>
     </div>
     <div class="form-wrapper">
       <h2 class="form-title">Customer Information</h2>
       <div class="form-group">
         <label class="form-label">Customer Name</label>
-        <input type="text" class="form-input" id="selection-customer" placeholder="CUSTOMER NAME">
+        <input type="text" id="customer-input" class="form-input" placeholder="Enter customer name">
       </div>
-      <div class="form-group">
-        <label class="form-label">Date</label>
-        <input type="text" class="form-input" id="selection-date-input" disabled>
-      </div>
-      <button class="btn-submit" onclick="continueSelection()">Continue to Scan</button>
+      
+      <button class="btn-submit" onclick="advanceToSelectionScan()">Continue</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     PITCH SUBMITTED SCREEN
-     ═══════════════════════════════════════════════════════════════ -->
-<div id="pitch-screen" class="screen">
+<!-- selection scanner -->
+<div id="selection-scan-screen" class="screen">
   <div class="container">
-    <div class="nav-header">
-      <button class="btn-back" onclick="goHome()">←</button>
-      <div class="nav-title">Pitch Submitted</div>
+    <div class="top-bar">
+      <div class="status-badge" style="background: var(--blue-light); color: var(--blue); border-color: var(--blue);">
+        <span class="status-dot"></span>
+        <span>Scanning</span>
+      </div>
+      <button class="btn-home" onclick="goBackToSelectionForm()">Back</button>
     </div>
-    <div style="background: white; border: 2px solid var(--gray-200); border-radius: 20px; padding: 24px; overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-          <tr style="border-bottom: 2px solid var(--gray-200);">
-            <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Ref No</th>
-            <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Customer</th>
-            <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Date</th>
-            <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Status</th>
-          </tr>
-        </thead>
-        <tbody id="pitch-tbody">
-          <tr>
-            <td colspan="4" style="text-align: center; padding: 40px; color: var(--gray-500);">No data available</td>
-          </tr>
-        </tbody>
-      </table>
+ 
+    <div class="scan-wrapper" style=" background: var(--white);border: 2px solid var(--gray-200);border-radius: 20px;padding: 24px;margin-bottom: 24px; position: relative;">
+      <div class="selection-count-badge" id="selection-count" style=" position: absolute;top: 16px;right: 16px;background:var(--black);color:var(--white);padding:8px 16px;border-radius:20px;font-weight:700;z-index:10;">0</div>
+      <div id="selection-qr-reader" style="  width: 100%;max-width: 100%;height: 300px;margin: 0 auto 20px;border-radius: 16px;overflow: hidden;background: var(--gray-50)"></div>
+    </div>
+    <!-- search by Snumber -->
+        
+<div class="snumber-container">
+  <div class="snumber-group">
+    <label class="snumber-label">Enter S-Number</label>
+    <div class="snumber-input-wrapper">
+      <input type="text" id="manual-snumber-input" class="snumber-input" placeholder="Ex: S12345">
+      <button class="snumber-btn" onclick="searchBySNumber()">Search</button>
+    </div>
+  </div>
+</div>
+     <!--  -->
+    <div class="items-list" id="selection-items-list">
+      <div class="empty">
+        <div class="empty-icon">📦</div>
+        <p class="empty-text">No items scanned yet</p>
+      </div>
+    </div>
+    <div class="action-buttons" style="display:grid;gap:12px;margin-top:24px;">
+      <button class="btn-large" onclick="generateSelectionPDF()">
+        <span>📄 Generate PDF & Save</span>
+      </button>
+      <button class="btn-secondary" onclick="clearSelectionItems()">
+        <span>Clear All</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     DETAILS SCREEN
-     ═══════════════════════════════════════════════════════════════ -->
+<div id="selection-pdf-screen" class="screen">
+  <div class="container">
+    <div class="pdf-wrapper">
+      <div class="pdf-icon">📄</div>
+      <h2 class="pdf-title">PDF Created!</h2>
+      <div class="pdf-count" id="pdf-item-count">0</div>
+      <p class="pdf-message">items processed with images</p>
+      <button class="btn-large" onclick="openSelectionPDF()">
+        <span>👁️ Open PDF</span>
+      </button>
+      <button class="btn-large btn-selection" onclick="goBackToHomeFromPDF()" style="margin-top: 16px; background: var(--gray-700);">
+        Back to Home
+      </button>
+    </div>
+  </div>
+</div>
 <!-- ═══════════════════════════════════════════════════════════════
      NOUVEAU DETAILS - REMPLACE L'ANCIEN DETAILS SCREEN
      ═══════════════════════════════════════════════════════════════ -->
@@ -1447,6 +1698,55 @@ body {
     </div>
   </div>
 </div>
+<!-- ═══════════════════════════════════════════════════════════════
+     PITCH SUBMITTED SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
+     <div id="pitch-screen" class="screen">
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goHome()">←</button>
+      <div class="nav-title">Pitch Submitted</div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Ref No</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Submitted By</th> <!-- Nouvelle colonne insérée ici -->
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="pitch-tbody">
+          <tr>
+            <td colspan="5" style="text-align:center; padding:40px; color: var(--gray-500);">
+              No data available
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DETAILS SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="details-screen" class="screen">
+  <div class="container">
+    <div class="nav-header">
+      <button class="btn-back" onclick="goHome()">←</button>
+      <div class="nav-title">Product Details</div>
+    </div>
+    <div class="empty">
+      <div class="empty-icon">ℹ️</div>
+      <p class="empty-text">Scan QR to view details</p>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════════
      QC CHECK SCREEN
@@ -1506,7 +1806,10 @@ body {
 
 
 <script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
+
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
+
+const API_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
 const ARCHIVING_SPREADSHEET_ID = '1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc';
 
 let currentUser = null;
@@ -1527,48 +1830,96 @@ let currentCheckinName = '';
 let checkedOutItems = [];
 let toCheckinItems = [];
 
+// selection
+let selectionScanner;
+let isSelectionScanning = false;
+let scannedItems = [];
+let selectionItems = [];
+let selectionFormData = { customer: '', date: '' };
+let selectionPDFUrl = '';
+
 // ✅ DETAILS VARIABLES (AJOUTÉ)
 let detailsScanner;
 let isDetailsScanning = false;
 let currentDetailsData = null;
 
+// Pitch
+let allPitchItems = [];
 // ====================================
 // 🔐 LOGIN
 // ====================================
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const username = document.getElementById('loginUsername').value;
-  const password = document.getElementById('loginPassword').value;
-  
+
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+
+  if (!username || !password) {
+    alert('Please enter username and password');
+    return;
+  }
+
   showLoader('Logging in...');
-  
+
   try {
     const url = `${API_URL}?apiAction=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
-    const response = await fetch(url);
-    const result = await response.json();
-    
-    hideLoader();
-    
-    if (result.success) {
-      currentUser = result.user;
-      
-      const initials = getInitials(username);
-      document.getElementById('userAvatar').textContent = initials;
-      document.getElementById('sidebarAvatar').textContent = initials;
-      document.getElementById('sidebarName').textContent = username;
-      document.getElementById('sidebarEmail').textContent = result.user.email;
-      
-      showScreen('home-screen');
-    } else {
-      alert('Invalid credentials');
+
+    const response = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
     }
+
+    const result = await response.json();
+
+    if (!result || typeof result.success === 'undefined') {
+      throw new Error('Invalid API response');
+    }
+
+    if (result.success) {
+  console.log('Login API result:', result);
+
+    localStorage.setItem('currentUsername', result.user.username);
+    console.log('Stored username:', localStorage.getItem('currentUsername'));
+      currentUser = result.user || {};
+
+      const initials = getInitials(username);
+
+      const userAvatar = document.getElementById('userAvatar');
+      const sidebarAvatar = document.getElementById('sidebarAvatar');
+      const sidebarName = document.getElementById('sidebarName');
+      const sidebarEmail = document.getElementById('sidebarEmail');
+
+      if (userAvatar) userAvatar.textContent = initials;
+      if (sidebarAvatar) sidebarAvatar.textContent = initials;
+      if (sidebarName) sidebarName.textContent = username;
+      if (sidebarEmail) sidebarEmail.textContent = result.user?.email || '';
+
+      showScreen('home-screen');
+
+    } else {
+      alert(result.message || 'Invalid credentials');
+    }
+
   } catch (error) {
-    hideLoader();
     console.error('Login error:', error);
     alert('Connection error. Please try again.');
+  } finally {
+    hideLoader();
   }
 });
+
+function getCurrentUsername() {
+  return localStorage.getItem('currentUsername') || 'Unknown';
+}
+
+// Exemple dans generateSelectionPDF()
+const username = getCurrentUsername();
+console.log('Username for submission:', username);
+
 
 function getInitials(name) {
   const parts = name.split(' ');
@@ -1585,28 +1936,38 @@ function logout() {
 }
 
 function showScreen(screenId) {
-  // ✅ CACHER TOUS LES ÉCRANS
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active');
-    s.style.display = 'none';  // ✅ FORCE display none
-  });
-  
-  // ✅ MONTRER SEULEMENT LE BON ÉCRAN
+
+  // 1️⃣ Vérifier que l'écran cible existe
   const targetScreen = document.getElementById(screenId);
-  targetScreen.classList.add('active');
-  targetScreen.style.display = 'block';  // ✅ FORCE display block
-  
-  // ✅ Scroll en haut
-  window.scrollTo(0, 0);
-  
-  if (screenId === 'login-screen') {
-    document.getElementById('bottomNav').classList.add('hidden');
-  } else {
-    document.getElementById('bottomNav').classList.remove('hidden');
+  if (!targetScreen) {
+    console.error(`Screen "${screenId}" not found`);
+    return;
   }
-  
-  updateActiveNav(screenId);
+
+  // 2️⃣ Désactiver tous les écrans
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.remove('active');
+  });
+
+  // 3️⃣ Activer l'écran cible
+  targetScreen.classList.add('active');
+
+  // 4️⃣ Gestion bottom navigation
+  const bottomNav = document.getElementById('bottomNav');
+  if (bottomNav) {
+    if (screenId === 'login-screen') {
+      bottomNav.classList.add('hidden');
+    } else {
+      bottomNav.classList.remove('hidden');
+    }
+  }
+
+  // 5️⃣ Mettre à jour navigation active si la fonction existe
+  if (typeof updateActiveNav === 'function') {
+    updateActiveNav(screenId);
+  }
 }
+
 
 function updateActiveNav(screenId) {
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -1627,10 +1988,10 @@ function toggleSidebar() {
   document.getElementById('sidebarOverlay').classList.toggle('active');
 }
 
-// ✅ MODIFIÉ : Ajout de stopDetailsScan()
 function goHome() {
   stopCheckoutScan();
   stopCheckinScan();
+  stopSelectionScan();
   stopDetailsScan();
   showScreen('home-screen');
 }
@@ -1934,10 +2295,11 @@ async function saveCheckinAll() {
     for (let i = 0; i < toCheckinItems.length; i++) {
       const item = toCheckinItems[i];
       
+      // ✅ NE PAS ENVOYER loginName, l'Apps Script va le récupérer automatiquement
       const params = new URLSearchParams({
         apiAction: 'saveCheckinWithID',
         archivingRow: String(item.archivingRow || ''),
-        loginName: '',
+        loginName: '',  // ✅ VIDE ! Apps Script va garder le nom du Check Out
         date: new Date().toLocaleDateString('en-GB'),
         spreadsheetId: item.spreadsheetId || '',
         sourceRow: String(item.sourceRow || ''),
@@ -2261,32 +2623,6 @@ async function saveCheckoutAll() {
 }
 
 // ====================================
-// 📋 SELECTION
-// ====================================
-function goToSelection() {
-  const today = new Date().toLocaleDateString('en-GB');
-  document.getElementById('selection-date-input').value = today;
-  showScreen('selection-form-screen');
-}
-
-function continueSelection() {
-  const customer = document.getElementById('selection-customer').value.trim();
-  
-  if (!customer) {
-    alert('Please enter customer name');
-    return;
-  }
-  
-  const isAllCaps = /^[A-Z0-9\s.,;:!?'"\-()\/]+$/.test(customer);
-  if (!isAllCaps) {
-    alert('❌ ERROR: Customer name must be in CAPITALS');
-    return;
-  }
-  
-  alert('Scan functionality coming soon');
-}
-
-// ====================================
 // 📊 DETAILS (✅ NOUVEAU)
 // ====================================
 function goToDetails() {
@@ -2501,11 +2837,481 @@ function goBackToDetailsScan() {
   startDetailsScan();
 }
 
+
+
+// ====================================
+// 📋 SELECTION
+// ====================================
+function goToSelection() {
+  const today = new Date().toLocaleDateString('en-GB');
+  document.getElementById('selection-date-input').value = today;
+  showScreen('selection-form-screen');
+}
+
+async function searchBySNumber() {
+
+  const input = document.getElementById('manual-snumber-input');
+  const sNumber = input.value.trim().toUpperCase();
+
+  if (!sNumber) {
+    alert('Please enter S-Number');
+    return;
+  }
+
+  showLoader('Searching item...');
+
+  try {
+
+    const response = await fetch(
+      `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItemBySNumber&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc&sNumber=${encodeURIComponent(sNumber)}`
+    );
+
+    const result = await response.json();
+
+    hideLoader();
+
+    if (result.success) {
+
+      const itemData = result.data;
+      itemData.id = Date.now();
+
+      selectionItems.push(itemData);
+      updateSelectionItemsList();
+      updateSelectionCount();
+
+      input.value = '';
+      console.log(itemData);
+    } else {
+      alert(result.error || 'Item not found');
+    }
+
+  } catch (error) {
+    hideLoader();
+    console.error(error);
+    alert('Connection error');
+  }
+}
+
+
+function advanceToSelectionScan() {
+  
+  const input = document.getElementById('customer-input');
+  const customerName = input.value.trim().toUpperCase(); 
+  if (!customerName) {
+    alert('Please enter customer name');
+    return;
+  }
+  
+  console.log(customerName);
+
+  selectionFormData.customer = customerName;
+  
+  document.getElementById("selection-form-screen").classList.remove("active");
+  document.getElementById("selection-scan-screen").classList.add("active");
+  
+  initSelectionScanner();
+}
+
+function goBackToSelectionForm() {
+  stopSelectionScan();
+  document.getElementById("selection-scan-screen").classList.remove("active");
+  document.getElementById("selection-form-screen").classList.add("active");
+}
+
+function initSelectionScanner() {
+  if (isSelectionScanning) return;
+  if (!selectionScanner) {
+    selectionScanner = new Html5Qrcode("selection-qr-reader");
+  }
+  selectionScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 220 },
+    decodedText => onSelectionScanSuccess(decodedText)
+  ).then(() => {
+    isSelectionScanning = true;
+  }).catch(err => {
+    console.error('Scanner error:', err);
+    alert('Camera error');
+  });
+}
+
+function stopSelectionScan() {
+  if (selectionScanner && isSelectionScanning) {
+    selectionScanner.stop().then(() => { isSelectionScanning = false; }).catch(() => { isSelectionScanning = false; });
+  }
+}
+
+async function onSelectionScanSuccess(decodedText) {
+  if (scanCooldown) return;
+  
+  scanCooldown = true;
+  setTimeout(() => { scanCooldown = false; }, 1000);
+  
+  const urlParams = new URLSearchParams(decodedText.split('?')[1]);
+  const spreadsheetId = urlParams.get('id');
+  const row = urlParams.get('row');
+  
+  if (!spreadsheetId || !row) {
+    alert('Invalid QR code');
+    return;
+  }
+  
+  showLoader('Loading item...');
+  
+  try {
+    const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItem&id=${spreadsheetId}&row=${row}`);
+    const result = await response.json();
+    console.log(result);
+    hideLoader();
+    
+    if (result.success) {
+      const itemData = result.data;
+      itemData.id = Date.now();
+      selectionItems.push(itemData);
+      updateSelectionItemsList();
+      updateSelectionCount();
+    } else {
+      alert('Error: ' + (result.error || 'Failed to load item'));
+    }
+    
+  } catch (error) {
+    hideLoader();
+    console.error('Error:', error);
+    alert('Connection error');
+  }
+
+}
+
+function updateSelectionItemsList() {
+  const itemsList = document.getElementById('selection-items-list');
+
+  if (selectionItems.length === 0) {
+    itemsList.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><p class="empty-text">No items scanned yet</p></div>';
+    return;
+  }
+
+  itemsList.innerHTML = selectionItems.map((item, index) => {
+// Ta variable imageHtml doit ressembler à ceci :
+const imageHtml = item.imageUrl 
+  ? `<img src="${item.imageUrl}" 
+          class="item-image" 
+          referrerpolicy="no-referrer">` // <--- C'EST LA CLÉ
+  : `<div class="item-image-placeholder">No Image</div>`;
+    
+    return `
+      <div class="item">
+        <div class="item-number">${index + 1}</div>
+        ${imageHtml}
+        <div class="item-info">
+          <div class="item-ref-group">
+            <div class="item-label">Reference</div>
+            <div class="item-value">${item.reference}</div>
+          </div>
+          <div class="item-snum-group">
+            <div class="item-label">S-Number</div>
+            <div class="item-value-small">${item.sNumber || 'N/A'}</div>
+          </div>
+        </div>
+        <button class="btn-remove" onclick="removeSelectionItem(${item.id})">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateSelectionCount() {
+  document.getElementById('selection-count').textContent = selectionItems.length;
+}
+
+function removeSelectionItem(itemId) {
+  selectionItems = selectionItems.filter(item => item.id !== itemId);
+  updateSelectionItemsList();
+  updateSelectionCount();
+}
+
+function clearSelectionItems() {
+  if (selectionItems.length === 0) {
+    alert('No items to clear');
+    return;
+  }
+  
+  if (confirm('Clear all scanned items?')) {
+    selectionItems = [];
+    updateSelectionItemsList();
+    updateSelectionCount();
+  }
+}
+async function generateSelectionPDF() {
+  if (selectionItems.length === 0) {
+    alert('No items to generate PDF');
+    return;
+  }
+  
+  const input = document.getElementById('customer-input');
+  const customerName = input.value.trim().toUpperCase(); 
+  const selectionDate = document.getElementById('selection-date-input').value;
+
+  // 🔹 récupère le username connecté
+ const username = getCurrentUsername();
+ console.log('Username for submission:', username);
+
+  // Mise à jour globale pour d'autres fonctions
+  selectionFormData.customer = customerName;
+  selectionFormData.date = selectionDate;
+
+  showLoader('Saving to Selection & Generating PDF...');
+  
+  try {
+    const finalItems = selectionItems.map(item => ({
+      ...item,
+      customer: customerName,
+      date: selectionDate,
+      submittedBy: username // ✅ ajoute username
+    }));
+
+    // 1️⃣ Sauvegarde dans la feuille Selection
+    const saveResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        apiAction: 'saveSelection',
+        items: finalItems
+      })
+    });
+    
+    const saveResult = await saveResponse.json();
+    if (!saveResult.success) throw new Error(saveResult.error);
+
+    // 2️⃣ Stockage temporaire pour génération PDF
+    const itemsJson = JSON.stringify(finalItems);
+    const cacheResponse = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=storeScanData&items=${encodeURIComponent(itemsJson)}`);
+    const cacheResult = await cacheResponse.json();
+    
+    if (!cacheResult.success) throw new Error('Cache error');
+
+    selectionPDFUrl = `${GOOGLE_APPS_SCRIPT_URL}?action=generateMultiPDF&cacheId=${cacheResult.cacheId}`;
+
+    // 3️⃣ Affichage écran PDF
+    hideLoader();
+    stopSelectionScan();
+    document.getElementById("selection-scan-screen").classList.remove("active");
+    document.getElementById("selection-pdf-screen").classList.add("active");
+    document.getElementById('pdf-item-count').textContent = selectionItems.length;
+
+  } catch (error) {
+    hideLoader();
+    console.error('Error:', error);
+    alert('Failed: ' + error.message);
+  }
+}
+
+async function generateMultiItemPDF() {
+  try {
+    const itemsJson = JSON.stringify(selectionItems);
+    const cacheResponse = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=storeScanData&items=${encodeURIComponent(itemsJson)}`);
+    const cacheResult = await cacheResponse.json();
+    
+    if (!cacheResult.success) {
+      return { success: false, error: 'Failed to store data in cache' };
+    }
+    
+    const pdfUrl = `${GOOGLE_APPS_SCRIPT_URL}?action=generateMultiPDF&cacheId=${cacheResult.cacheId}`;
+    
+    return {
+      success: true,
+      pdfUrl: pdfUrl
+    };
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function openSelectionPDF() {
+  if (selectionPDFUrl) {
+    window.open(selectionPDFUrl, '_blank');
+  }
+}
+function goBackToHomeFromPDF() {
+  document.getElementById("selection-pdf-screen").classList.remove("active");
+  document.getElementById("home-screen").classList.add("active");
+  selectionItems = [];
+  selectionFormData = { customer: '', date: '' };
+  selectionPDFUrl = '';
+  handleBackNav('home-screen');
+}
+
+// ====================================
+// Pitch submitted
+// ====================================
+async function submitPitch(pitchData) {
+  const username = localStorage.getItem('currentUsername') || 'Unknown';
+  pitchData.submittedBy = username; // ajoute le username
+
+  const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=savePitch`, {
+    method: 'POST',
+    body: JSON.stringify(pitchData),
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  const result = await response.json();
+  if(result.success) {
+    alert('Pitch submitted successfully!');
+  } else {
+    alert('Error submitting pitch: ' + (result.error || 'Unknown'));
+  }
+}
+
+async function loadPitchScreen() {
+  showLoader('Loading pitches...');
+
+  try {
+    const response = await fetch(
+      `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getPitchSubmitted&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc`
+    );
+
+    const result = await response.json();
+    hideLoader();
+
+    const tbody = document.getElementById('pitch-tbody');
+    tbody.innerHTML = '';
+    
+    if (!result.success || !result.items || result.items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center; padding:40px; color:var(--gray-500);">
+            No data available
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    // Ajoute la ligne de filtres si pas déjà présente
+    addFiltersRow();
+
+    result.items.forEach((item, index) => {
+      const row = document.createElement('tr');
+      row.style.borderBottom = "1px solid var(--gray-200)";
+
+      row.innerHTML = `
+        <td style="padding:12px;">${item.id}</td>
+        <td style="padding:12px;">${item.customer}</td>
+        <td style="padding:12px;">${item.dateSelection}</td>
+        <td style="padding:12px;">${item.submittedBy || ''}</td> <!-- Nouvelle colonne -->
+        <td>
+          <select onchange="changeStatus('${item.id}', this.value, this)">
+            <option value="New" ${item.status === "New" ? "selected" : ""}>New</option>
+            <option value="WIP" ${item.status === "WIP" ? "selected" : ""}>WIP</option>
+            <option value="Closed" ${item.status === "Closed" ? "selected" : ""}>Closed</option>
+            <option value="Reject" ${item.status === "Reject" ? "selected" : ""}>Reject</option>
+          </select>
+        </td>
+      `;
+
+      tbody.appendChild(row);
+    });
+
+    console.log("Pitch screen loading...");
+  } catch (error) {
+    hideLoader();
+    console.error(error);
+    alert('Connection error');
+  }
+}
+
+function addFiltersRow() {
+  const tbody = document.getElementById('pitch-tbody');
+  if (!tbody) return;
+
+  const table = tbody.closest('table');
+  if (!table) return;
+
+  const thead = table.querySelector('thead');
+  if (!thead) return;
+
+  if (thead.querySelector('.filters-row')) return;
+
+  const filterRow = document.createElement('tr');
+  filterRow.classList.add('filters-row');
+
+  // Colonnes à filtrer : Ref No, Customer, Date, Submitted By, Status
+  const cols = ['refNo', 'customer', 'date', 'submittedBy', 'status'];
+
+  cols.forEach(col => {
+    const th = document.createElement('th');
+
+    if (col === 'status') {
+      const select = document.createElement('select');
+      ['', 'New', 'WIP', 'Closed', 'Reject'].forEach(s => {
+        const option = document.createElement('option');
+        option.value = s;
+        option.text = s === '' ? 'All' : s;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', applyFilters);
+      th.appendChild(select);
+    } else {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Filter';
+      input.addEventListener('input', applyFilters);
+      th.appendChild(input);
+    }
+
+    filterRow.appendChild(th);
+  });
+
+  thead.appendChild(filterRow);
+}
+
+// Filtrage dynamique
+function applyFilters() {
+  const tbody = document.getElementById('pitch-tbody');
+  if (!tbody) return;
+
+  const table = tbody.closest('table');
+  if (!table) return;
+
+  const filterRow = table.querySelector('.filters-row');
+  if (!filterRow) return;
+
+  const inputs = filterRow.querySelectorAll('input');
+  const statusSelect = filterRow.querySelector('select');
+
+  const refFilter = inputs[0]?.value.toLowerCase() || '';
+  const customerFilter = inputs[1]?.value.toLowerCase() || '';
+  const dateFilter = inputs[2]?.value.toLowerCase() || '';
+  const submittedByFilter = inputs[3]?.value.toLowerCase() || '';
+  const statusFilter = statusSelect?.value || '';
+
+  Array.from(tbody.rows).forEach(row => {
+    const cells = row.cells;
+    const matchRef = !refFilter || cells[0].textContent.toLowerCase().includes(refFilter);
+    const matchCustomer = !customerFilter || cells[1].textContent.toLowerCase().includes(customerFilter);
+    const matchDate = !dateFilter || cells[2].textContent.toLowerCase().includes(dateFilter);
+    const matchSubmittedBy = !submittedByFilter || cells[3].textContent.toLowerCase().includes(submittedByFilter);
+    const matchStatus = !statusFilter || cells[4].querySelector('select')?.value === statusFilter || cells[4].textContent === statusFilter;
+
+    row.style.display = (matchRef && matchCustomer && matchDate && matchSubmittedBy && matchStatus) ? '' : 'none';
+  });
+}
+
+
+
+function goToPitchScreen() {
+  stopSelectionScan();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('pitch-screen').classList.add('active');
+
+  loadPitchScreen(); // 🔥 Chargement automatique
+}
+
 // ====================================
 // 📊 OTHER PAGES
 // ====================================
 function goToPitch() {
   showScreen('pitch-screen');
+  loadPitchScreen();
 }
 
 function goToQC() {
@@ -2561,6 +3367,7 @@ function hideLoader() {
   const loader = document.getElementById('loader');
   if (loader) loader.remove();
 }
+
 </script>
 </body>
 </html>
