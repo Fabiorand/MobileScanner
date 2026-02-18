@@ -1365,15 +1365,85 @@ body {
 <!-- ═══════════════════════════════════════════════════════════════
      DETAILS SCREEN
      ═══════════════════════════════════════════════════════════════ -->
-<div id="details-screen" class="screen">
+<!-- ═══════════════════════════════════════════════════════════════
+     NOUVEAU DETAILS - REMPLACE L'ANCIEN DETAILS SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- DETAILS SCAN SCREEN -->
+<div id="details-scan-screen" class="screen">
+  <div class="container">
+    <div class="top-bar">
+      <div class="status-badge" style="background: var(--violet-light); color: var(--violet); border: 2px solid var(--violet);">
+        <span class="status-dot"></span>
+        <span>Details</span>
+      </div>
+      <button class="btn-home" onclick="goHome()">Home</button>
+    </div>
+    
+    <!-- SCANNER -->
+    <div class="scanner-box">
+      <div id="details-qr-reader"></div>
+      <div class="scan-info">
+        <p class="scan-text">Scan QR or search S-Number</p>
+      </div>
+    </div>
+    
+    <!-- SEARCH S-NUMBER -->
+    <div style="background: var(--white); border: 2px solid var(--gray-200); border-radius: 20px; padding: 20px; margin-bottom: 24px;">
+      <div style="display: flex; gap: 12px;">
+        <input 
+          type="text" 
+          id="details-search-input" 
+          class="form-input" 
+          placeholder="Enter S-Number" 
+          style="flex: 1; margin: 0;"
+        >
+        <button 
+          class="btn-submit" 
+          onclick="searchDetailsItem()" 
+          style="width: auto; padding: 14px 24px; margin: 0; background: var(--violet);">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAILS VIEW SCREEN -->
+<div id="details-view-screen" class="screen">
   <div class="container">
     <div class="nav-header">
-      <button class="btn-back" onclick="goHome()">←</button>
-      <div class="nav-title">Product Details</div>
+      <button class="btn-back" onclick="goBackToDetailsScan()">←</button>
+      <div class="nav-title" id="details-reference">Details</div>
     </div>
-    <div class="empty">
-      <div class="empty-icon">ℹ️</div>
-      <p class="empty-text">Scan QR to view details</p>
+    
+    <!-- IMAGE -->
+    <div style="background: var(--white); border: 2px solid var(--gray-200); border-radius: 20px; padding: 24px; margin-bottom: 24px;">
+      <img id="details-image" src="" alt="Product" style="width: 100%; height: auto; border-radius: 16px; display: none;">
+      <div id="details-no-image" style="display: none; text-align: center; padding: 60px 20px; background: var(--gray-100); border-radius: 16px;">
+        <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;">🖼️</div>
+        <p style="color: var(--gray-500);">No image available</p>
+      </div>
+    </div>
+    
+    <!-- INFO TABLE -->
+    <div style="background: var(--white); border: 2px solid var(--gray-200); border-radius: 20px; padding: 24px; margin-bottom: 24px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tbody id="details-table-body">
+          <!-- Sera rempli dynamiquement -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- ARCHIVING HISTORY -->
+    <div class="section-header">
+      <div class="section-title">History</div>
+    </div>
+    <div id="details-history-list" class="items-list">
+      <div class="empty">
+        <div class="empty-icon">📋</div>
+        <p class="empty-text">No history</p>
+      </div>
     </div>
   </div>
 </div>
@@ -1436,9 +1506,7 @@ body {
 
 
 <script>
-
-
-const API_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
 const ARCHIVING_SPREADSHEET_ID = '1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc';
 
 let currentUser = null;
@@ -1458,6 +1526,11 @@ let checkinNamesData = {};
 let currentCheckinName = '';
 let checkedOutItems = [];
 let toCheckinItems = [];
+
+// ✅ DETAILS VARIABLES (AJOUTÉ)
+let detailsScanner;
+let isDetailsScanning = false;
+let currentDetailsData = null;
 
 // ====================================
 // 🔐 LOGIN
@@ -1543,9 +1616,11 @@ function toggleSidebar() {
   document.getElementById('sidebarOverlay').classList.toggle('active');
 }
 
+// ✅ MODIFIÉ : Ajout de stopDetailsScan()
 function goHome() {
   stopCheckoutScan();
   stopCheckinScan();
+  stopDetailsScan();
   showScreen('home-screen');
 }
 
@@ -1848,11 +1923,10 @@ async function saveCheckinAll() {
     for (let i = 0; i < toCheckinItems.length; i++) {
       const item = toCheckinItems[i];
       
-      // ✅ NE PAS ENVOYER loginName, l'Apps Script va le récupérer automatiquement
       const params = new URLSearchParams({
         apiAction: 'saveCheckinWithID',
         archivingRow: String(item.archivingRow || ''),
-        loginName: '',  // ✅ VIDE ! Apps Script va garder le nom du Check Out
+        loginName: '',
         date: new Date().toLocaleDateString('en-GB'),
         spreadsheetId: item.spreadsheetId || '',
         sourceRow: String(item.sourceRow || ''),
@@ -2202,14 +2276,225 @@ function continueSelection() {
 }
 
 // ====================================
+// 📊 DETAILS (✅ NOUVEAU)
+// ====================================
+function goToDetails() {
+  showScreen('details-scan-screen');
+  startDetailsScan();
+}
+
+function startDetailsScan() {
+  if (isDetailsScanning) return;
+  if (!detailsScanner) {
+    detailsScanner = new Html5Qrcode("details-qr-reader");
+  }
+  detailsScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 220 },
+    decodedText => onDetailsScan(decodedText)
+  ).then(() => {
+    isDetailsScanning = true;
+  }).catch(err => {
+    console.error('Scanner error:', err);
+    alert('Camera error');
+  });
+}
+
+function stopDetailsScan() {
+  if (detailsScanner && isDetailsScanning) {
+    detailsScanner.stop().then(() => { 
+      isDetailsScanning = false; 
+    }).catch(() => { 
+      isDetailsScanning = false; 
+    });
+  }
+}
+
+async function onDetailsScan(decodedText) {
+  if (scanCooldown) return;
+  
+  try {
+    const url = new URL(decodedText);
+    const params = new URLSearchParams(url.search);
+    const spreadsheetId = params.get('id');
+    const row = params.get('row');
+    
+    if (spreadsheetId && row) {
+      scanCooldown = true;
+      if (navigator.vibrate) navigator.vibrate(200);
+      await fetchDetailsData(spreadsheetId, row);
+      setTimeout(() => { scanCooldown = false; }, 800);
+    } else {
+      alert('Invalid QR code');
+    }
+  } catch (e) {
+    scanCooldown = false;
+    alert('Invalid QR code');
+  }
+}
+
+async function searchDetailsItem() {
+  const sNumber = document.getElementById('details-search-input').value.trim();
+  
+  if (!sNumber) {
+    alert('Please enter S-Number');
+    return;
+  }
+  
+  showLoader('Searching...');
+  
+  try {
+    const url = `${API_URL}?apiAction=getItemBySNumber&spreadsheetId=${ARCHIVING_SPREADSHEET_ID}&sNumber=${encodeURIComponent(sNumber)}`;
+    const response = await fetch(url);
+    const result = await response.json();
+    hideLoader();
+    
+    if (result.error) {
+      alert('S-Number not found');
+      return;
+    }
+    
+    if (result.success && result.data) {
+      currentDetailsData = result.data;
+      document.getElementById('details-search-input').value = '';
+      await loadDetailsHistory(result.data.spreadsheetId, result.data.sourceRow);
+      renderDetailsView();
+      stopDetailsScan();
+      showScreen('details-view-screen');
+    }
+  } catch (error) {
+    hideLoader();
+    console.error('Error:', error);
+    alert('Connection error');
+  }
+}
+
+async function fetchDetailsData(spreadsheetId, row) {
+  showLoader('Loading...');
+  
+  try {
+    const url = `${API_URL}?apiAction=getItem&id=${spreadsheetId}&row=${row}`;
+    const response = await fetch(url);
+    const result = await response.json();
+    hideLoader();
+    
+    if (result.error) {
+      alert('Error: ' + result.error);
+      return;
+    }
+    
+    if (result.success && result.data) {
+      currentDetailsData = result.data;
+      await loadDetailsHistory(spreadsheetId, row);
+      renderDetailsView();
+      stopDetailsScan();
+      showScreen('details-view-screen');
+    }
+  } catch (error) {
+    hideLoader();
+    console.error('Error:', error);
+    alert('Connection error');
+  }
+}
+
+async function loadDetailsHistory(spreadsheetId, row) {
+  try {
+    const url = `${API_URL}?apiAction=getArchivingDetails&id=${spreadsheetId}&row=${row}`;
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    if (result.success && result.entries) {
+      currentDetailsData.history = result.entries;
+    }
+  } catch (error) {
+    console.error('Error loading history:', error);
+  }
+}
+
+function renderDetailsView() {
+  if (!currentDetailsData) return;
+  
+  document.getElementById('details-reference').textContent = currentDetailsData.reference || 'Details';
+  
+  const imgElement = document.getElementById('details-image');
+  const noImgElement = document.getElementById('details-no-image');
+  
+  if (currentDetailsData.imageUrl) {
+    imgElement.src = currentDetailsData.imageUrl;
+    imgElement.style.display = 'block';
+    noImgElement.style.display = 'none';
+  } else {
+    imgElement.style.display = 'none';
+    noImgElement.style.display = 'block';
+  }
+  
+  const tableBody = document.getElementById('details-table-body');
+  const rows = [
+    { label: 'Reference', value: currentDetailsData.reference },
+    { label: 'S-Number', value: currentDetailsData.sNumber },
+    { label: 'Season', value: currentDetailsData.season },
+    { label: 'Description', value: currentDetailsData.description },
+    { label: 'Fabric Code', value: currentDetailsData.fabricCode },
+    { label: 'Composition', value: currentDetailsData.composition },
+    { label: 'Collection', value: currentDetailsData.collection },
+    { label: 'Total Qty', value: currentDetailsData.totalQty },
+    { label: 'Qty Available', value: currentDetailsData.qtyAvailable }
+  ];
+  
+  tableBody.innerHTML = rows.map(row => `
+    <tr style="border-bottom: 1px solid var(--gray-200);">
+      <td style="padding: 12px 0; font-size: 12px; font-weight: 700; color: var(--gray-600); width: 40%;">${row.label}</td>
+      <td style="padding: 12px 0; font-size: 14px; font-weight: 600; color: var(--black);">${row.value || 'N/A'}</td>
+    </tr>
+  `).join('');
+  
+  const historyList = document.getElementById('details-history-list');
+  
+  if (!currentDetailsData.history || currentDetailsData.history.length === 0) {
+    historyList.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p class="empty-text">No history</p></div>';
+  } else {
+    historyList.innerHTML = currentDetailsData.history.map((entry, index) => `
+      <div class="item">
+        <div class="item-number">${index + 1}</div>
+        <div class="item-info" style="flex: 1;">
+          <div style="margin-bottom: 8px;">
+            <div class="item-label">Date</div>
+            <div class="item-value-small">${entry.date || 'N/A'}</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div class="item-label">Check Out</div>
+              <div class="item-value-small">${entry.checkOutName || '-'}</div>
+            </div>
+            <div>
+              <div class="item-label">Check In</div>
+              <div class="item-value-small">${entry.checkInName || '-'}</div>
+            </div>
+          </div>
+          <div style="margin-top: 8px;">
+            <div class="item-label">Destination</div>
+            <div class="item-value-small">${entry.destination || '-'}</div>
+          </div>
+          <div class="item-badges" style="margin-top: 8px;">
+            <span class="badge badge-total">Qty: ${entry.qtyLog || 0}</span>
+            <span class="badge badge-available">Avail: ${entry.qtyAvailable || 0}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function goBackToDetailsScan() {
+  showScreen('details-scan-screen');
+  startDetailsScan();
+}
+
+// ====================================
 // 📊 OTHER PAGES
 // ====================================
 function goToPitch() {
   showScreen('pitch-screen');
-}
-
-function goToDetails() {
-  showScreen('details-screen');
 }
 
 function goToQC() {
