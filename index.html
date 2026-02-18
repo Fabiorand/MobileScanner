@@ -1585,8 +1585,19 @@ function logout() {
 }
 
 function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
+  // ✅ CACHER TOUS LES ÉCRANS
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';  // ✅ FORCE display none
+  });
+  
+  // ✅ MONTRER SEULEMENT LE BON ÉCRAN
+  const targetScreen = document.getElementById(screenId);
+  targetScreen.classList.add('active');
+  targetScreen.style.display = 'block';  // ✅ FORCE display block
+  
+  // ✅ Scroll en haut
+  window.scrollTo(0, 0);
   
   if (screenId === 'login-screen') {
     document.getElementById('bottomNav').classList.add('hidden');
