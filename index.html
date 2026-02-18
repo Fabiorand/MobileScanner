@@ -3263,6 +3263,23 @@ function addFiltersRow() {
   thead.appendChild(filterRow);
 }
 
+function changeStatus(id, newStatus) {
+  console.log("Sending ID:", id, "New Status:", newStatus);
+
+  fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=updatePitchStatus&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc&id=${encodeURIComponent(id)}&newStatus=${encodeURIComponent(newStatus)}`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Server response:", data);
+      if (data.success) {
+        // Met à jour localement pour filtrage
+        const item = allPitchItems.find(i => i.id === id);
+        if (item) item.status = newStatus;
+      } else {
+        alert('Failed to update status: ' + (data.error || 'unknown'));
+      }
+    })
+    .catch(err => console.error(err));
+}
 // Filtrage dynamique
 function applyFilters() {
   const tbody = document.getElementById('pitch-tbody');
