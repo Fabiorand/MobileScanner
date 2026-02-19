@@ -432,7 +432,7 @@ body {
    ==================================== */
 .bottom-nav {
   position: fixed;
-  bottom: 20px;
+  bottom: 16px; /* ✅ Réduit de 20px → 16px */
   left: 50%;
   transform: translateX(-50%);
   background: var(--black);
@@ -440,7 +440,7 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 12px 20px;
+  padding: 8px 16px; /* ✅ Réduit de 12px → 8px */
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   z-index: 999;
   width: calc(100% - 40px);
@@ -453,7 +453,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 6px; /* ✅ Réduit de 8px → 6px */
   background: none;
   border: none;
   cursor: pointer;
@@ -472,9 +472,9 @@ body {
 }
 
 .nav-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
+  width: 22px; /* ✅ Réduit de 24px → 22px */
+  height: 22px; /* ✅ Réduit de 24px → 22px */
+  margin-bottom: 3px; /* ✅ Réduit de 4px → 3px */
   color: rgba(255, 255, 255, 0.6);
   transition: all 0.2s;
   stroke-width: 2;
@@ -485,7 +485,7 @@ body {
 }
 
 .nav-label {
-  font-size: 11px;
+  font-size: 10px; /* ✅ Réduit de 11px → 10px */
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
   transition: all 0.2s;
@@ -877,6 +877,9 @@ body {
 /* ====================================
    📋 CHECK IN - NAMES LIST
    ==================================== */
+/* ====================================
+   📋 CHECK IN - NAMES LIST
+   ==================================== */
 .names-list {
   display: flex;
   flex-direction: column;
@@ -890,12 +893,14 @@ body {
   background: var(--white);
   border: 2px solid var(--gray-200);
   border-radius: 16px;
-  padding: 20px;
+  padding: 20px 24px; /* ✅ Augmenté le padding horizontal */
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%; /* ✅ Prend toute la largeur */
+  box-sizing: border-box; /* ✅ Important pour le responsive */
 }
 
 .name-card:active {
@@ -906,6 +911,7 @@ body {
 
 .name-card-info {
   flex: 1;
+  min-width: 0; /* ✅ Permet au texte de se couper si trop long */
 }
 
 .name-card-name {
@@ -913,6 +919,9 @@ body {
   font-weight: 700;
   color: var(--black);
   margin-bottom: 4px;
+  overflow: hidden; /* ✅ Gère le texte trop long */
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .name-card-count {
@@ -923,171 +932,8 @@ body {
 .name-card-arrow {
   font-size: 24px;
   color: var(--gray-400);
-}
-
-/* ====================================
-   📦 CHECK IN - 2 LISTS LAYOUT
-   ==================================== */
-.checkin-container {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.checkin-section {
-  flex: 1;
-}
-
-.checkin-section-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--black);
-}
-
-.hidden {
-  display: none !important;
-}
-/* --------------------------------- */
-/* selection block */
-/* --------------------------------- */
-
-/* Conteneur général */
-.snumber-container {
-  margin-bottom: 16px;
-  padding: 16px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* Groupe label + input */
-.snumber-group {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Label */
-.snumber-label {
-  font-weight: 600;
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 6px;
-}
-
-/* Wrapper input + bouton */
-.snumber-input-wrapper {
-  display: flex;
-  gap: 8px;
-}
-
-/* Input */
-.snumber-input {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.snumber-input:focus {
-  border-color: #4a90e2;
-}
-
-/* Bouton */
-.snumber-btn {
-  padding: 10px 16px;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.snumber-btn:hover {
-  background-color: #357ABD;
-}
-/* btn */
-
-.btn-large {
-  width: 100%;
-  padding: 20px;
-  border-radius: 16px;
-  border: none;
-  background: var(--black);
-  color: var(--white);
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-}
-
-.btn-large:active {
-  transform: scale(0.98);
-  opacity: 0.9;
-}
-
-.btn-selection {
-  margin-top: 16px;
-  background: #000000;
-}
-
-
-.btn-secondary {
-  width: 100%;
-  padding: 16px;
-  margin-top: 12px;
-  border-radius: 16px;
-  border: 2px solid var(--gray-300);
-  background: var(--white);
-  color: var(--black);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-}
-
-.btn-secondary:active {
-  transform: scale(0.98);
-  background: var(--gray-100);
-}
-
-/* pdf */
-
-.pdf-wrapper {
-  text-align: center;
-  padding: 40px 0;
-}
-
-.pdf-icon {
-  font-size: 96px;
-  margin-bottom: 24px;
-}
-
-.pdf-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
-}
-
-.pdf-count {
-  font-size: 48px;
-  font-weight: 700;
-  color: var(--blue);
-  margin: 20px 0;
-}
-
-.pdf-message {
-  font-size: 16px;
-  color: var(--gray-600);
-  margin-bottom: 40px;
+  flex-shrink: 0; /* ✅ La flèche garde sa taille */
+  margin-left: 16px;
 }
 /* __________________________ */
 /* pitch                      */
@@ -2807,40 +2653,46 @@ function renderDetailsView() {
     </tr>
   `).join('');
   
-  const historyList = document.getElementById('details-history-list');
+  // ✅ NOUVEAU : HISTORY EN TABLEAU
+  const historyContainer = document.getElementById('details-history-list');
   
   if (!currentDetailsData.history || currentDetailsData.history.length === 0) {
-    historyList.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p class="empty-text">No history</p></div>';
+    historyContainer.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p class="empty-text">No history</p></div>';
   } else {
-    historyList.innerHTML = currentDetailsData.history.map((entry, index) => `
-      <div class="item">
-        <div class="item-number">${index + 1}</div>
-        <div class="item-info" style="flex: 1;">
-          <div style="margin-bottom: 8px;">
-            <div class="item-label">Date</div>
-            <div class="item-value-small">${entry.date || 'N/A'}</div>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-              <div class="item-label">Check Out</div>
-              <div class="item-value-small">${entry.checkOutName || '-'}</div>
-            </div>
-            <div>
-              <div class="item-label">Check In</div>
-              <div class="item-value-small">${entry.checkInName || '-'}</div>
-            </div>
-          </div>
-          <div style="margin-top: 8px;">
-            <div class="item-label">Destination</div>
-            <div class="item-value-small">${entry.destination || '-'}</div>
-          </div>
-          <div class="item-badges" style="margin-top: 8px;">
-            <span class="badge badge-total">Qty: ${entry.qtyLog || 0}</span>
-            <span class="badge badge-available">Avail: ${entry.qtyAvailable || 0}</span>
-          </div>
-        </div>
+    historyContainer.innerHTML = `
+      <div style="background: var(--white); border: 2px solid var(--gray-200); border-radius: 20px; padding: 16px; overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--gray-200);">
+              <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">#</th>
+              <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Date</th>
+              <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Check Out</th>
+              <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Check In</th>
+              <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600);">Destination</th>
+              <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 700; color: var(--gray-600);">Qty</th>
+              <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 700; color: var(--gray-600);">Available</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${currentDetailsData.history.map((entry, index) => `
+              <tr style="border-bottom: 1px solid var(--gray-200);">
+                <td style="padding: 12px; font-size: 14px; font-weight: 700; color: var(--black);">${index + 1}</td>
+                <td style="padding: 12px; font-size: 13px; color: var(--gray-700);">${entry.date || 'N/A'}</td>
+                <td style="padding: 12px; font-size: 13px; color: var(--gray-700);">${entry.checkOutName || '-'}</td>
+                <td style="padding: 12px; font-size: 13px; color: var(--gray-700);">${entry.checkInName || '-'}</td>
+                <td style="padding: 12px; font-size: 13px; color: var(--gray-700);">${entry.destination || '-'}</td>
+                <td style="padding: 12px; text-align: center;">
+                  <span style="padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; background: var(--gray-100); color: var(--gray-600);">${entry.qtyLog || 0}</span>
+                </td>
+                <td style="padding: 12px; text-align: center;">
+                  <span style="padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; background: var(--green-light); color: var(--green);">${entry.qtyAvailable || 0}</span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
       </div>
-    `).join('');
+    `;
   }
 }
 
