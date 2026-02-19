@@ -2558,11 +2558,23 @@ function removeCheckoutItem(itemId) {
 }
 
 function clearCheckoutAll() {
-  if (checkoutItems.length === 0) return;
-  if (!confirm('Clear all items?')) return;
+  console.log('Clear button clicked!'); // ✅ LOG
+  console.log('checkoutItems.length:', checkoutItems.length); // ✅ LOG
   
+  if (checkoutItems.length === 0) {
+    alert('No items to clear');
+    return;
+  }
+  
+  if (!confirm('Clear all items?')) {
+    console.log('User cancelled'); // ✅ LOG
+    return;
+  }
+  
+  console.log('Clearing items...'); // ✅ LOG
   checkoutItems = [];
   updateCheckoutList();
+  console.log('Items cleared!'); // ✅ LOG
 }
 
 async function saveCheckoutAll() {
