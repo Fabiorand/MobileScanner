@@ -2433,6 +2433,7 @@ async function saveCheckoutAll() {
   
   try {
     let finalSessionId = '';
+    let successCount = 0;
     
     for (let i = 0; i < checkoutItems.length; i++) {
       const item = checkoutItems[i];
@@ -2462,21 +2463,35 @@ async function saveCheckoutAll() {
       const response = await fetch(url);
       const result = await response.json();
       
+      if (result.error) {
+        hideLoader();
+        alert('Error saving item ' + (i+1) + ': ' + result.error);
+        return; // ❌ Arrête si erreur
+      }
+      
       if (i === 0 && result.sessionId) {
         finalSessionId = result.sessionId;
       }
+      
+      successCount++;
     }
     
     hideLoader();
-    alert(`Success! ${checkoutItems.length} items saved with ID: ${finalSessionId}`);
+    
+    // ✅ VIDER LA LISTE APRÈS SUCCESS
+    checkoutItems = [];
+    updateCheckoutList(); // ✅ Rafraîchir l'affichage
     
     stopCheckoutScan();
-    checkoutItems = [];
+    
+    alert(`Success! ${successCount} items saved with ID: ${finalSessionId}`);
+    
     goHome();
+    
   } catch (error) {
     hideLoader();
     console.error('Error:', error);
-    alert('Connection error');
+    alert('Connection error: ' + error.message);
   }
 }
 
