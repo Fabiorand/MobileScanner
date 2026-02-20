@@ -2133,6 +2133,20 @@ async function saveCheckinAll() {
     return;
   }
   
+  // ✅ AFFICHER LES DONNÉES AVANT SAVE
+  console.log('=== ITEMS TO SAVE ===');
+  toCheckinItems.forEach((item, i) => {
+    console.log(`Item ${i+1}:`);
+    console.log('  reference:', item.reference);
+    console.log('  sNumber:', item.sNumber);
+    console.log('  season:', item.season);
+    console.log('  archivingRow:', item.archivingRow);
+    console.log('  sourceRow:', item.sourceRow);
+  });
+  
+  const confirmSave = confirm(`Save ${toCheckinItems.length} items?\n\nCheck console (F12) to verify data.`);
+  if (!confirmSave) return;
+  
   showLoader('Saving...');
   
   try {
@@ -2141,11 +2155,14 @@ async function saveCheckinAll() {
     for (let i = 0; i < toCheckinItems.length; i++) {
       const item = toCheckinItems[i];
       
-      // ✅ NE PAS ENVOYER loginName, l'Apps Script va le récupérer automatiquement
+      console.log(`\n--- Sending item ${i+1} ---`);
+      console.log('archivingRow:', item.archivingRow);
+      console.log('reference:', item.reference);
+      
       const params = new URLSearchParams({
         apiAction: 'saveCheckinWithID',
         archivingRow: String(item.archivingRow || ''),
-        loginName: '',  // ✅ VIDE ! Apps Script va garder le nom du Check Out
+        loginName: '',
         date: new Date().toLocaleDateString('en-GB'),
         spreadsheetId: item.spreadsheetId || '',
         sourceRow: String(item.sourceRow || ''),
@@ -2156,13 +2173,15 @@ async function saveCheckinAll() {
       const response = await fetch(url);
       const result = await response.json();
       
+      console.log('Result:', result);
+      
       if (i === 0 && result.sessionId) {
         finalSessionId = result.sessionId;
       }
     }
     
     hideLoader();
-    alert(`Success! ${toCheckinItems.length} items checked in with ID: ${finalSessionId}`);
+    alert(`Done ✅`);
     
     toCheckinItems = [];
     goHome();
