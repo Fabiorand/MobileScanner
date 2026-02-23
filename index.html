@@ -430,9 +430,10 @@ body {
 /* ====================================
    📱 BOTTOM NAV
    ==================================== */
+
 .bottom-nav {
   position: fixed;
-  bottom: 16px; /* ✅ Réduit de 20px → 16px */
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--black);
@@ -440,11 +441,21 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 8px 16px; /* ✅ Réduit de 12px → 8px */
+  justify-items: auto;
+  padding: 6px 20px; 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   z-index: 999;
   width: calc(100% - 40px);
   max-width: 500px;
+}
+
+.nav-icon {
+  min-width: 20px;
+  height: 20px; /* réduit légèrement de 24px à 20px */
+  margin-bottom: 2px; /* réduit de 4px à 2px */
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s;
+  stroke-width: 2;
 }
 
 .nav-btn {
@@ -453,12 +464,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px; /* ✅ Réduit de 8px → 6px */
+  padding: 2px;
   background: none;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 60px;
+  min-width: 30px;
   border-radius: 20px;
 }
 
@@ -471,21 +482,13 @@ body {
   background: var(--violet);
 }
 
-.nav-icon {
-  width: 22px; /* ✅ Réduit de 24px → 22px */
-  height: 22px; /* ✅ Réduit de 24px → 22px */
-  margin-bottom: 3px; /* ✅ Réduit de 4px → 3px */
-  color: rgba(255, 255, 255, 0.6);
-  transition: all 0.2s;
-  stroke-width: 2;
-}
 
 .nav-btn.active .nav-icon {
   color: var(--white);
 }
 
 .nav-label {
-  font-size: 10px; /* ✅ Réduit de 11px → 10px */
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
   transition: all 0.2s;
@@ -503,7 +506,7 @@ body {
   max-width: 440px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 100px;
+  padding-bottom: 20px;
 }
 
 .nav-header {
@@ -877,9 +880,6 @@ body {
 /* ====================================
    📋 CHECK IN - NAMES LIST
    ==================================== */
-/* ====================================
-   📋 CHECK IN - NAMES LIST
-   ==================================== */
 .names-list {
   display: flex;
   flex-direction: column;
@@ -893,14 +893,12 @@ body {
   background: var(--white);
   border: 2px solid var(--gray-200);
   border-radius: 16px;
-  padding: 20px 24px; /* ✅ Augmenté le padding horizontal */
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   transition: all 0.2s;
-  width: 100%; /* ✅ Prend toute la largeur */
-  box-sizing: border-box; /* ✅ Important pour le responsive */
 }
 
 .name-card:active {
@@ -911,7 +909,6 @@ body {
 
 .name-card-info {
   flex: 1;
-  min-width: 0; /* ✅ Permet au texte de se couper si trop long */
 }
 
 .name-card-name {
@@ -919,9 +916,6 @@ body {
   font-weight: 700;
   color: var(--black);
   margin-bottom: 4px;
-  overflow: hidden; /* ✅ Gère le texte trop long */
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .name-card-count {
@@ -932,13 +926,185 @@ body {
 .name-card-arrow {
   font-size: 24px;
   color: var(--gray-400);
-  flex-shrink: 0; /* ✅ La flèche garde sa taille */
-  margin-left: 16px;
+}
+
+/* ====================================
+   📦 CHECK IN - 2 LISTS LAYOUT
+   ==================================== */
+.checkin-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.checkin-section {
+  flex: 1;
+}
+
+.checkin-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--black);
+}
+
+.hidden {
+  display: none !important;
+}
+/* --------------------------------- */
+/* selection block */
+/* --------------------------------- */
+
+/* Conteneur général */
+.snumber-container {
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Groupe label + input */
+.snumber-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label */
+.snumber-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+/* Wrapper input + bouton */
+.snumber-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+/* Input */
+.snumber-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.snumber-input:focus {
+  border-color: #4a90e2;
+}
+
+/* Bouton */
+.snumber-btn {
+  padding: 10px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.snumber-btn:hover {
+  background-color: #357ABD;
+}
+/* btn */
+
+.btn-large {
+  width: 100%;
+  padding: 20px;
+  border-radius: 16px;
+  border: none;
+  background: var(--black);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-large:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.btn-selection {
+  margin-top: 16px;
+  background: #000000;
+}
+
+
+.btn-secondary {
+  width: 100%;
+  padding: 16px;
+  margin-top: 12px;
+  border-radius: 16px;
+  border: 2px solid var(--gray-300);
+  background: var(--white);
+  color: var(--black);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+  background: var(--gray-100);
+}
+
+/* pdf */
+
+.pdf-wrapper {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.pdf-icon {
+  font-size: 96px;
+  margin-bottom: 24px;
+}
+
+.pdf-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.pdf-count {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--blue);
+  margin: 20px 0;
+}
+
+.pdf-message {
+  font-size: 16px;
+  color: var(--gray-600);
+  margin-bottom: 40px;
 }
 /* __________________________ */
 /* pitch                      */
 /* __________________________ */
-
+.btn-view-pdf{
+  border-color:transparent;
+}
+.btn-view-pdf:hover{
+  border-color:black;
+  width: 48px;
+  padding: 1px;
+  height: 30px;
+  background-color: rgb(111, 174, 226);
+}
 /* Container principal du pitch-screen */
 #pitch-screen .container {
   display: flex;
@@ -952,41 +1118,16 @@ body {
 
 /* Wrapper du tableau pour occuper tout l'espace restant */
 #pitch-screen .table-wrapper {
-  flex: 1;                /* prend tout l'espace vertical restant */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: auto;          /* scroll vertical et horizontal si nécessaire */
+  overflow: auto;
   background: white;
   border: 2px solid var(--gray-200);
   border-radius: 20px;
   padding: 16px;
 }
 
-/* Tableau responsive */
-#pitch-screen table {
-  width: 100%;             /* occupe toute la largeur du wrapper */
-  min-width: 800px;        /* largeur minimale pour lisibilité */
-  border-collapse: collapse;
-  table-layout: auto;
-}
-/* Header du tableau */
-#pitch-screen th {
-  padding: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--gray-600);
-  text-align: left;
-  border-bottom: 2px solid var(--gray-200);
-}
-
-/* Cellules du tableau */
-#pitch-screen td {
-  padding: 12px;
-  font-size: 14px;
-  color: var(--gray-800);
-  border-bottom: 1px solid var(--gray-200);
-}
-/* Sticky pour la première ligne du thead (titres) */
 #pitch-screen table thead tr:first-child th {
   position: sticky;
   top: 0;                 /* collé en haut du wrapper */
@@ -1006,7 +1147,7 @@ body {
 /* Ligne des filtres (ajoutée dynamiquement) */
 #pitch-screen table thead tr.filters-row th {
   position: sticky;
-  top: 40px; /* hauteur approximative de la première ligne des titres, ajuste si nécessaire */
+  top: 25px; /* hauteur approximative de la première ligne des titres, ajuste si nécessaire */
   background: #f9f9f9;
   z-index: 2;
   border-bottom: 2px solid var(--gray-200);
@@ -1025,7 +1166,92 @@ body {
   overflow-x: auto;
 }
 
+/* pitch mobile */
 
+@media (max-width: 600px) {
+  
+
+  /* --- Reste du design (Cartes) --- */
+  #pitch-screen tbody, #pitch-screen tr, #pitch-screen td {
+    display: block;
+    width: 100%;
+  }
+
+  #pitch-screen tr {
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 20px;
+    margin-bottom: 15px;
+    padding: 15px;
+  }
+
+  #pitch-screen td {
+    display: flex !important;
+    padding: 8px 0 !important;
+    border: none !important;
+  }
+
+  #pitch-screen td::before {
+    content: attr(data-label);
+    width: 100px;
+    font-weight: 700;
+    color: var(--gray-500);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  #pitch-screen td span {
+    flex: 1;
+    font-weight: 600;
+  }
+   #pitch-screen thead {
+    display: block;
+    width: 100%;
+    background: var(--gray-50);
+    padding: 0px;
+    margin: 0px;
+    border-radius: 15px;
+  }
+
+  /* On force les deux lignes (Titres et Filtres) à s'afficher */
+  #pitch-screen thead tr {
+    display: flex !important;
+    flex-direction: row !important; /* Garde l'alignement horizontal pour les colonnes */
+    width: 100%;
+    border: none !important;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  /* On ajuste les titres (1ère ligne) */
+  #pitch-screen thead tr:first-child th {
+    display: block;
+    flex: 1;
+    font-size: 9px; /* Très petit pour que ça tienne */
+    text-transform: uppercase;
+    color: var(--gray-500);
+    text-align: center;
+    padding: 4px 2px !important;
+  }
+
+  /* On ajuste les filtres (2ème ligne) */
+  #pitch-screen thead tr.filters-row th {
+    display: block;
+    flex: 1;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  /* On rend les inputs de filtres plus petits pour mobile */
+  #pitch-screen thead tr.filters-row input,
+  #pitch-screen thead tr.filters-row select {
+    font-size: 10px;
+    padding: 4px;
+    height: 35px;
+  }
+
+}
 </style>
 </head>
 
@@ -1052,9 +1278,24 @@ body {
       </div>
       
       <div class="form-group">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required>
-      </div>
+  <label class="form-label">Password</label>
+  <div style="position: relative;">
+    <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required>
+    <button type="button" id="togglePassword" style="
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+    ">
+      👁️
+    </button>
+  </div>
+</div>
+
       
       <button type="submit" class="btn-login">Sign In</button>
     </form>
@@ -1135,13 +1376,13 @@ body {
         <div class="action-title">Details</div>
       </div>
 
-      <div class="action-card qc" onclick="goToQC()">
+      <div class="action-card qc" onclick="goToDashboard()">
         <div class="action-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"/>
           </svg>
         </div>
-        <div class="action-title">QC Check</div>
+        <div class="action-title">Dashboard</div>
       </div>
     </div>
   </div>
@@ -1542,6 +1783,30 @@ body {
         <p class="empty-text">No history</p>
       </div>
     </div>
+
+     <!-- SELECTION -->
+    <div class="section-header" style="margin-top: 24px;">
+      <div class="section-title">Selection</div>
+    </div>
+
+    <div style="background: var(--white); border: 2px solid var(--gray-200); border-radius: 20px; padding: 24px; margin-bottom: 24px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--gray-200); text-align: left;">
+            <th style="padding: 12px 8px;">Date</th>
+            <th style="padding: 12px 8px;">Client</th>
+            <th style="padding: 12px 8px;">RequestBy</th>
+          </tr>
+        </thead>
+        <tbody id="details-selection-table-body">
+          <tr>
+            <td colspan="3" style="text-align: center; padding: 20px; color: var(--gray-500);">
+              No selection data
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 <!-- ═══════════════════════════════════════════════════════════════
@@ -1553,7 +1818,6 @@ body {
       <button class="btn-back" onclick="goHome()">←</button>
       <div class="nav-title">Pitch Submitted</div>
     </div>
-
     <div class="table-wrapper">
       <table>
         <thead>
@@ -1579,33 +1843,17 @@ body {
 
 
 <!-- ═══════════════════════════════════════════════════════════════
-     DETAILS SCREEN
+     Dashbaord SCREEN
      ═══════════════════════════════════════════════════════════════ -->
-<div id="details-screen" class="screen">
+<div id="dashboard-screen" class="screen">
   <div class="container">
     <div class="nav-header">
       <button class="btn-back" onclick="goHome()">←</button>
-      <div class="nav-title">Product Details</div>
-    </div>
-    <div class="empty">
-      <div class="empty-icon">ℹ️</div>
-      <p class="empty-text">Scan QR to view details</p>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     QC CHECK SCREEN
-     ═══════════════════════════════════════════════════════════════ -->
-<div id="qc-screen" class="screen">
-  <div class="container">
-    <div class="nav-header">
-      <button class="btn-back" onclick="goHome()">←</button>
-      <div class="nav-title">QC Check</div>
+      <div class="nav-title">Dashboard</div>
     </div>
     <div class="empty">
       <div class="empty-icon">✓</div>
-      <p class="empty-text">QC Check coming soon</p>
+      <p class="empty-text">Dashboard coming soon</p>
     </div>
   </div>
 </div>
@@ -1652,6 +1900,7 @@ body {
 
 
 <script>
+
 
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTT7cf3VZXeymJGQhBPiK8vhfLYENLbjxBPi0S6KN1lAVakR5Ps2ocX6EY_Pe5S5fvaA/exec';
 
@@ -1726,10 +1975,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 
     if (result.success) {
-  console.log('Login API result:', result);
-
     localStorage.setItem('currentUsername', result.user.username);
-    console.log('Stored username:', localStorage.getItem('currentUsername'));
       currentUser = result.user || {};
 
       const initials = getInitials(username);
@@ -1751,21 +1997,28 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 
   } catch (error) {
-    console.error('Login error:', error);
     alert('Connection error. Please try again.');
   } finally {
     hideLoader();
   }
 });
 
+const passwordInput = document.getElementById('loginPassword');
+const togglePassword = document.getElementById('togglePassword');
+
+togglePassword.addEventListener('click', () => {
+  const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  passwordInput.setAttribute('type', type);
+
+  togglePassword.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+});
+
+
 function getCurrentUsername() {
   return localStorage.getItem('currentUsername') || 'Unknown';
 }
 
-// Exemple dans generateSelectionPDF()
 const username = getCurrentUsername();
-console.log('Username for submission:', username);
-
 
 function getInitials(name) {
   const parts = name.split(' ');
@@ -1786,7 +2039,6 @@ function showScreen(screenId) {
   // 1️⃣ Vérifier que l'écran cible existe
   const targetScreen = document.getElementById(screenId);
   if (!targetScreen) {
-    console.error(`Screen "${screenId}" not found`);
     return;
   }
 
@@ -1868,7 +2120,6 @@ function startCheckinScan() {
   ).then(() => {
     isCheckinScanning = true;
   }).catch(err => {
-    console.error('Scanner error:', err);
     alert('Camera error');
   });
 }
@@ -1927,7 +2178,6 @@ async function fetchCheckinItemData(spreadsheetId, row) {
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -1961,7 +2211,6 @@ async function searchCheckinItem() {
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -1997,7 +2246,6 @@ async function loadCheckinNames(reference) {
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -2133,20 +2381,6 @@ async function saveCheckinAll() {
     return;
   }
   
-  // ✅ AFFICHER LES DONNÉES AVANT SAVE
-  console.log('=== ITEMS TO SAVE ===');
-  toCheckinItems.forEach((item, i) => {
-    console.log(`Item ${i+1}:`);
-    console.log('  reference:', item.reference);
-    console.log('  sNumber:', item.sNumber);
-    console.log('  season:', item.season);
-    console.log('  archivingRow:', item.archivingRow);
-    console.log('  sourceRow:', item.sourceRow);
-  });
-  
-  const confirmSave = confirm(`Save ${toCheckinItems.length} items?\n\nCheck console (F12) to verify data.`);
-  if (!confirmSave) return;
-  
   showLoader('Saving...');
   
   try {
@@ -2155,14 +2389,11 @@ async function saveCheckinAll() {
     for (let i = 0; i < toCheckinItems.length; i++) {
       const item = toCheckinItems[i];
       
-      console.log(`\n--- Sending item ${i+1} ---`);
-      console.log('archivingRow:', item.archivingRow);
-      console.log('reference:', item.reference);
-      
+      // ✅ NE PAS ENVOYER loginName, l'Apps Script va le récupérer automatiquement
       const params = new URLSearchParams({
         apiAction: 'saveCheckinWithID',
         archivingRow: String(item.archivingRow || ''),
-        loginName: '',
+        loginName: '',  // ✅ VIDE ! Apps Script va garder le nom du Check Out
         date: new Date().toLocaleDateString('en-GB'),
         spreadsheetId: item.spreadsheetId || '',
         sourceRow: String(item.sourceRow || ''),
@@ -2173,21 +2404,18 @@ async function saveCheckinAll() {
       const response = await fetch(url);
       const result = await response.json();
       
-      console.log('Result:', result);
-      
       if (i === 0 && result.sessionId) {
         finalSessionId = result.sessionId;
       }
     }
     
     hideLoader();
-    alert(`Done ✅`);
+    alert(`Done✅ `);
     
     toCheckinItems = [];
     goHome();
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -2258,7 +2486,6 @@ function startCheckoutScan() {
   ).then(() => {
     isCheckoutScanning = true;
   }).catch(err => {
-    console.error('Scanner error:', err);
     alert('Camera error');
   });
 }
@@ -2315,7 +2542,6 @@ async function fetchCheckoutItem(spreadsheetId, row) {
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -2347,7 +2573,6 @@ async function searchCheckoutItem() {
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -2423,23 +2648,11 @@ function removeCheckoutItem(itemId) {
 }
 
 function clearCheckoutAll() {
-  console.log('Clear button clicked!'); // ✅ LOG
-  console.log('checkoutItems.length:', checkoutItems.length); // ✅ LOG
+  if (checkoutItems.length === 0) return;
+  if (!confirm('Clear all items?')) return;
   
-  if (checkoutItems.length === 0) {
-    alert('No items to clear');
-    return;
-  }
-  
-  if (!confirm('Clear all items?')) {
-    console.log('User cancelled'); // ✅ LOG
-    return;
-  }
-  
-  console.log('Clearing items...'); // ✅ LOG
   checkoutItems = [];
   updateCheckoutList();
-  console.log('Items cleared!'); // ✅ LOG
 }
 
 async function saveCheckoutAll() {
@@ -2534,7 +2747,6 @@ function startDetailsScan() {
   ).then(() => {
     isDetailsScanning = true;
   }).catch(err => {
-    console.error('Scanner error:', err);
     alert('Camera error');
   });
 }
@@ -2596,14 +2808,15 @@ async function searchDetailsItem() {
     if (result.success && result.data) {
       currentDetailsData = result.data;
       document.getElementById('details-search-input').value = '';
+      
       await loadDetailsHistory(result.data.spreadsheetId, result.data.sourceRow);
+      await loadDetailsSelection(result.data.sNumber); // 🔥 AJOUT
       renderDetailsView();
       stopDetailsScan();
       showScreen('details-view-screen');
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -2624,14 +2837,15 @@ async function fetchDetailsData(spreadsheetId, row) {
     
     if (result.success && result.data) {
       currentDetailsData = result.data;
+      
       await loadDetailsHistory(spreadsheetId, row);
+      await loadDetailsSelection(result.data.sNumber); 
       renderDetailsView();
       stopDetailsScan();
       showScreen('details-view-screen');
     }
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 }
@@ -2646,9 +2860,43 @@ async function loadDetailsHistory(spreadsheetId, row) {
       currentDetailsData.history = result.entries;
     }
   } catch (error) {
-    console.error('Error loading history:', error);
   }
 }
+async function loadDetailsSelection(sNumber) {
+  try {
+    const response = await fetch(
+      `${API_URL}?apiAction=getSelectionBySNumber&spreadsheetId=${ARCHIVING_SPREADSHEET_ID}&sNumber=${encodeURIComponent(sNumber)}`
+    );
+
+    const result = await response.json();
+
+    const tbody = document.getElementById('details-selection-table-body');
+
+    if (!result.success || !result.selections || result.selections.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="3" style="text-align:center; padding:20px; color:var(--gray-500);">
+            No selection data
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = result.selections.map(item => `
+      <tr style="border-bottom:1px solid var(--gray-200);">
+        <td style="padding:12px;">${item.date || '-'}</td>
+        <td style="padding:12px;">${item.customer || '-'}</td>
+        <td style="padding:12px;">${item.submittedBy || '-'}</td>
+      </tr>
+    `).join('');
+    console.log(document.getElementById('details-selection-table-body'));
+
+  } catch (error) {
+    console.error('Selection load error:', error);
+  }
+}
+
 
 function renderDetailsView() {
   if (!currentDetailsData) return;
@@ -2761,7 +3009,7 @@ async function searchBySNumber() {
   try {
 
     const response = await fetch(
-      `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItemBySNumber&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc&sNumber=${encodeURIComponent(sNumber)}`
+      `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItemBySNumber&spreadsheetId=${ARCHIVING_SPREADSHEET_ID}&sNumber=${encodeURIComponent(sNumber)}`
     );
 
     const result = await response.json();
@@ -2778,14 +3026,12 @@ async function searchBySNumber() {
       updateSelectionCount();
 
       input.value = '';
-      console.log(itemData);
     } else {
       alert(result.error || 'Item not found');
     }
 
   } catch (error) {
     hideLoader();
-    console.error(error);
     alert('Connection error');
   }
 }
@@ -2799,8 +3045,6 @@ function advanceToSelectionScan() {
     alert('Please enter customer name');
     return;
   }
-  
-  console.log(customerName);
 
   selectionFormData.customer = customerName;
   
@@ -2811,7 +3055,10 @@ function advanceToSelectionScan() {
 }
 
 function goBackToSelectionForm() {
+  stopCheckoutScan();
+  stopCheckinScan();
   stopSelectionScan();
+  stopDetailsScan();
   document.getElementById("selection-scan-screen").classList.remove("active");
   document.getElementById("selection-form-screen").classList.add("active");
 }
@@ -2828,7 +3075,6 @@ function initSelectionScanner() {
   ).then(() => {
     isSelectionScanning = true;
   }).catch(err => {
-    console.error('Scanner error:', err);
     alert('Camera error');
   });
 }
@@ -2859,7 +3105,6 @@ async function onSelectionScanSuccess(decodedText) {
   try {
     const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=getItem&id=${spreadsheetId}&row=${row}`);
     const result = await response.json();
-    console.log(result);
     hideLoader();
     
     if (result.success) {
@@ -2874,7 +3119,6 @@ async function onSelectionScanSuccess(decodedText) {
     
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Connection error');
   }
 
@@ -2950,7 +3194,6 @@ async function generateSelectionPDF() {
 
   // 🔹 récupère le username connecté
  const username = getCurrentUsername();
- console.log('Username for submission:', username);
 
   // Mise à jour globale pour d'autres fonctions
   selectionFormData.customer = customerName;
@@ -2965,13 +3208,14 @@ async function generateSelectionPDF() {
       date: selectionDate,
       submittedBy: username // ✅ ajoute username
     }));
-
+    console.log('Données envoyées à Apps Script :', finalItems);
     // 1️⃣ Sauvegarde dans la feuille Selection
     const saveResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify({
         apiAction: 'saveSelection',
-        items: finalItems
+        items: finalItems,
+        customer: customerName 
       })
     });
     
@@ -2996,7 +3240,6 @@ async function generateSelectionPDF() {
 
   } catch (error) {
     hideLoader();
-    console.error('Error:', error);
     alert('Failed: ' + error.message);
   }
 }
@@ -3018,7 +3261,6 @@ async function generateMultiItemPDF() {
       pdfUrl: pdfUrl
     };
   } catch (error) {
-    console.error('Error generating PDF:', error);
     return { success: false, error: error.message };
   }
 }
@@ -3039,7 +3281,7 @@ function goBackToHomeFromPDF() {
 
 // ====================================
 // Pitch submitted
-// ====================================
+// ==================================== 
 async function submitPitch(pitchData) {
   const username = localStorage.getItem('currentUsername') || 'Unknown';
   pitchData.submittedBy = username; // ajoute le username
@@ -3063,7 +3305,7 @@ async function loadPitchScreen() {
 
   try {
     const response = await fetch(
-      `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getPitchSubmitted&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc`
+      `${GOOGLE_APPS_SCRIPT_URL}?apiAction=getPitchSubmitted&spreadsheetId=${ARCHIVING_SPREADSHEET_ID}`
     );
 
     const result = await response.json();
@@ -3082,39 +3324,49 @@ async function loadPitchScreen() {
       `;
       return;
     }
-
-    // Ajoute la ligne de filtres si pas déjà présente
     addFiltersRow();
 
     result.items.forEach((item, index) => {
-      const row = document.createElement('tr');
-      row.style.borderBottom = "1px solid var(--gray-200)";
-
-      row.innerHTML = `
-        <td style="padding:12px;">${item.id}</td>
-        <td style="padding:12px;">${item.customer}</td>
-        <td style="padding:12px;">${item.dateSelection}</td>
-        <td style="padding:12px;">${item.submittedBy || ''}</td> <!-- Nouvelle colonne -->
-        <td>
-          <select onchange="changeStatus('${item.id}', this.value, this)">
-            <option value="New" ${item.status === "New" ? "selected" : ""}>New</option>
-            <option value="WIP" ${item.status === "WIP" ? "selected" : ""}>WIP</option>
-            <option value="Closed" ${item.status === "Closed" ? "selected" : ""}>Closed</option>
-            <option value="Reject" ${item.status === "Reject" ? "selected" : ""}>Reject</option>
-          </select>
-        </td>
-      `;
-
-      tbody.appendChild(row);
-    });
-
-    console.log("Pitch screen loading...");
+  const row = document.createElement('tr');
+  const url = item.url || '';
+  
+  row.innerHTML = `
+    <td data-label="Ref No"><span>${item.id}</span></td>
+    <td data-label="Customer"><span>${item.customer}</span></td>
+    <td data-label="Date"><span>${item.dateSelection}</span></td>
+    <td data-label="By"><span>${item.submittedBy || ''}</span></td>
+    <td data-label="Status">
+      <span>
+        <select onchange="changeStatus('${item.id}', this.value, this)">
+          <option value="New" ${item.status === "New" ? "selected" : ""}>New</option>
+          <option value="WIP" ${item.status === "WIP" ? "selected" : ""}>WIP</option>
+          <option value="Closed" ${item.status === "Closed" ? "selected" : ""}>Closed</option>
+          <option value="Reject" ${item.status === "Reject" ? "selected" : ""}>Reject</option>
+        </select>
+      </span>
+    </td>
+    <td data-label="PDF">
+      <span>
+        <button class="btn-view-pdf" onclick="openPDF('${url}')">Click➡️</button>
+      </span>
+    </td>
+  `;
+  tbody.appendChild(row);
+});
   } catch (error) {
     hideLoader();
-    console.error(error);
     alert('Connection error');
   }
 }
+
+function openPDF(url) {
+  if (!url) {
+    alert("PDF URL not available");
+    return;
+  }
+  window.open(url, "_blank");
+}
+
 
 function addFiltersRow() {
   const tbody = document.getElementById('pitch-tbody');
@@ -3160,24 +3412,69 @@ function addFiltersRow() {
 
   thead.appendChild(filterRow);
 }
-
 function changeStatus(id, newStatus) {
-  console.log("Sending ID:", id, "New Status:", newStatus);
 
-  fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=updatePitchStatus&spreadsheetId=1jBJdi1E142iMLwe8_59O8c4Dq_ua48AWcrukf9dYxwc&id=${encodeURIComponent(id)}&newStatus=${encodeURIComponent(newStatus)}`)
+  fetch(`${GOOGLE_APPS_SCRIPT_URL}?apiAction=updatePitchStatus&spreadsheetId=${ARCHIVING_SPREADSHEET_ID}&id=${encodeURIComponent(id)}&newStatus=${encodeURIComponent(newStatus)}`)
     .then(res => res.json())
     .then(data => {
-      console.log("Server response:", data);
       if (data.success) {
-        // Met à jour localement pour filtrage
-        const item = allPitchItems.find(i => i.id === id);
-        if (item) item.status = newStatus;
+
+        // Mise à jour locale si nécessaire
+        if (typeof allPitchItems !== "undefined") {
+          const item = allPitchItems.find(i => i.id === id);
+          if (item) item.status = newStatus;
+        }
+
+        // ✅ Notification succès
+        showNotification(`Status changed to "${newStatus}"`, "success");
+
       } else {
-        alert('Failed to update status: ' + (data.error || 'unknown'));
+        showNotification('Failed to update status: ' + (data.error || 'unknown'), "error");
       }
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      console.error(err);
+      showNotification("Connection error while updating status", "error");
+    });
 }
+function showNotification(message, type = "success") {
+
+  const notif = document.createElement("div");
+  notif.textContent = message;
+
+  notif.style.position = "fixed";
+  notif.style.top = "50%";
+  notif.style.left = "50%";
+  notif.style.transform = "translate(-50%, -50%) scale(0.9)";
+  notif.style.padding = "18px 30px";
+  notif.style.borderRadius = "12px";
+  notif.style.color = "white";
+  notif.style.fontSize = "16px";
+  notif.style.fontWeight = "600";
+  notif.style.zIndex = "9999";
+  notif.style.boxShadow = "0 8px 25px rgba(0,0,0,0.25)";
+  notif.style.opacity = "0";
+  notif.style.transition = "all 0.3s ease";
+
+  notif.style.backgroundColor = type === "success" ? "#16a34a" : "#dc2626";
+
+  document.body.appendChild(notif);
+
+  // Animation entrée
+  setTimeout(() => {
+    notif.style.opacity = "1";
+    notif.style.transform = "translate(-50%, -50%) scale(1)";
+  }, 10);
+
+  // Disparition automatique
+  setTimeout(() => {
+    notif.style.opacity = "0";
+    notif.style.transform = "translate(-50%, -50%) scale(0.9)";
+    setTimeout(() => notif.remove(), 300);
+  }, 2500);
+}
+
+
 // Filtrage dynamique
 function applyFilters() {
   const tbody = document.getElementById('pitch-tbody');
@@ -3213,8 +3510,11 @@ function applyFilters() {
 
 
 function goToPitchScreen() {
+  stopCheckoutScan();
+  stopCheckinScan();
   stopSelectionScan();
-
+  stopDetailsScan();
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('pitch-screen').classList.add('active');
 
@@ -3229,8 +3529,8 @@ function goToPitch() {
   loadPitchScreen();
 }
 
-function goToQC() {
-  showScreen('qc-screen');
+function goToDashboard() {
+  showScreen('dashboard-screen');
 }
 
 // ====================================
